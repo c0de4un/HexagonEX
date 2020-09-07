@@ -33,10 +33,9 @@
 // INCLUDES
 // ===========================================================
 
- // Include C++ STL
-#include <iostream>
-
-// Include hexEngine
-#include <hex/core/hex.hpp>
+// HEADER
+#ifndef HEX_CORE_HPP
+#include "../../../public/hex/core/hex.hpp"
+#endif // !HEX_CORE_HPP
 
 // -----------------------------------------------------------

@@ -38,7 +38,7 @@ set ( PROJECT_DESCRIPTION "Puzzle 2D Game" )
 project ( ${PROJECT_NAME} VERSION ${PROJECT_VERSION} DESCRIPTION ${PROJECT_DESCRIPTION} LANGUAGES C CXX )
 
 # C++ Version
-set ( CMAKE_CXX_STANDARD 17 )
+#set ( CMAKE_CXX_STANDARD 17 ) # Android stdlibc++ 14+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -57,7 +57,10 @@ include ( "cmake/configs.cmake" )
 # MODULES
 # =================================================================================
 
-# Game.Client.Windows.Executable
+# Engine
+add_subdirectory ( "src/cpp/engine/public/hex" )
+
+# Game
 add_subdirectory ( "src/cpp/game/public/hex" )
 
 # ------------------------------------------------------------------------------

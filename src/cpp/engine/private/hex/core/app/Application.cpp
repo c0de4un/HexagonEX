@@ -33,10 +33,39 @@
 // INCLUDES
 // ===========================================================
 
- // Include C++ STL
-#include <iostream>
+// HEADER
+#ifndef HEX_CORE_APPLICATION_HPP
+#include "../../../../public/hex/core/app/Application.hpp"
+#endif // !HEX_CORE_APPLICATION_HPP
 
-// Include hexEngine
-#include <hex/core/hex.hpp>
+// ===========================================================
+// hex::core::Application
+// ===========================================================
+
+namespace hex
+{
+
+    namespace core
+    {
+
+        // -----------------------------------------------------------
+
+        // ===========================================================
+        // CONSTRUCTOR & DESTRUCTOR
+        // ===========================================================
+
+        Application::Application()
+        {
+        }
+
+        Application::~Application() noexcept
+        {
+        }
+
+        // -----------------------------------------------------------
+
+    } /// hex::core
+
+} /// hex
 
 // -----------------------------------------------------------

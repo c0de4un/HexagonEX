@@ -27,16 +27,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
+#ifndef HEX_CORE_API_HPP
+#define HEX_CORE_API_HPP
+
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
 
- // Include C++ STL
-#include <iostream>
+// ===========================================================
+// DECL-SPEC
+// ===========================================================
 
-// Include hexEngine
-#include <hex/core/hex.hpp>
+/** API **/
+#if defined( HEX_SHARED ) // SHARED Library
+
+#if defined( HEX_EXPORT )
+#define HEX_API __declspec( dllexport ) // EXPORT
+#else
+#define HEX_API __declspec( dllimport ) // IMPORT
+#endif
+
+#elif defined( HEX_STATIC ) // STATIC Library
+#define HEX_API /** void **/
+#endif
+
+// ===========================================================
+// REFLECTION MACROS
+// ===========================================================
+
+#define HEX_STRUCT
+#define HEX_CLASS
+#define HEX_INTERFACE
 
 // -----------------------------------------------------------
+
+#endif // !HEX_CORE_API_HPP

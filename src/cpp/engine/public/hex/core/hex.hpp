@@ -27,16 +27,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
+#ifndef HEX_CORE_HPP
+#define HEX_CORE_HPP
+
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
 
- // Include C++ STL
-#include <iostream>
+// Include hex::api
+#ifndef HEX_CORE_API_HPP
+#include "configs/hex_api.hpp"
+#endif // !HEX_CORE_API_HPP
 
-// Include hexEngine
-#include <hex/core/hex.hpp>
+// Include hex::core::Application
+#ifndef HEX_CORE_APPLICATION_HPP
+#include "app/Application.hpp"
+#endif // !HEX_CORE_APPLICATION_HPP
 
 // -----------------------------------------------------------
+
+#endif // !HEX_CORE_HPP
