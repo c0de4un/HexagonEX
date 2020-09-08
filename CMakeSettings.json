@@ -22,7 +22,13 @@
             "buildCommandArgs": "",
             "ctestCommandArgs": "",
             "inheritEnvironments": [ "clang_cl_x86" ],
-            "variables": []
+            "variables": [
+                {
+                    "name": "CXX_VERSION",
+                    "value": "17",
+                    "type": "STRING"
+                }
+            ]
         },
         {
             "name": "Clang-x86-Release",

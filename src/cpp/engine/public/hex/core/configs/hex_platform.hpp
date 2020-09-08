@@ -27,45 +27,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_API_HPP
-#define HEX_CORE_API_HPP
-
-// -----------------------------------------------------------
-
-// ===========================================================
-// INCLUDES
-// ===========================================================
-
-// Include hex::platform
 #ifndef HEX_CORE_CONFIG_PLATFORM_HPP
-#include "hex_platform.hpp"
-#endif // !HEX_CORE_CONFIG_PLATFORM_HPP
-
-// ===========================================================
-// DECL-SPEC
-// ===========================================================
-
-/** API **/
-#if defined( HEX_SHARED ) // SHARED Library
-
-#if defined( HEX_EXPORT )
-#define HEX_API __declspec( dllexport ) // EXPORT
-#else
-#define HEX_API __declspec( dllimport ) // IMPORT
-#endif
-
-#elif defined( HEX_STATIC ) // STATIC Library
-#define HEX_API /** void **/
-#endif
-
-// ===========================================================
-// REFLECTION MACROS
-// ===========================================================
-
-#define HEX_STRUCT
-#define HEX_CLASS
-#define HEX_INTERFACE
+#define HEX_CORE_CONFIG_PLATFORM_HPP
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_API_HPP
+// ===========================================================
+// DEFINES
+// ===========================================================
+
+// WINDOWS
+#if defined( MINGW ) || defined( MINGGW32 ) || defined( MINGW64 ) || defined( WIN32 ) || defined( WIN64 ) || defined( WINDOWS ) || defined( MSVC )
+#define HEX_WINDOWS
+#elif defined( __linux ) || defined( _linux ) || defined( _linux_ ) || defined( __linux__ ) || defined( LINUX )
+// LINUX
+#define HEX_LINUX
+#elif defined( ANDROID ) || defined( _android_ ) || defined( __android__ ) || defined( _android ) || defined( __android )
+// ANDROID
+#define HEX_ANDROID
+#else
+#error "hex_platform.hpp - configuration required"
+#endif
+
+// -----------------------------------------------------------
+
+#endif // !HEX_CORE_CONFIG_PLATFORM_HPP

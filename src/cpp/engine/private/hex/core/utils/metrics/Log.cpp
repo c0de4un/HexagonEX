@@ -27,45 +27,89 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_API_HPP
-#define HEX_CORE_API_HPP
-
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
 
-// Include hex::platform
-#ifndef HEX_CORE_CONFIG_PLATFORM_HPP
-#include "hex_platform.hpp"
-#endif // !HEX_CORE_CONFIG_PLATFORM_HPP
+// HEADER
+#ifndef HEX_CORE_LOG_HPP
+#include "../../../../../public/hex/core/utils/metrics/Log.hpp"
+#endif // !HEX_CORE_LOG_HPP
 
 // ===========================================================
-// DECL-SPEC
+// hex::core::Log
 // ===========================================================
 
-/** API **/
-#if defined( HEX_SHARED ) // SHARED Library
+namespace hex
+{
 
-#if defined( HEX_EXPORT )
-#define HEX_API __declspec( dllexport ) // EXPORT
-#else
-#define HEX_API __declspec( dllimport ) // IMPORT
-#endif
+    namespace core
+    {
 
-#elif defined( HEX_STATIC ) // STATIC Library
-#define HEX_API /** void **/
-#endif
+        // -----------------------------------------------------------
 
-// ===========================================================
-// REFLECTION MACROS
-// ===========================================================
+        // ===========================================================
+        // FIELDS
+        // ===========================================================
 
-#define HEX_STRUCT
-#define HEX_CLASS
-#define HEX_INTERFACE
+        Log* Log::mInstance(nullptr);
 
-// -----------------------------------------------------------
+        // ===========================================================
+        // CONSTRUCTOR & DESTRUCTOR
+        // ===========================================================
 
-#endif // !HEX_CORE_API_HPP
+        Log::Log() = default;
+
+        Log::~Log() noexcept = default;
+
+        // ===========================================================
+        // METHODS
+        // ===========================================================
+
+        void Log::onInfo(const char* const pMsg) noexcept
+        {
+        }
+
+        void Log::onDebug(const char* const pMsg) noexcept
+        {
+        }
+
+        void Log::onWarning(const char* const pMsg) noexcept
+        {
+        }
+
+        void Log::onError(const char* const pMsg) noexcept
+        {
+        }
+
+        void Log::printInfo(const char* const pMsg) noexcept
+        {
+            if ( mInstance )
+                mInstance->onInfo(pMsg);
+        }
+
+        void Log::printDebug(const char* const pMsg) noexcept
+        {
+            if ( mInstance )
+                mInstance->onDebug(pMsg);
+        }
+
+        void Log::printWarning(const char* const pMsg) noexcept
+        {
+            if ( mInstance )
+                mInstance->onWarning(pMsg);
+        }
+
+        void Log::printError(const char* const pMsg) noexcept
+        {
+            if ( mInstance )
+                mInstance->onError( pMsg );
+        }
+
+        // -----------------------------------------------------------
+
+    } /// hex::win
+
+} /// hex

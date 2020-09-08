@@ -27,45 +27,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_API_HPP
-#define HEX_CORE_API_HPP
-
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
 
-// Include hex::platform
-#ifndef HEX_CORE_CONFIG_PLATFORM_HPP
-#include "hex_platform.hpp"
-#endif // !HEX_CORE_CONFIG_PLATFORM_HPP
+// HEADER
+#ifndef HEX_WIN_APP_HPP
+#include "../../../public/hex/windows/app/WinApp.hpp"
+#endif // !HEX_WIN_APP_HPP
 
 // ===========================================================
-// DECL-SPEC
+// hex::win::WinApp
 // ===========================================================
 
-/** API **/
-#if defined( HEX_SHARED ) // SHARED Library
+namespace hex
+{
 
-#if defined( HEX_EXPORT )
-#define HEX_API __declspec( dllexport ) // EXPORT
-#else
-#define HEX_API __declspec( dllimport ) // IMPORT
-#endif
+    namespace win
+    {
 
-#elif defined( HEX_STATIC ) // STATIC Library
-#define HEX_API /** void **/
-#endif
+        // -----------------------------------------------------------
 
-// ===========================================================
-// REFLECTION MACROS
-// ===========================================================
 
-#define HEX_STRUCT
-#define HEX_CLASS
-#define HEX_INTERFACE
+
+        // -----------------------------------------------------------
+
+    }
+
+}
 
 // -----------------------------------------------------------
-
-#endif // !HEX_CORE_API_HPP

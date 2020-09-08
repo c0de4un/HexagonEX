@@ -36,6 +36,11 @@
 // HEADER
 #include "../../../public/hex/windows/main.hpp"
 
+// Include hex::win::WinApp
+#ifndef HEX_WIN_APP_HPP
+#include "../../../../engine/public/hex/windows/app/WinApp.hpp"
+#endif // !HEX_WIN_APP_HPP
+
 // ===========================================================
 // METHODS
 // ===========================================================

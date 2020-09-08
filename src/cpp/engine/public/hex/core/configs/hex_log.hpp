@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_API_HPP
-#define HEX_CORE_API_HPP
+#ifndef HEX_CORE_CONFIG_LOG_HPP
+#define HEX_CORE_CONFIG_LOG_HPP
 
 // -----------------------------------------------------------
 
@@ -36,36 +36,37 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::platform
-#ifndef HEX_CORE_CONFIG_PLATFORM_HPP
-#include "hex_platform.hpp"
-#endif // !HEX_CORE_CONFIG_PLATFORM_HPP
+// Include hex::api
+#ifndef HEX_CORE_API_HPP
+#include "hex_api.hpp"
+#endif // !HEX_CORE_API_HPP
 
-// ===========================================================
-// DECL-SPEC
-// ===========================================================
+// PLATFORM
+#if defined( HEX_WINDOWS ) // WINDOWS
 
-/** API **/
-#if defined( HEX_SHARED ) // SHARED Library
+// Include hex::win::WinLog
+#ifndef HEX_WIN_LOG_HPP
+#include "../../windows/utils/metrics/WinLog.hpp"
+#endif // !HEX_WIN_LOG_HPP
 
-#if defined( HEX_EXPORT )
-#define HEX_API __declspec( dllexport ) // EXPORT
+#elif defined( HEX_LINUX ) // LINUX
+
+// Include hex::linux::LinuxLog
+#ifndef HEX_LINUX_LOGGER_HPP
+#include "../../linux/utils/metrics/LinuxLog.hpp"
+#endif // !HEX_LINUX_LOGGER_HPP
+
+#elif defined( HEX_ANDROID ) // ANDROID
+
+// Include hex::android::AndroidLog
+#ifndef HEX_ANDROID_LOGGER_HPP
+#include "../../android/utils/metrics/AndroidLog.hpp"
+#endif // !HEX_ANDROID_LOGGER_HPP
+
 #else
-#define HEX_API __declspec( dllimport ) // IMPORT
+#error "hex_log.hpp - configuration required"
 #endif
-
-#elif defined( HEX_STATIC ) // STATIC Library
-#define HEX_API /** void **/
-#endif
-
-// ===========================================================
-// REFLECTION MACROS
-// ===========================================================
-
-#define HEX_STRUCT
-#define HEX_CLASS
-#define HEX_INTERFACE
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_API_HPP
+#endif // !HEX_CORE_CONFIG_LOG_HPP

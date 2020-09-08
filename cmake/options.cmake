@@ -1,0 +1,1 @@
+option ( AUTO_DETECT_DEBUG "Automatically detect need for logging & assertions" ON )

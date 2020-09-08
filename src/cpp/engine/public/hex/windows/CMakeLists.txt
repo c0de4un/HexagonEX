@@ -20,7 +20,7 @@ cmake_minimum_required ( VERSION 3.6 FATAL_ERROR ) # QT & Android
 # =================================================================================
 
 # Project Name
-set ( PROJECT_NAME "hexEngine.CORE" )
+set ( PROJECT_NAME "hexEngine.Windows" )
 
 # Project Version
 set ( PROJECT_VERSION 0.0.1 )
@@ -32,7 +32,7 @@ set ( PROJECT_DESCRIPTION "Puzzle Game Engine" )
 project ( ${PROJECT_NAME} VERSION ${PROJECT_VERSION} DESCRIPTION ${PROJECT_DESCRIPTION} LANGUAGES C CXX )
 
 # C++ Version
-set ( CMAKE_CXX_STANDARD 17 )
+#set ( CMAKE_CXX_STANDARD 17 )
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -46,62 +46,39 @@ set(CMAKE_AUTORCC ON)
 # =================================================================================
 
 set ( PUBLIC_DIR "" )
-set ( PRIVATE_DIR "../../../private/hex/core/" )
+set ( PRIVATE_DIR "../../../private/hex/windows/" )
 
 # =================================================================================
 # HEADERS
 # =================================================================================
 
-set ( HEX_CORE_HEADERS
-    # CONFIGS
-    "${PUBLIC_DIR}configs/hex_platform.hpp"
-    "${PUBLIC_DIR}configs/hex_api.hpp"
-    # APPLICATION
-    "${PUBLIC_DIR}app/IApplication.hxx"
-    "${PUBLIC_DIR}app/Application.hpp"
-    # GRAPHICS
-    # ENGINE
-    # RENDER
-    # ASYNC
-    # ASSETS
-    # INPUT
-    # UTILS
-    "${PUBLIC_DIR}hex.hpp" )
+set ( HEX_WIN_HEADERS
+    "${PUBLIC_DIR}app/WinApp.hpp" )
 
 # DEBUG
 if ( DEBUG OR HEX_DEBUG )
     set ( HEX_CORE_HEADERS ${HEX_CORE_HEADERS}
-        "${PUBLIC_DIR}utils/metrics/Log.hpp"
-        "${PUBLIC_DIR}configs/hex_log.hpp" )
+    "${PUBLIC_DIR}utils/metrics/WinLog.hpp" )
 endif ( DEBUG OR HEX_DEBUG )
 
 # =================================================================================
 # SOURCES
 # =================================================================================
 
-set ( HEX_CORE_SOURCES
-    # APPLICATION
-    "${PRIVATE_DIR}app/Application.cpp"
-    # GRAPHICS
-    # ENGINE
-    # RENDER
-    # ASYNC
-    # ASSETS
-    # INPUT
-    # UTILS
-    "${PRIVATE_DIR}hex.cpp" )
+set ( HEX_WIN_SOURCES
+    "${PRIVATE_DIR}app/WinApp.cpp" )
 
 # DEBUG
 if ( DEBUG OR HEX_DEBUG )
-    set ( HEX_CORE_SOURCES ${HEX_CORE_SOURCES}
-        "${PRIVATE_DIR}utils/metrics/Log.cpp" )
+    set ( HEX_WIN_SOURCES ${HEX_WIN_SOURCES}
+    "${PRIVATE_DIR}utils/metrics/WinLog.cpp" )
 endif ( DEBUG OR HEX_DEBUG )
 
 # =================================================================================
 # BUILD
 # =================================================================================
 
-# Add STATIC Library Object
-add_library ( hexEngine.Core ${HEX_CORE_HEADERS} ${HEX_CORE_SOURCES} )
+# Add STATIC Library
+add_library ( hexEngine.Windows ${HEX_WIN_HEADERS} ${HEX_WIN_SOURCES} )
 
 # ------------------------------------------------------------------------------

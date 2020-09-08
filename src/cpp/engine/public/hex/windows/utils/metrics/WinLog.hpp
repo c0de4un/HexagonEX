@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_API_HPP
-#define HEX_CORE_API_HPP
+#ifndef HEX_WIN_LOG_HPP
+#define HEX_WIN_LOG_HPP
 
 // -----------------------------------------------------------
 
@@ -36,36 +36,70 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::platform
-#ifndef HEX_CORE_CONFIG_PLATFORM_HPP
-#include "hex_platform.hpp"
-#endif // !HEX_CORE_CONFIG_PLATFORM_HPP
+// Include hex::core::Log
+#ifndef HEX_CORE_LOG_HPP
+#include "../../../core/utils/metrics/Log.hpp"
+#endif // !HEX_CORE_LOG_HPP
 
 // ===========================================================
-// DECL-SPEC
+// TYPES
 // ===========================================================
 
-/** API **/
-#if defined( HEX_SHARED ) // SHARED Library
+namespace hex
+{
 
-#if defined( HEX_EXPORT )
-#define HEX_API __declspec( dllexport ) // EXPORT
-#else
-#define HEX_API __declspec( dllimport ) // IMPORT
-#endif
+    namespace win
+    {
 
-#elif defined( HEX_STATIC ) // STATIC Library
-#define HEX_API /** void **/
-#endif
+        // -----------------------------------------------------------
 
-// ===========================================================
-// REFLECTION MACROS
-// ===========================================================
+        /**
+         * @brief
+         * WinLog - default logger for Windows platform.
+         * 
+         * @version 1.0
+        **/
+        class WinLog final : public hex::core::Log
+        {
 
-#define HEX_STRUCT
-#define HEX_CLASS
-#define HEX_INTERFACE
+            // -----------------------------------------------------------
+
+            // ===========================================================
+            // META
+            // ===========================================================
+
+            HEX_CLASS
+
+            // -----------------------------------------------------------
+            
+        private:
+
+            // -----------------------------------------------------------
+
+            // -----------------------------------------------------------
+
+        protected:
+
+            // -----------------------------------------------------------
+
+            // -----------------------------------------------------------
+
+        public:
+
+            // -----------------------------------------------------------
+
+            // -----------------------------------------------------------
+
+        }; /// hex::win::WinLog
+
+        // -----------------------------------------------------------
+
+    } /// hex::win
+
+} /// hex
+
+#define HEX_WIN_LOG_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_API_HPP
+#endif // !HEX_WIN_LOG_HPP

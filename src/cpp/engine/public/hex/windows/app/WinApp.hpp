@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_API_HPP
-#define HEX_CORE_API_HPP
+#ifndef HEX_WIN_APP_HPP
+#define HEX_WIN_APP_HPP
 
 // -----------------------------------------------------------
 
@@ -36,36 +36,75 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::platform
-#ifndef HEX_CORE_CONFIG_PLATFORM_HPP
-#include "hex_platform.hpp"
-#endif // !HEX_CORE_CONFIG_PLATFORM_HPP
+// Include hex::core::Application
+#ifndef HEX_CORE_APPLICATION_HPP
+#include "../../core/app/Application.hpp"
+#endif // !HEX_CORE_APPLICATION_HPP
 
 // ===========================================================
-// DECL-SPEC
+// TYPES
 // ===========================================================
 
-/** API **/
-#if defined( HEX_SHARED ) // SHARED Library
+namespace hex
+{
 
-#if defined( HEX_EXPORT )
-#define HEX_API __declspec( dllexport ) // EXPORT
-#else
-#define HEX_API __declspec( dllimport ) // IMPORT
-#endif
+    namespace win
+    {
 
-#elif defined( HEX_STATIC ) // STATIC Library
-#define HEX_API /** void **/
-#endif
+        /**
+         * @brief
+         * WinApp - Windows application class.
+         * 
+         * @version 1.0
+        **/
+        class WinApp final : public hex::core::Application
+        {
 
-// ===========================================================
-// REFLECTION MACROS
-// ===========================================================
+            // -----------------------------------------------------------
 
-#define HEX_STRUCT
-#define HEX_CLASS
-#define HEX_INTERFACE
+            // -----------------------------------------------------------
+
+        private:
+
+            // -----------------------------------------------------------
+
+            // ===========================================================
+            // CONSTRUCTOR
+            // ===========================================================
+
+            explicit WinApp();
+
+            // ===========================================================
+            // DELETED
+            // ===========================================================
+
+            WinApp(const WinApp&) noexcept = delete;
+            WinApp& operator=(const WinApp&) noexcept = delete;
+            WinApp(WinApp&&) noexcept = delete;
+            WinApp& operator=(WinApp&&) noexcept = delete;
+
+            // -----------------------------------------------------------
+
+        public:
+
+            // -----------------------------------------------------------
+
+            // ===========================================================
+            // DESTRUCTOR
+            // ===========================================================
+
+            virtual ~WinApp() noexcept;
+
+            // -----------------------------------------------------------
+
+        }; /// hex::win::WinApp
+
+    } /// hex::win
+
+} /// hex
+
+#define HEX_WIN_APP_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_API_HPP
+#endif // !HEX_WIN_APP_HPP

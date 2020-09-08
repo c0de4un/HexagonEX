@@ -38,7 +38,7 @@ set ( PROJECT_DESCRIPTION "Puzzle Game Engine" )
 project ( ${PROJECT_NAME} VERSION ${PROJECT_VERSION} DESCRIPTION ${PROJECT_DESCRIPTION} LANGUAGES C CXX )
 
 # C++ Version
-set ( CMAKE_CXX_STANDARD 17 )
+#set ( CMAKE_CXX_STANDARD 17 )
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -59,5 +59,10 @@ include ( "cmake/configs.cmake" )
 
 # CORE
 add_subdirectory ("core")
+
+# WINDOWS
+if ( WINDOWS OR WIN64 OR WIN32 OR MSVC OR MINGW OR MINGW64 )
+    add_subdirectory ( "windows" )
+endif ( WINDOWS OR WIN64 OR WIN32 OR MSVC OR MINGW OR MINGW64 )
 
 # ------------------------------------------------------------------------------
