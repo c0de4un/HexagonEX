@@ -19,7 +19,10 @@ cmake_minimum_required ( VERSION 3.6 FATAL_ERROR ) # QT & Android
 # OPTIONS
 # =================================================================================
 
-
+# Root.Dir
+if ( NOT DEFINED HEX_ROOT_DIR )
+    message ( FATAL_ERROR "${PROJECT_NAME} - root dir for engine is not defined. Set <HEX_ROOT_DIR>." )
+endif ( NOT DEFINED HEX_ROOT_DIR )
 
 # =================================================================================
 # PROJECT
@@ -56,6 +59,11 @@ include ( "cmake/configs.cmake" )
 # =================================================================================
 # MODULES
 # =================================================================================
+
+# ECS
+set ( HEX_ECS_HEADERS_EXPORT "" )
+set ( HEX_ECS_SOURCES_EXPORT "" )
+add_subdirectory ( "ecs" )
 
 # CORE
 add_subdirectory ("core")

@@ -27,83 +27,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
+#ifndef HEX_ECS_DEBUG_HPP
+#define HEX_ECS_DEBUG_HPP
+
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
 
-// HEADER
-#ifndef HEX_WIN_LOG_HPP
-#include "../../../../../public/hex/windows/utils/metrics/WinLog.hpp"
-#endif // !HEX_WIN_LOG_HPP
-
-// Include C++ I/O
-#include <iostream>
-
-// Include Windows API
-#include <Windows.h>
-
 // ===========================================================
-// hex::win::WinLog
+// TYPES
 // ===========================================================
 
-namespace hex
-{
+// Include hex::log
+#ifndef HEX_CORE_CONFIG_LOG_HPP
+#include "../../core/configs/hex_log.hpp"
+#endif // !HEX_CORE_CONFIG_LOG_HPP
+using ecsLog = hexLog;
 
-    namespace win
-    {
-
-        // -----------------------------------------------------------
-
-        // ===========================================================
-        // CONSTRUCTOR & DESTRUCTOR
-        // ===========================================================
-
-        WinLog::WinLog() = default;
-
-        WinLog::~WinLog() noexcept = default;
-
-        // ===========================================================
-        // METHODS
-        // ===========================================================
-
-        void WinLog::Initialize() noexcept
-        {
-            if (hexLog::getInstance() )
-                return;
-
-            hexLog::setInstance( new WinLog() );
-        }
-
-        // ===========================================================
-        // OVERRIDE: hex::core::ILog
-        // ===========================================================
-
-        void WinLog::onInfo(const char* const pMsg) noexcept
-        {
-            std::cout << "INFO: " << pMsg << std::endl;
-        }
-
-        void WinLog::onDebug(const char* const pMsg) noexcept
-        {
-            std::cout << "DEBUG: " << pMsg << std::endl;
-        }
-
-        void WinLog::onWarning(const char* const pMsg) noexcept
-        {
-            std::cout << "WARNING: " << pMsg << std::endl;
-        }
-
-        void WinLog::onError(const char* const pMsg) noexcept
-        {
-            std::cout << "ERROR: " << pMsg << std::endl;
-        }
-
-        // -----------------------------------------------------------
-
-    } /// hex::win
-
-} /// hex
+// Include hex::assert
+#ifndef HEX_CORE_CONFIG_ASSERT_HPP
+#include "../../core/configs/hex_assert.hpp"
+#endif // !HEX_CORE_CONFIG_ASSERT_HPP
+#define ecsAssert(a) assert(a);
 
 // -----------------------------------------------------------
+
+#endif // !HEX_ECS_DEBUG_HPP

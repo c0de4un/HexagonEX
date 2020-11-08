@@ -47,6 +47,7 @@ set(CMAKE_AUTORCC ON)
 
 set ( PUBLIC_DIR "" )
 set ( PRIVATE_DIR "../../../private/" )
+set ( EXECUTABLE_OBJECT "HexagonEX" ) # Executable Object Name
 
 # =================================================================================
 # HEADERS
@@ -73,17 +74,16 @@ set ( HEX_GAME_WINDOWS_RESOURCES "${CMAKE_SOURCE_DIR}/res/win/win_res.rc" )
 # =================================================================================
 
 # Add Executable Object
-add_executable ( hexGame ${HEX_GAME_WINDOWS_HEADERS} ${HEX_GAME_WINDOWS_SOURCES} ${HEX_GAME_WINDOWS_RESOURCES} )
+add_executable ( ${EXECUTABLE_OBJECT} ${HEX_GAME_WINDOWS_HEADERS} ${HEX_GAME_WINDOWS_SOURCES} ${HEX_GAME_WINDOWS_RESOURCES} )
 
-# Configure Executable
 # Configure Executable-Object
-set_target_properties ( hexGame PROPERTIES
+set_target_properties ( ${EXECUTABLE_OBJECT} PROPERTIES
     VERSION ${PROJECT_VERSION}
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin" )
 
 # Link Executable
 #include_directories ( "../../../../engine/public" )
-target_include_directories ( hexGame PUBLIC "../../../../engine/public" )
-target_link_libraries ( hexGame hexEngine.Core )
+target_include_directories ( ${EXECUTABLE_OBJECT} PUBLIC "../../../../engine/public" )
+target_link_libraries ( ${EXECUTABLE_OBJECT} hexEngine.Core hexEngine.Windows )
 
 # ------------------------------------------------------------------------------

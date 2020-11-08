@@ -38,6 +38,32 @@
 #include "../../../../public/hex/core/app/Application.hpp"
 #endif // !HEX_CORE_APPLICATION_HPP
 
+// Include hex::memory
+#ifndef HEX_CORE_CONFIG_MEMORY_HPP
+#include "../../../../public/hex/core/configs/hex_memory.hpp"
+#endif // !HEX_CORE_CONFIG_MEMORY_HPP
+
+// Include hex::ecs::ECSEngine
+#ifndef HEX_ECS_ENGINE_HPP
+#include "../../../../public/hex/ecs/ECSEngine.hpp"
+#endif // HEX_ECS_ENGINE_HPP
+
+// DEBUG
+#if defined( DEBUG ) || defined( HEX_DEBUG )
+
+// Include hex::log
+#ifndef HEX_CORE_CONFIG_LOG_HPP
+#include "../../../../public/hex/core/configs/hex_log.hpp"
+#endif // !HEX_CORE_CONFIG_LOG_HPP
+
+// Include hex::assert
+#ifndef HEX_CORE_CONFIG_ASSERT_HPP
+#include "../../../../public/hex/core/configs/hex_assert.hpp"
+#endif // !HEX_CORE_CONFIG_ASSERT_HPP
+
+#endif
+// DEBUG
+
 // ===========================================================
 // hex::core::Application
 // ===========================================================
@@ -51,15 +77,63 @@ namespace hex
         // -----------------------------------------------------------
 
         // ===========================================================
+        // CONSTANTS & FIELDS
+        // ===========================================================
+
+        Application* Application::mInstance( nullptr );
+
+        // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        Application::Application()
+        Application::Application() = default;
+
+        Application::~Application() noexcept = default;
+
+        // ===========================================================
+        // METHODS
+        // ===========================================================
+
+        void onInitialize()
         {
+
         }
 
-        Application::~Application() noexcept
+        void Application::Terminate() noexcept
         {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hexLog::printInfo( u8"Application::Terminate" );
+#endif // DEBUG
+
+            if ( mInstance )
+                mInstance->onTerminate();
+
+            mInstance = nullptr;
+        }
+
+        void Application::onInitialize()
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hexLog::printInfo( u8"Application::onInitialize" );
+#endif // DEBUG
+
+            Application::onInitialize();
+        }
+
+        void Application::onTerminate() noexcept
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hexLog::printInfo( u8"Application::onTerminate" );
+#endif // DEBUG
+
+            // Terminate Application
+            hexMemory::Delete( mInstance );
+
+            // Terminate ECS
+            hexECS::Terminate();
+
+            // Termiante MemoryManager
+            hexMemory::Terminate();
         }
 
         // -----------------------------------------------------------

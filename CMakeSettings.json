@@ -27,6 +27,11 @@
                     "name": "CXX_VERSION",
                     "value": "17",
                     "type": "STRING"
+                },
+                {
+                    "name": "AUTO_DETECT_DEBUG",
+                    "value": "true",
+                    "type": "BOOL"
                 }
             ]
         },

@@ -2,7 +2,8 @@
 
 # // ------------------------------------------------------------------------------
 #
-# HexagonEX - 2D puzzle game.
+# hexEngine - open-source Game Engine. Designed for 2D Puzzle Games rapid development.
+# ECS - Entity Component System.
 #
 # License: see "LICENSE" file.
 #
@@ -16,30 +17,23 @@
 cmake_minimum_required ( VERSION 3.6 FATAL_ERROR ) # QT & Android
 
 # =================================================================================
-# OPTIONS
-# =================================================================================
-
-include ( "cmake/options.cmake" )
-
-# =================================================================================
 # PROJECT
 # =================================================================================
 
 # Project Name
-set ( PROJECT_NAME "HexagonEX" )
+set ( PROJECT_NAME "hexEngine.ECS" )
 
 # Project Version
 set ( PROJECT_VERSION 0.0.1 )
 
 # Project Description
-set ( PROJECT_DESCRIPTION "Puzzle 2D Game" )
+set ( PROJECT_DESCRIPTION "hexEngine ECS Module" )
 
 # Configure Project
 project ( ${PROJECT_NAME} VERSION ${PROJECT_VERSION} DESCRIPTION ${PROJECT_DESCRIPTION} LANGUAGES C CXX )
 
 # C++ Version
-set ( CMAKE_CXX_STANDARD ${CXX_VERSION} )
-#set ( CMAKE_CXX_STANDARD 17 ) # Android stdlibc++ 14+
+#set ( CMAKE_CXX_STANDARD 17 )
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -48,25 +42,43 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-# Set Flags
-# Flags:
-# -fexceptions - enable C++ exceptions (GCC & MSVC), fcxx-exceptions (Clang);
-set ( CMAKE_CXX_FLAGS "-fexceptions -fcxx-exceptions" ${CMAKE_CXX_FLAGS} )
-
 # =================================================================================
 # CONFIGS
 # =================================================================================
 
-include ( "cmake/configs.cmake" )
+set ( PUBLIC_DIR "${HEX_ROOT_DIR}/public/hex/ecs/" )
+set ( PRIVATE_DIR "${HEX_ROOT_DIR}/private/hex/ecs/" )
 
 # =================================================================================
-# MODULES
+# HEADERS
 # =================================================================================
 
-# Engine
-add_subdirectory ( "src/cpp/engine/public/hex" )
+set ( HEX_ECS_HEADERS
+    "${PUBLIC_DIR}types/ecs_memory.hpp"
+    "${PUBLIC_DIR}ECSEngine.hpp" )
 
-# Game
-add_subdirectory ( "src/cpp/game/public/hex" )
+# DEBUG
+if ( DEBUG OR HEX_DEBUG )
+    set ( HEX_ECS_HEADERS ${HEX_ECS_HEADERS}
+    "${PUBLIC_DIR}types/ecs_debug.hpp" )
+endif ( DEBUG OR HEX_DEBUG )
+
+# =================================================================================
+# SOURCES
+# =================================================================================
+
+set ( HEX_ECS_SOURCES
+    "${PRIVATE_DIR}ECSEngine.cpp" )
+
+# =================================================================================
+# EXPORT
+# =================================================================================
+
+if ( NOT DEFINED HEX_ECS_HEADERS_EXPORT OR NOT DEFINED HEX_ECS_SOURCES_EXPORT )
+    message( FATAL_ERROR "${PROJECT_NAME} - export list not defined" )
+endif ( NOT DEFINED HEX_ECS_HEADERS_EXPORT OR NOT DEFINED HEX_ECS_SOURCES_EXPORT )
+
+set ( HEX_ECS_HEADERS_EXPORT ${HEX_ECS_HEADERS} PARENT_SCOPE )
+set ( HEX_ECS_SOURCES_EXPORT ${HEX_ECS_SOURCES} PARENT_SCOPE )
 
 # ------------------------------------------------------------------------------

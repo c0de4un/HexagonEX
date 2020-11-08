@@ -56,6 +56,8 @@ set ( HEX_CORE_HEADERS
     # CONFIGS
     "${PUBLIC_DIR}configs/hex_platform.hpp"
     "${PUBLIC_DIR}configs/hex_api.hpp"
+    "${PUBLIC_DIR}configs/hex_assert.hpp"
+    "${PUBLIC_DIR}configs/hex_memory.hpp"
     # APPLICATION
     "${PUBLIC_DIR}app/IApplication.hxx"
     "${PUBLIC_DIR}app/Application.hpp"
@@ -65,12 +67,16 @@ set ( HEX_CORE_HEADERS
     # ASYNC
     # ASSETS
     # INPUT
+    # MEMORY
+    "${PUBLIC_DIR}utils/memory/MemoryManager.hpp"
     # UTILS
     "${PUBLIC_DIR}hex.hpp" )
 
 # DEBUG
 if ( DEBUG OR HEX_DEBUG )
     set ( HEX_CORE_HEADERS ${HEX_CORE_HEADERS}
+        "${PUBLIC_DIR}configs/hex_assert.hpp"
+        "${PUBLIC_DIR}utils/metrics/ILog.hxx"
         "${PUBLIC_DIR}utils/metrics/Log.hpp"
         "${PUBLIC_DIR}configs/hex_log.hpp" )
 endif ( DEBUG OR HEX_DEBUG )
@@ -88,6 +94,8 @@ set ( HEX_CORE_SOURCES
     # ASYNC
     # ASSETS
     # INPUT
+    # MEMORY
+    "${PRIVATE_DIR}utils/memory/MemoryManager.cpp"
     # UTILS
     "${PRIVATE_DIR}hex.cpp" )
 
@@ -96,6 +104,15 @@ if ( DEBUG OR HEX_DEBUG )
     set ( HEX_CORE_SOURCES ${HEX_CORE_SOURCES}
         "${PRIVATE_DIR}utils/metrics/Log.cpp" )
 endif ( DEBUG OR HEX_DEBUG )
+
+# =================================================================================
+# MODULES
+# =================================================================================
+
+# ECS
+set ( HEX_CORE_HEADERS ${HEX_CORE_HEADERS} ${HEX_ECS_HEADERS_EXPORT} )
+set ( HEX_CORE_SOURCES ${HEX_CORE_SOURCES} ${HEX_ECS_SOURCES_EXPORT} )
+message( STATUS "${PROJECT_NAME} - HEADERS: ${HEX_CORE_HEADERS}\r\nSOURCES: ${HEX_CORE_SOURCES}" )
 
 # =================================================================================
 # BUILD

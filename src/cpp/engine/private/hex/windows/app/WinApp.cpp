@@ -38,6 +38,27 @@
 #include "../../../public/hex/windows/app/WinApp.hpp"
 #endif // !HEX_WIN_APP_HPP
 
+// Include hex::memory
+#ifndef HEX_CORE_CONFIG_MEMORY_HPP
+#include "../../../public/hex/core/configs/hex_memory.hpp"
+#endif // !HEX_CORE_CONFIG_MEMORY_HPP
+
+// DEBUG
+#if defined( DEBUG ) || defined( HEX_DEBUG )
+
+// Include hex::log
+#ifndef HEX_CORE_CONFIG_LOG_HPP
+#include "../../../../public/hex/core/configs/hex_log.hpp"
+#endif // !HEX_CORE_CONFIG_LOG_HPP
+
+// Include hex::assert
+#ifndef HEX_CORE_CONFIG_ASSERT_HPP
+#include "../../../../public/hex/core/configs/hex_assert.hpp"
+#endif // !HEX_CORE_CONFIG_ASSERT_HPP
+
+#endif
+// DEBUG
+
 // ===========================================================
 // hex::win::WinApp
 // ===========================================================
@@ -50,7 +71,46 @@ namespace hex
 
         // -----------------------------------------------------------
 
+        // ===========================================================
+        // CONSTRUCTOR & DESTRUCTOR
+        // ===========================================================
 
+        WinApp::WinApp() noexcept = default;
+        WinApp::~WinApp() noexcept = default;
+
+        // ===========================================================
+        // METHODS
+        // ===========================================================
+
+        WinApp* WinApp::Initialize() noexcept
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hexLog::printInfo( u8"WinApp::Initialize" );
+#endif // DEBUG
+
+            if ( !mInstance )
+                mInstance = hexMemory::New<hexWinApp>();
+
+            return static_cast<WinApp*>( mInstance );
+        }
+
+        void WinApp::onInitialize()
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hexLog::printInfo( u8"WinApp::onTerminate" );
+#endif // DEBUG
+
+            Application::onInitialize();
+        }
+
+        void WinApp::onTerminate() noexcept
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hexLog::printInfo( u8"WinApp::onTerminate" );
+#endif // DEBUG
+
+            Application::onTerminate();
+        }
 
         // -----------------------------------------------------------
 

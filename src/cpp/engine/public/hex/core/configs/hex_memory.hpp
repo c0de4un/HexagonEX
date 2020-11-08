@@ -27,83 +27,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
+#ifndef HEX_CORE_CONFIG_MEMORY_HPP
+#define HEX_CORE_CONFIG_MEMORY_HPP
+
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
 
-// HEADER
-#ifndef HEX_WIN_LOG_HPP
-#include "../../../../../public/hex/windows/utils/metrics/WinLog.hpp"
-#endif // !HEX_WIN_LOG_HPP
+// Include hex::api
+#ifndef HEX_CORE_API_HPP
+#include "hex_api.hpp"
+#endif // !HEX_CORE_API_HPP
 
-// Include C++ I/O
-#include <iostream>
+// Include hex::core::MemoryManager
+#ifndef HEX_CORE_MEMORY_MANAGER_HPP
+#include "../utils/memory/MemoryManager.hpp"
+#endif // !HEX_CORE_MEMORY_MANAGER_HPP
 
-// Include Windows API
-#include <Windows.h>
 
 // ===========================================================
-// hex::win::WinLog
+// TYPES
 // ===========================================================
 
-namespace hex
-{
-
-    namespace win
-    {
-
-        // -----------------------------------------------------------
-
-        // ===========================================================
-        // CONSTRUCTOR & DESTRUCTOR
-        // ===========================================================
-
-        WinLog::WinLog() = default;
-
-        WinLog::~WinLog() noexcept = default;
-
-        // ===========================================================
-        // METHODS
-        // ===========================================================
-
-        void WinLog::Initialize() noexcept
-        {
-            if (hexLog::getInstance() )
-                return;
-
-            hexLog::setInstance( new WinLog() );
-        }
-
-        // ===========================================================
-        // OVERRIDE: hex::core::ILog
-        // ===========================================================
-
-        void WinLog::onInfo(const char* const pMsg) noexcept
-        {
-            std::cout << "INFO: " << pMsg << std::endl;
-        }
-
-        void WinLog::onDebug(const char* const pMsg) noexcept
-        {
-            std::cout << "DEBUG: " << pMsg << std::endl;
-        }
-
-        void WinLog::onWarning(const char* const pMsg) noexcept
-        {
-            std::cout << "WARNING: " << pMsg << std::endl;
-        }
-
-        void WinLog::onError(const char* const pMsg) noexcept
-        {
-            std::cout << "ERROR: " << pMsg << std::endl;
-        }
-
-        // -----------------------------------------------------------
-
-    } /// hex::win
-
-} /// hex
+#define hexNew hexMemory::New
+#define hexDelete(a) hexMemory::Delete(a)
+#define hexNewArray(a) hexMemory::NewArray(a)
+#define hexDeleteArray(a) hexMemory::DeleteArray(a)
 
 // -----------------------------------------------------------
+
+#endif // !HEX_CORE_CONFIG_MEMORY_HPP

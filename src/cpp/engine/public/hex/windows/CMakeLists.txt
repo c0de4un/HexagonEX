@@ -52,12 +52,12 @@ set ( PRIVATE_DIR "../../../private/hex/windows/" )
 # HEADERS
 # =================================================================================
 
-set ( HEX_WIN_HEADERS
+set ( HEX_WIN_HEADERS ""
     "${PUBLIC_DIR}app/WinApp.hpp" )
 
 # DEBUG
 if ( DEBUG OR HEX_DEBUG )
-    set ( HEX_CORE_HEADERS ${HEX_CORE_HEADERS}
+    set ( HEX_WIN_HEADERS ${HEX_WIN_HEADERS}
     "${PUBLIC_DIR}utils/metrics/WinLog.hpp" )
 endif ( DEBUG OR HEX_DEBUG )
 
@@ -65,7 +65,7 @@ endif ( DEBUG OR HEX_DEBUG )
 # SOURCES
 # =================================================================================
 
-set ( HEX_WIN_SOURCES
+set ( HEX_WIN_SOURCES ""
     "${PRIVATE_DIR}app/WinApp.cpp" )
 
 # DEBUG
@@ -80,5 +80,10 @@ endif ( DEBUG OR HEX_DEBUG )
 
 # Add STATIC Library
 add_library ( hexEngine.Windows ${HEX_WIN_HEADERS} ${HEX_WIN_SOURCES} )
+
+# Link
+target_include_directories ( hexEngine.Windows PUBLIC "../core" )
+target_include_directories ( hexEngine.Windows PUBLIC "../ecs" )
+target_link_libraries ( hexEngine.Windows hexEngine.Core )
 
 # ------------------------------------------------------------------------------

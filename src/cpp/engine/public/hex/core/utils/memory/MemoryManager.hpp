@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_WIN_LOG_HPP
-#define HEX_WIN_LOG_HPP
+#ifndef HEX_CORE_MEMORY_MANAGER_HPP
+#define HEX_CORE_MEMORY_MANAGER_HPP
 
 // -----------------------------------------------------------
 
@@ -36,15 +36,10 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::core::Log
-#ifndef HEX_CORE_LOG_HPP
-#include "../../../core/utils/metrics/Log.hpp"
-#endif // !HEX_CORE_LOG_HPP
-
-// Include hex::core::ILog
-#ifndef HEX_CORE_I_LOG_HXX
-#include "../../../core/utils/metrics/ILog.hxx"
-#endif // !HEX_CORE_I_LOG_HXX
+// Include hex::memory
+#ifndef HEX_CORE_CONFIG_MEMORY_HPP
+#include "../../configs/hex_memory.hpp"
+#endif // !HEX_CORE_CONFIG_MEMORY_HPP
 
 // ===========================================================
 // TYPES
@@ -53,30 +48,23 @@
 namespace hex
 {
 
-    namespace win
+    namespace core
     {
 
         // -----------------------------------------------------------
 
         /**
          * @brief
-         * WinLog - default logger for Windows platform.
+         * MemoryManager - entry point for all allocate/deallocate & construct&destruct
+         * calls.
          * 
-         * @version 1.0
+         * Allows to easely switch memory-management schemata.
+         * 
+         * @version 0.0
         **/
-        class WinLog final : public hex::core::ILog
+        class MemoryManager final
         {
 
-            // -----------------------------------------------------------
-
-            // ===========================================================
-            // META
-            // ===========================================================
-
-            HEX_CLASS
-
-            // -----------------------------------------------------------
-            
         private:
 
             // -----------------------------------------------------------
@@ -85,16 +73,22 @@ namespace hex
             // CONSTRUCTOR
             // ===========================================================
 
-            explicit WinLog();
+            /**
+             * @brief
+             * MemoryManager constructor.
+             * 
+             * @throws - no exceptions.
+            **/
+            explicit MemoryManager() noexcept;
 
             // ===========================================================
             // DELETED
             // ===========================================================
 
-            WinLog(const WinLog&) noexcept = delete;
-            WinLog& operator=(const WinLog&) noexcept = delete;
-            WinLog(WinLog&&) noexcept = delete;
-            WinLog& operator=(WinLog&&) = delete;
+            MemoryManager( const MemoryManager& ) noexcept = delete;
+            MemoryManager& operator=( const MemoryManager& ) noexcept = delete;
+            MemoryManager( MemoryManager&& ) noexcept = delete;
+            MemoryManager& operator=( MemoryManager&& ) noexcept = delete;
 
             // -----------------------------------------------------------
 
@@ -106,7 +100,17 @@ namespace hex
             // DESTRUCTOR
             // ===========================================================
 
-            virtual ~WinLog() noexcept;
+            /**
+             * @brief
+             * MemoryManager destructor.
+             * 
+             * @throws - no exceptions.
+            **/
+            ~MemoryManager() noexcept;
+
+            // ===========================================================
+            // GETTERS & SETTERS
+            // ===========================================================
 
             // ===========================================================
             // METHODS
@@ -114,69 +118,60 @@ namespace hex
 
             /**
              * @brief
-             * Initialize WinLog instance.
+             * Initialize MemoryManager.
              * 
-             * @thread_safety - main thread only.
              * @throws - no exceptions.
             **/
             static void Initialize() noexcept;
 
-            // ===========================================================
-            // OVERRIDE: hex::core::ILog
-            // ===========================================================
-
             /**
              * @brief
-             * Prints INFO (GOOD) Level Log-Message.
-             *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
+             * Terminate MemoryManager.
+             * 
              * @throws - no exceptions.
             **/
-            virtual void onInfo(const char* const pMsg) noexcept final;
+            static void Terminate() noexcept;
 
-            /**
-             * @brief
-             * Prints DEBUG (NORMAL/VERBOSE) Level Log-Message.
-             *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
-             * @throws - no exceptions.
-            **/
-            virtual void onDebug(const char* const pMsg) noexcept final;
+            template <typename T>
+            static T* New()
+            { return new T(); }
 
-            /**
-             * @brief
-             * Prints WARNING Level Log-Message.
-             *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
-             * @throws - no exceptions.
-            **/
-            virtual void onWarning(const char* const pMsg) noexcept final;
+            template <typename T, typename... _Types>
+            static T* New( _Types&&... _Args )
+            { return new T( _Args ); }
 
-            /**
-             * @brief
-             * Prints ERROR (FATAL/CRITICAL) Level Log-Message.
-             *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
-             * @throws - no exceptions.
-            **/
-            virtual void onError(const char* const pMsg) noexcept final;
+            template <typename T>
+            static void Delete( T* const pInstance )
+            { delete pInstance; }
+
+            template <typename T = void>
+            static void Delete( const T* const pInstance )
+            { delete pInstance; }
+
+            template <typename T>
+            static T* NewArray( const size_t pSize )
+            { return new T[pSize]; }
+
+            template <typename T = void>
+            static void DeleteArray( T* const pArray )
+            { delete[] pArray; }
+
+            template <typename T = void>
+            static void DeleteArray( const T* const pArray )
+            { delete[] pArray; }
 
             // -----------------------------------------------------------
 
-        }; /// hex::win::WinLog
+        }; /// hex::core::MemoryManager
 
         // -----------------------------------------------------------
 
-    } /// hex::win
+    } /// hex::core
 
 } /// hex
 
-#define HEX_WIN_LOG_DECL
+using hexMemory = hex::core::MemoryManager;
 
 // -----------------------------------------------------------
 
-#endif // !HEX_WIN_LOG_HPP
+#endif // !HEX_CORE_MEMORY_MANAGER_HPP

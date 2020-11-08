@@ -34,76 +34,80 @@
 // ===========================================================
 
 // HEADER
-#ifndef HEX_WIN_LOG_HPP
-#include "../../../../../public/hex/windows/utils/metrics/WinLog.hpp"
-#endif // !HEX_WIN_LOG_HPP
+#ifndef HEX_ECS_ENGINE_HPP
+#include "../../../public/hex/ecs/ECSEngine.hpp"
+#endif // !HEX_ECS_ENGINE_HPP
 
-// Include C++ I/O
-#include <iostream>
+// Include hex::ecs::memory
+#ifndef HEX_ECS_DEBUG_HPP
+#include "../../../public/hex/ecs/types/ecs_memory.hpp"
+#endif // !HEX_ECS_DEBUG_HPP
 
-// Include Windows API
-#include <Windows.h>
+// DEBUG
+#if defined( DEBUG ) || defined( HEX_DEBUG )
+
+// Include debug
+#ifndef HEX_ECS_DEBUG_HPP
+#include "../../../public/hex/ecs/types/ecs_debug.hpp"
+#endif // !HEX_ECS_DEBUG_HPP
+
+#endif
+// DEBUG
 
 // ===========================================================
-// hex::win::WinLog
+// TYPES
 // ===========================================================
 
 namespace hex
 {
 
-    namespace win
+    namespace ecs
     {
 
         // -----------------------------------------------------------
 
         // ===========================================================
+        // FIELDS
+        // ===========================================================
+
+        ECSEngine* ECSEngine::mInstance( nullptr );
+
+        // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        WinLog::WinLog() = default;
-
-        WinLog::~WinLog() noexcept = default;
+        ECSEngine::ECSEngine() noexcept = default;
+        ECSEngine::~ECSEngine() noexcept = default;
 
         // ===========================================================
         // METHODS
         // ===========================================================
 
-        void WinLog::Initialize() noexcept
+        void ECSEngine::Initialize() noexcept
         {
-            if (hexLog::getInstance() )
-                return;
-
-            hexLog::setInstance( new WinLog() );
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            ecsLog::printInfo( u8"ECSEngine::Initialize" );
+            ecsAssert( !mInstance && "ECS Instance already created, check logic" );
+#endif // DEBUG
+            
+            if ( !mInstance )
+                mInstance = ecsNew<ECSEngine>();
         }
 
-        // ===========================================================
-        // OVERRIDE: hex::core::ILog
-        // ===========================================================
-
-        void WinLog::onInfo(const char* const pMsg) noexcept
+        void ECSEngine::Terminate() noexcept
         {
-            std::cout << "INFO: " << pMsg << std::endl;
-        }
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            ecsLog::printInfo( u8"ECSEngine::Terminate" );
+#endif // DEBUG
 
-        void WinLog::onDebug(const char* const pMsg) noexcept
-        {
-            std::cout << "DEBUG: " << pMsg << std::endl;
-        }
-
-        void WinLog::onWarning(const char* const pMsg) noexcept
-        {
-            std::cout << "WARNING: " << pMsg << std::endl;
-        }
-
-        void WinLog::onError(const char* const pMsg) noexcept
-        {
-            std::cout << "ERROR: " << pMsg << std::endl;
+            ecsDelete( mInstance );
+            mInstance = nullptr;
         }
 
         // -----------------------------------------------------------
 
-    } /// hex::win
+    }
 
-} /// hex
+}
 
 // -----------------------------------------------------------

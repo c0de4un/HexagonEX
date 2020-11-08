@@ -30,16 +30,26 @@
 #ifndef HEX_CORE_LOG_HPP
 #define HEX_CORE_LOG_HPP
 
- // -----------------------------------------------------------
+// -----------------------------------------------------------
 
- // ===========================================================
- // INCLUDES
- // ===========================================================
+// ===========================================================
+// INCLUDES
+// ===========================================================
 
  // Include hex::log
 #ifndef HEX_CORE_CONFIG_LOG_HPP
 #include "../../configs/hex_log.hpp"
 #endif // !HEX_CORE_CONFIG_LOG_HPP
+
+// ===========================================================
+// FORWARD-DECLARATION
+// ===========================================================
+
+// Forward-Declare hex::core::ILog
+#ifndef HEX_CORE_I_LOG_DECL
+#define HEX_CORE_I_LOG_DECL
+namespace hex { namespace core { class ILog; } }
+#endif // !HEX_CORE_I_LOG_DECL
 
 // ===========================================================
 // TYPES
@@ -59,7 +69,7 @@ namespace hex
          *
          * @version 1.0
         **/
-        class Log
+        class Log final
         {
 
             // -----------------------------------------------------------
@@ -71,7 +81,7 @@ namespace hex
             HEX_CLASS
 
             // -----------------------------------------------------------
-
+        
         private:
 
             // -----------------------------------------------------------
@@ -80,13 +90,7 @@ namespace hex
             // FIELDS
             // ===========================================================
 
-            static Log* mInstance;
-
-            // -----------------------------------------------------------
-
-        protected:
-
-            // -----------------------------------------------------------
+            static ILog* mInstance;
 
             // ===========================================================
             // CONSTRUCTOR
@@ -103,50 +107,6 @@ namespace hex
             Log(Log&&) noexcept = delete;
             Log& operator=(Log&&) = delete;
 
-            // ===========================================================
-            // METHODS
-            // ===========================================================
-
-            /**
-             * @brief
-             * Prints INFO (GOOD) Level Log-Message.
-             *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
-             * @throws - no exceptions.
-            **/
-            virtual void onInfo(const char* const pMsg) noexcept;
-
-            /**
-             * @brief
-             * Prints DEBUG (NORMAL/VERBOSE) Level Log-Message.
-             *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
-             * @throws - no exceptions.
-            **/
-            virtual void onDebug(const char* const pMsg) noexcept;
-
-            /**
-             * @brief
-             * Prints WARNING Level Log-Message.
-             *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
-             * @throws - no exceptions.
-            **/
-            virtual void onWarning(const char* const pMsg) noexcept;
-
-            /**
-             * @brief
-             * Prints ERROR (FATAL/CRITICAL) Level Log-Message.
-             *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
-             * @throws - no exceptions.
-            **/
-            virtual void onError(const char* const pMsg) noexcept;
-
             // -----------------------------------------------------------
 
         public:
@@ -160,8 +120,41 @@ namespace hex
             virtual ~Log() noexcept;
 
             // ===========================================================
+            // GETTERS & SETTERS
+            // ===========================================================
+
+            /**
+             * @brief
+             * Sets ILog instance to use.
+             *
+             * @thread_safety - main thread only.
+             * @param pInstance - ILog instance. Automatically deleted on #Terminate(void).
+             * @throws - no exceptions.
+            **/
+            static void setInstance(ILog* const pInstance) noexcept;
+
+            /**
+             * @brief
+             * Returns ILog instance.
+             *
+             * @thread_safety - not thread-safe.
+             * @return ILog
+             * @throws - no exceptions.
+            **/
+            static ILog* getInstance() noexcept;
+
+            // ===========================================================
             // METHODS
             // ===========================================================
+
+            /**
+             * @brief
+             * Terminate Log instance.
+             * 
+             * @thread_safety - main thread only.
+             * @throws - no exceptions.
+            **/
+            static void Terminate() noexcept;
 
             /**
              * @brief

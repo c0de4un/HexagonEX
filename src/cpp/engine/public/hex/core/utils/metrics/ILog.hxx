@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_WIN_LOG_HPP
-#define HEX_WIN_LOG_HPP
+#ifndef HEX_CORE_I_LOG_HXX
+#define HEX_CORE_I_LOG_HXX
 
 // -----------------------------------------------------------
 
@@ -36,15 +36,10 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::core::Log
-#ifndef HEX_CORE_LOG_HPP
-#include "../../../core/utils/metrics/Log.hpp"
-#endif // !HEX_CORE_LOG_HPP
-
-// Include hex::core::ILog
-#ifndef HEX_CORE_I_LOG_HXX
-#include "../../../core/utils/metrics/ILog.hxx"
-#endif // !HEX_CORE_I_LOG_HXX
+// Include hex::api
+#ifndef HEX_CORE_API_HPP
+#include "../../configs/hex_api.hpp"
+#endif // !HEX_CORE_API_HPP
 
 // ===========================================================
 // TYPES
@@ -53,18 +48,18 @@
 namespace hex
 {
 
-    namespace win
+    namespace core
     {
 
         // -----------------------------------------------------------
 
         /**
          * @brief
-         * WinLog - default logger for Windows platform.
+         * ILog - log interface (behavior declaration).
          * 
          * @version 1.0
         **/
-        class WinLog final : public hex::core::ILog
+        class ILog
         {
 
             // -----------------------------------------------------------
@@ -73,28 +68,7 @@ namespace hex
             // META
             // ===========================================================
 
-            HEX_CLASS
-
-            // -----------------------------------------------------------
-            
-        private:
-
-            // -----------------------------------------------------------
-
-            // ===========================================================
-            // CONSTRUCTOR
-            // ===========================================================
-
-            explicit WinLog();
-
-            // ===========================================================
-            // DELETED
-            // ===========================================================
-
-            WinLog(const WinLog&) noexcept = delete;
-            WinLog& operator=(const WinLog&) noexcept = delete;
-            WinLog(WinLog&&) noexcept = delete;
-            WinLog& operator=(WinLog&&) = delete;
+            HEX_INTERFACE
 
             // -----------------------------------------------------------
 
@@ -106,23 +80,10 @@ namespace hex
             // DESTRUCTOR
             // ===========================================================
 
-            virtual ~WinLog() noexcept;
+            virtual ~ILog() noexcept = default;
 
             // ===========================================================
             // METHODS
-            // ===========================================================
-
-            /**
-             * @brief
-             * Initialize WinLog instance.
-             * 
-             * @thread_safety - main thread only.
-             * @throws - no exceptions.
-            **/
-            static void Initialize() noexcept;
-
-            // ===========================================================
-            // OVERRIDE: hex::core::ILog
             // ===========================================================
 
             /**
@@ -133,7 +94,7 @@ namespace hex
              * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
              * @throws - no exceptions.
             **/
-            virtual void onInfo(const char* const pMsg) noexcept final;
+            virtual void onInfo(const char* const pMsg) noexcept = 0;
 
             /**
              * @brief
@@ -143,7 +104,7 @@ namespace hex
              * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
              * @throws - no exceptions.
             **/
-            virtual void onDebug(const char* const pMsg) noexcept final;
+            virtual void onDebug(const char* const pMsg) noexcept = 0;
 
             /**
              * @brief
@@ -153,7 +114,7 @@ namespace hex
              * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
              * @throws - no exceptions.
             **/
-            virtual void onWarning(const char* const pMsg) noexcept final;
+            virtual void onWarning(const char* const pMsg) noexcept = 0;
 
             /**
              * @brief
@@ -163,20 +124,20 @@ namespace hex
              * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
              * @throws - no exceptions.
             **/
-            virtual void onError(const char* const pMsg) noexcept final;
+            virtual void onError(const char* const pMsg) noexcept = 0;
 
             // -----------------------------------------------------------
 
-        }; /// hex::win::WinLog
+        }; /// hex::core::ILog
 
         // -----------------------------------------------------------
 
-    } /// hex::win
+    } /// hex::core
 
 } /// hex
 
-#define HEX_WIN_LOG_DECL
+#define HEX_CORE_I_LOG_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_WIN_LOG_HPP
+#endif // !HEX_CORE_I_LOG_HXX

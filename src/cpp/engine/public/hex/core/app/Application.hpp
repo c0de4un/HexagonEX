@@ -77,6 +77,13 @@ namespace hex
             // -----------------------------------------------------------
 
             // ===========================================================
+            // CONSTANTS & FIELDS
+            // ===========================================================
+
+            /** Application instance. **/
+            static Application* mInstance;
+
+            // ===========================================================
             // CONSTRUCTOR
             // ===========================================================
 
@@ -91,6 +98,26 @@ namespace hex
             Application(Application&&) noexcept = delete;
             Application& operator=(Application&&) noexcept = delete;
 
+            // ===========================================================
+            // METHODS
+            // ===========================================================
+
+            /**
+             * @brief
+             * Called when Initialize called.
+             *
+             * @throws - no exceptions.
+            **/
+            virtual void onInitialize();
+
+            /**
+             * @brief
+             * Called when Terminate called.
+             * 
+             * @throws - no exceptions.
+            **/
+            virtual void onTerminate() noexcept;
+
             // -----------------------------------------------------------
 
         public:
@@ -103,6 +130,22 @@ namespace hex
 
             virtual ~Application() noexcept;
 
+            // ===========================================================
+            // METHODS
+            // ===========================================================
+
+            /**
+             * @brief
+             * Terminate Application isntance.
+             * 
+             * (?)
+             * All sub-systems (Graphics, Audio, Input, Threading) terminated along,
+             * doesn't terminates log-susytem though.
+             * 
+             * @throws - no exceptions.
+            **/
+            static void Terminate() noexcept;
+
             // -----------------------------------------------------------
 
         }; /// hex::core::Application
@@ -114,6 +157,7 @@ namespace hex
 } /// hex
 
 #define HEX_CORE_APPLICATION_DECL
+using hexApp = hex::core::Application;
 
 // -----------------------------------------------------------
 

@@ -34,75 +34,74 @@
 // ===========================================================
 
 // HEADER
-#ifndef HEX_WIN_LOG_HPP
-#include "../../../../../public/hex/windows/utils/metrics/WinLog.hpp"
-#endif // !HEX_WIN_LOG_HPP
+#ifndef HEX_CORE_MEMORY_MANAGER_HPP
+#include "../../../../../public/hex/core/utils/memory/MemoryManager.hpp"
+#endif // !HEX_CORE_MEMORY_MANAGER_HPP
 
-// Include C++ I/O
-#include <iostream>
+// DEBUG
+#if defined( DEBUG ) || defined( HEX_DEBUG )
 
-// Include Windows API
-#include <Windows.h>
+// Include hex::log
+#ifndef HEX_CORE_CONFIG_LOG_HPP
+#include "../../../../../public/hex/core/configs/hex_log.hpp"
+#endif // !HEX_CORE_CONFIG_LOG_HPP
+
+// Include hex::assert
+#ifndef HEX_CORE_CONFIG_ASSERT_HPP
+#include "../../../../../public/hex/core/configs/hex_assert.hpp"
+#endif // !HEX_CORE_CONFIG_ASSERT_HPP
+
+#endif
+// DEBUG
 
 // ===========================================================
-// hex::win::WinLog
+// hex::core::MemoryManager
 // ===========================================================
 
 namespace hex
 {
 
-    namespace win
+    namespace core
     {
 
         // -----------------------------------------------------------
 
         // ===========================================================
+        // FIELDS
+        // ===========================================================
+
+        // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        WinLog::WinLog() = default;
+        MemoryManager::MemoryManager() noexcept = default;
+        MemoryManager::~MemoryManager() noexcept = default;
 
-        WinLog::~WinLog() noexcept = default;
+        // ===========================================================
+        // GETTERS & SETTERS
+        // ===========================================================
 
         // ===========================================================
         // METHODS
         // ===========================================================
 
-        void WinLog::Initialize() noexcept
+        void MemoryManager::Initialize() noexcept
         {
-            if (hexLog::getInstance() )
-                return;
-
-            hexLog::setInstance( new WinLog() );
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hexLog::printInfo( u8"MemoryManager::Initialize" );
+#endif // DEBUG
         }
 
-        // ===========================================================
-        // OVERRIDE: hex::core::ILog
-        // ===========================================================
-
-        void WinLog::onInfo(const char* const pMsg) noexcept
+        void MemoryManager::Terminate() noexcept
         {
-            std::cout << "INFO: " << pMsg << std::endl;
-        }
-
-        void WinLog::onDebug(const char* const pMsg) noexcept
-        {
-            std::cout << "DEBUG: " << pMsg << std::endl;
-        }
-
-        void WinLog::onWarning(const char* const pMsg) noexcept
-        {
-            std::cout << "WARNING: " << pMsg << std::endl;
-        }
-
-        void WinLog::onError(const char* const pMsg) noexcept
-        {
-            std::cout << "ERROR: " << pMsg << std::endl;
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hexLog::printInfo( u8"MemoryManager::Terminate" );
+#endif // DEBUG
         }
 
         // -----------------------------------------------------------
 
-    } /// hex::win
+    } /// hex::core
 
 } /// hex
 

@@ -27,24 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_WIN_LOG_HPP
-#define HEX_WIN_LOG_HPP
+#ifndef HEX_ECS_ENGINE_HPP
+#define HEX_ECS_ENGINE_HPP
 
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
-
-// Include hex::core::Log
-#ifndef HEX_CORE_LOG_HPP
-#include "../../../core/utils/metrics/Log.hpp"
-#endif // !HEX_CORE_LOG_HPP
-
-// Include hex::core::ILog
-#ifndef HEX_CORE_I_LOG_HXX
-#include "../../../core/utils/metrics/ILog.hxx"
-#endif // !HEX_CORE_I_LOG_HXX
 
 // ===========================================================
 // TYPES
@@ -53,48 +43,38 @@
 namespace hex
 {
 
-    namespace win
+    namespace ecs
     {
-
-        // -----------------------------------------------------------
 
         /**
          * @brief
-         * WinLog - default logger for Windows platform.
+         * ECSEngine - ecs implementation adapter.
+         * Allows to easilly change ECS implementation.
          * 
-         * @version 1.0
+         * @version 0.1
         **/
-        class WinLog final : public hex::core::ILog
+        class ECSEngine final
         {
 
-            // -----------------------------------------------------------
-
-            // ===========================================================
-            // META
-            // ===========================================================
-
-            HEX_CLASS
-
-            // -----------------------------------------------------------
-            
         private:
 
             // -----------------------------------------------------------
 
             // ===========================================================
-            // CONSTRUCTOR
+            // FIELDS
             // ===========================================================
 
-            explicit WinLog();
+            /** ECSEngine instance. **/
+            static ECSEngine* mInstance;
 
             // ===========================================================
             // DELETED
             // ===========================================================
 
-            WinLog(const WinLog&) noexcept = delete;
-            WinLog& operator=(const WinLog&) noexcept = delete;
-            WinLog(WinLog&&) noexcept = delete;
-            WinLog& operator=(WinLog&&) = delete;
+            ECSEngine( const ECSEngine& ) noexcept = delete;
+            ECSEngine& operator=( const ECSEngine& ) noexcept = delete;
+            ECSEngine( ECSEngine&& ) noexcept = delete;
+            ECSEngine& operator=( ECSEngine&& ) noexcept = delete;
 
             // -----------------------------------------------------------
 
@@ -103,10 +83,28 @@ namespace hex
             // -----------------------------------------------------------
 
             // ===========================================================
-            // DESTRUCTOR
+            // CONSTRUCTOR & DESTRUCTOR
             // ===========================================================
 
-            virtual ~WinLog() noexcept;
+            /**
+             * @brief
+             * ECSEngine default constructor.
+             *
+             * @throws - no exceptions.
+            **/
+            explicit ECSEngine() noexcept;
+
+            /**
+             * @brief
+             * ECSEngine destructor.
+             * 
+             * @throws - no exceptions.
+            **/
+            ~ECSEngine() noexcept;
+
+            // ===========================================================
+            // GETTERS & SETTERS
+            // ===========================================================
 
             // ===========================================================
             // METHODS
@@ -114,69 +112,30 @@ namespace hex
 
             /**
              * @brief
-             * Initialize WinLog instance.
-             * 
-             * @thread_safety - main thread only.
+             * Initialize ECS.
+             *
              * @throws - no exceptions.
             **/
             static void Initialize() noexcept;
 
-            // ===========================================================
-            // OVERRIDE: hex::core::ILog
-            // ===========================================================
-
             /**
              * @brief
-             * Prints INFO (GOOD) Level Log-Message.
+             * Terminate ECS.
              *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
              * @throws - no exceptions.
             **/
-            virtual void onInfo(const char* const pMsg) noexcept final;
-
-            /**
-             * @brief
-             * Prints DEBUG (NORMAL/VERBOSE) Level Log-Message.
-             *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
-             * @throws - no exceptions.
-            **/
-            virtual void onDebug(const char* const pMsg) noexcept final;
-
-            /**
-             * @brief
-             * Prints WARNING Level Log-Message.
-             *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
-             * @throws - no exceptions.
-            **/
-            virtual void onWarning(const char* const pMsg) noexcept final;
-
-            /**
-             * @brief
-             * Prints ERROR (FATAL/CRITICAL) Level Log-Message.
-             *
-             * @thread_safety - thread-safe.
-             * @param pMsg - log-message as c-string (UTF-8 multibyte supported).
-             * @throws - no exceptions.
-            **/
-            virtual void onError(const char* const pMsg) noexcept final;
+            static void Terminate() noexcept;
 
             // -----------------------------------------------------------
 
-        }; /// hex::win::WinLog
+        };
 
-        // -----------------------------------------------------------
-
-    } /// hex::win
+    } /// hex::ecs
 
 } /// hex
 
-#define HEX_WIN_LOG_DECL
+using hexECS = hex::ecs::ECSEngine;
 
 // -----------------------------------------------------------
 
-#endif // !HEX_WIN_LOG_HPP
+#endif // !HEX_ECS_ENGINE_HPP

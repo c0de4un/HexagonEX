@@ -38,6 +38,22 @@
 #include "../../../../../public/hex/core/utils/metrics/Log.hpp"
 #endif // !HEX_CORE_LOG_HPP
 
+// Include hex::core::ILog
+#ifndef HEX_CORE_I_LOG_HXX
+#include "../../../public/hex/core/utils/metrics/ILog.hxx"
+#endif // !HEX_CORE_I_LOG_HXX
+
+// DEBUG
+#ifdef HEX_DEBUG
+
+// Include hex::assert
+#ifndef HEX_CORE_CONFIG_ASSERT_HPP
+#include "../../../public/hex/core/configs/hex_assert.hpp"
+#endif // !HEX_CORE_CONFIG_ASSERT_HPP
+#endif
+
+// DEBUG
+
 // ===========================================================
 // hex::core::Log
 // ===========================================================
@@ -54,7 +70,7 @@ namespace hex
         // FIELDS
         // ===========================================================
 
-        Log* Log::mInstance(nullptr);
+        ILog* Log::mInstance(nullptr);
 
         // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
@@ -65,47 +81,59 @@ namespace hex
         Log::~Log() noexcept = default;
 
         // ===========================================================
+        // GETTERS & SETTERS
+        // ===========================================================
+
+        void Log::setInstance(ILog* const pInstance) noexcept
+        {
+            if (mInstance)
+                return;
+
+            mInstance = pInstance;
+        }
+
+        ILog* Log::getInstance() noexcept { return mInstance; }
+
+        // ===========================================================
         // METHODS
         // ===========================================================
 
-        void Log::onInfo(const char* const pMsg) noexcept
+        void Log::Terminate() noexcept
         {
-        }
-
-        void Log::onDebug(const char* const pMsg) noexcept
-        {
-        }
-
-        void Log::onWarning(const char* const pMsg) noexcept
-        {
-        }
-
-        void Log::onError(const char* const pMsg) noexcept
-        {
+            delete mInstance;
+            mInstance = nullptr;
         }
 
         void Log::printInfo(const char* const pMsg) noexcept
         {
-            if ( mInstance )
-                mInstance->onInfo(pMsg);
+#ifdef HEX_DEBUG // DEBUG
+            assert(mInstance && "Log::printInfo: instance is null");
+#endif // DEBUG
+            mInstance->onInfo(pMsg);
         }
 
         void Log::printDebug(const char* const pMsg) noexcept
         {
-            if ( mInstance )
-                mInstance->onDebug(pMsg);
+#ifdef HEX_DEBUG // DEBUG
+            assert(mInstance && "Log::printDebug: instance is null");
+#endif // DEBUG
+            mInstance->onDebug(pMsg);
         }
 
         void Log::printWarning(const char* const pMsg) noexcept
         {
-            if ( mInstance )
-                mInstance->onWarning(pMsg);
+#ifdef HEX_DEBUG // DEBUG
+            assert(mInstance && "Log::printWarning: instance is null");
+#endif // DEBUG
+            mInstance->onWarning(pMsg);
         }
 
         void Log::printError(const char* const pMsg) noexcept
         {
-            if ( mInstance )
-                mInstance->onError( pMsg );
+#ifdef HEX_DEBUG // DEBUG
+            assert(mInstance && "Log::printError: instance is null");
+#endif // DEBUG
+            mInstance->onError( pMsg );
         }
 
         // -----------------------------------------------------------
