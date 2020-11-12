@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_API_HPP
-#define HEX_CORE_API_HPP
+#ifndef HEX_CORE_CONFIG_ATOMIC_HPP
+#define HEX_CORE_CONFIG_ATOMIC_HPP
 
 // -----------------------------------------------------------
 
@@ -36,46 +36,29 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::platform
-#ifndef HEX_CORE_CONFIG_PLATFORM_HPP
-#include "hex_platform.hpp"
-#endif // !HEX_CORE_CONFIG_PLATFORM_HPP
+// Include hex::api
+#ifndef HEX_CORE_API_HPP
+#include "hex_api.hpp"
+#endif // !HEX_CORE_API_HPP
 
-// ===========================================================
-// DECL-SPEC
-// ===========================================================
+// PLATFORM
+#if defined( HEX_ANDROID ) || defined( HEX_WINDOWS ) || defined( HEX_LINUX )
 
-/** API **/
-#if defined( HEX_SHARED ) // SHARED Library
+// Include STL atomic
+#include <atomic>
 
-#if defined( HEX_EXPORT )
-#define HEX_API __declspec( dllexport ) // EXPORT
+template <typename T>
+using hex_atomic = std::atomic<T>;
+
 #else
-#define HEX_API __declspec( dllimport ) // IMPORT
+#error "hex_atomic.hpp - platform not detected, configuration required."
 #endif
-
-#elif defined( HEX_STATIC ) // STATIC Library
-#define HEX_API /** void **/
-#endif
+// PLATFORM
 
 // ===========================================================
-// REFLECTION MACROS
+// TYPES
 // ===========================================================
-
-#define HEX_STRUCT
-#define HEX_CLASS
-#define HEX_INTERFACE
-
-// ===========================================================
-// DEBUG
-// ===========================================================
-
-#if defined( DEBUG ) || defined( HEX_DEBUG )
-#define HEX_NOEXCEPT
-#else
-#define HEX_NOEXCEPT noexcept
-#endif
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_API_HPP
+#endif // !HEX_CORE_CONFIG_ATOMIC_HPP

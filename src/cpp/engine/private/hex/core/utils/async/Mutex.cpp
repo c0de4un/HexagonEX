@@ -1,4 +1,6 @@
 /**
+ * Copyright © 2020 Denis Z. (code4un@yandex.ru) All rights reserved.
+ * Authors: Denis Z. (code4un@yandex.ru)
  * All rights reserved.
  * License: see LICENSE.txt
  *
@@ -25,10 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- **/
-
-#ifndef HEX_CORE_API_HPP
-#define HEX_CORE_API_HPP
+ */
 
 // -----------------------------------------------------------
 
@@ -36,46 +35,48 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::platform
-#ifndef HEX_CORE_CONFIG_PLATFORM_HPP
-#include "hex_platform.hpp"
-#endif // !HEX_CORE_CONFIG_PLATFORM_HPP
+// HEADER
+#ifndef HEX_CORE_MUTEX_HPP
+#include "../../../../../public/hex/core/utils/async/Mutex.hpp"
+#endif // !HEX_CORE_MUTEX_HPP
 
 // ===========================================================
-// DECL-SPEC
+// hex::core::Mutex
 // ===========================================================
 
-/** API **/
-#if defined( HEX_SHARED ) // SHARED Library
+namespace hex
+{
 
-#if defined( HEX_EXPORT )
-#define HEX_API __declspec( dllexport ) // EXPORT
-#else
-#define HEX_API __declspec( dllimport ) // IMPORT
-#endif
+    namespace core
+    {
 
-#elif defined( HEX_STATIC ) // STATIC Library
-#define HEX_API /** void **/
-#endif
+        // -----------------------------------------------------------
 
-// ===========================================================
-// REFLECTION MACROS
-// ===========================================================
+        // ===========================================================
+        // CONSTRUCTOR & DESTRUCTOR
+        // ===========================================================
 
-#define HEX_STRUCT
-#define HEX_CLASS
-#define HEX_INTERFACE
+        Mutex::Mutex()
+            : mLockedFlag( false )
+        {
+        }
 
-// ===========================================================
-// DEBUG
-// ===========================================================
+        Mutex::~Mutex() = default;
 
-#if defined( DEBUG ) || defined( HEX_DEBUG )
-#define HEX_NOEXCEPT
-#else
-#define HEX_NOEXCEPT noexcept
-#endif
+        // ===========================================================
+        // GETTERS & SETTERS
+        // ===========================================================
+
+        bool Mutex::isLocked() const HEX_NOEXCEPT
+        {
+            const bool value = mLockedFlag;
+            return value;
+        }
+
+        // -----------------------------------------------------------
+
+    } /// hex::core
+
+} /// hex
 
 // -----------------------------------------------------------
-
-#endif // !HEX_CORE_API_HPP

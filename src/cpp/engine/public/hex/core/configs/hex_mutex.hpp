@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_API_HPP
-#define HEX_CORE_API_HPP
+#ifndef HEX_CORE_CONFIG_MUTEX_HPP
+#define HEX_CORE_CONFIG_MUTEX_HPP
 
 // -----------------------------------------------------------
 
@@ -36,46 +36,32 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::platform
-#ifndef HEX_CORE_CONFIG_PLATFORM_HPP
-#include "hex_platform.hpp"
-#endif // !HEX_CORE_CONFIG_PLATFORM_HPP
+// Include hex::api
+#ifndef HEX_CORE_API_HPP
+#include "hex_api.hpp"
+#endif // !HEX_CORE_API_HPP
 
-// ===========================================================
-// DECL-SPEC
-// ===========================================================
+// PLATFORM
+#if defined( HEX_ANDROID ) || defined( HEX_LINUX )
 
-/** API **/
-#if defined( HEX_SHARED ) // SHARED Library
+// Inclide hex::linux::LinuxMutex
+#ifndef HEX_POSIX_MUTEX_HPP
+#include "../../posix//utils/async/PMutex.hpp"
+#endif // !HEX_POSIX_MUTEX_HPP
+using hex_Mutex = hex::posix::PMutex;
 
-#if defined( HEX_EXPORT )
-#define HEX_API __declspec( dllexport ) // EXPORT
+#elif defined( HEX_WINDOWS )
+
+#ifndef HEX_WIN_MUTEX_HPP
+#include "../../windows/utils//async/WinMutex.hpp"
+#endif // !HEX_WIN_MUTEX_HPP
+using hex_Mutex = hex::win::WinMutex;
+
 #else
-#define HEX_API __declspec( dllimport ) // IMPORT
+#error "hex_mutex.hpp - platform not detected, configuration required."
 #endif
-
-#elif defined( HEX_STATIC ) // STATIC Library
-#define HEX_API /** void **/
-#endif
-
-// ===========================================================
-// REFLECTION MACROS
-// ===========================================================
-
-#define HEX_STRUCT
-#define HEX_CLASS
-#define HEX_INTERFACE
-
-// ===========================================================
-// DEBUG
-// ===========================================================
-
-#if defined( DEBUG ) || defined( HEX_DEBUG )
-#define HEX_NOEXCEPT
-#else
-#define HEX_NOEXCEPT noexcept
-#endif
+// PLATFORM
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_API_HPP
+#endif // !HEX_CORE_CONFIG_MUTEX_HPP

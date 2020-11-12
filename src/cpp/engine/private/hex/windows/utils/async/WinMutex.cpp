@@ -1,4 +1,6 @@
 /**
+ * Copyright © 2020 Denis Z. (code4un@yandex.ru) All rights reserved.
+ * Authors: Denis Z. (code4un@yandex.ru)
  * All rights reserved.
  * License: see LICENSE.txt
  *
@@ -25,10 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- **/
-
-#ifndef HEX_CORE_API_HPP
-#define HEX_CORE_API_HPP
+ */
 
 // -----------------------------------------------------------
 
@@ -36,46 +35,71 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::platform
-#ifndef HEX_CORE_CONFIG_PLATFORM_HPP
-#include "hex_platform.hpp"
-#endif // !HEX_CORE_CONFIG_PLATFORM_HPP
+// HEADER
+#ifndef HEX_WIN_MUTEX_HPP
+#include "../../../../../public/hex/windows/utils/async/WinMutex.hpp"
+#endif // !HEX_WIN_MUTEX_HPP
 
 // ===========================================================
-// DECL-SPEC
+// hex::win::WinMutex
 // ===========================================================
 
-/** API **/
-#if defined( HEX_SHARED ) // SHARED Library
+namespace hex
+{
 
-#if defined( HEX_EXPORT )
-#define HEX_API __declspec( dllexport ) // EXPORT
-#else
-#define HEX_API __declspec( dllimport ) // IMPORT
-#endif
+    namespace win
+    {
 
-#elif defined( HEX_STATIC ) // STATIC Library
-#define HEX_API /** void **/
-#endif
+        // -----------------------------------------------------------
 
-// ===========================================================
-// REFLECTION MACROS
-// ===========================================================
+        // ===========================================================
+        // CONSTRUCTOR & DESTRUCTOR
+        // ===========================================================
 
-#define HEX_STRUCT
-#define HEX_CLASS
-#define HEX_INTERFACE
+        WinMutex::WinMutex()
+            : Mutex()
+        { InitializeCriticalSection( &mMutex ); }
 
-// ===========================================================
-// DEBUG
-// ===========================================================
+        WinMutex::~WinMutex()
+        { DeleteCriticalSection( &mMutex ); }
 
-#if defined( DEBUG ) || defined( HEX_DEBUG )
-#define HEX_NOEXCEPT
-#else
-#define HEX_NOEXCEPT noexcept
-#endif
+        // ===========================================================
+        // GETTERS & SETTERS
+        // ===========================================================
+
+        void* WinMutex::native_handle() HEX_NOEXCEPT
+        { return &mMutex; }
+
+        // ===========================================================
+        // OVERRIDE: Mutex
+        // ===========================================================
+
+        bool WinMutex::try_lock() HEX_NOEXCEPT
+        {
+            if ( !isLocked() )
+                return false;
+
+            lock();
+
+            return true;
+        }
+
+        void WinMutex::lock()
+        {
+            mLockedFlag = true;
+            EnterCriticalSection( &mMutex );
+        }
+
+        void WinMutex::unlock() HEX_NOEXCEPT
+        {
+            mLockedFlag = false;
+            LeaveCriticalSection( &mMutex );
+        }
+
+        // -----------------------------------------------------------
+
+    }
+
+}
 
 // -----------------------------------------------------------
-
-#endif // !HEX_CORE_API_HPP

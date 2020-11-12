@@ -56,6 +56,7 @@ set ( HEX_CORE_HEADERS
     # CONFIGS
     "${PUBLIC_DIR}configs/hex_platform.hpp"
     "${PUBLIC_DIR}configs/hex_api.hpp"
+    "${PUBLIC_DIR}configs/hex_atomic.hpp"
     "${PUBLIC_DIR}configs/hex_assert.hpp"
     "${PUBLIC_DIR}configs/hex_memory.hpp"
     # APPLICATION
@@ -65,6 +66,8 @@ set ( HEX_CORE_HEADERS
     # ENGINE
     # RENDER
     # ASYNC
+    "${PUBLIC_DIR}utils/async/IMutex.hxx"
+    "${PUBLIC_DIR}utils/async/Mutex.hpp"
     # ASSETS
     # INPUT
     # MEMORY
@@ -92,6 +95,7 @@ set ( HEX_CORE_SOURCES
     # ENGINE
     # RENDER
     # ASYNC
+    "${PRIVATE_DIR}utils/async/Mutex.cpp"
     # ASSETS
     # INPUT
     # MEMORY
