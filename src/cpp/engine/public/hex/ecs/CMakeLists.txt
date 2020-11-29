@@ -55,7 +55,21 @@ set ( PRIVATE_DIR "${HEX_ROOT_DIR}/private/hex/ecs/" )
 
 set ( HEX_ECS_HEADERS
     "${PUBLIC_DIR}types/ecs_memory.hpp"
-    "${PUBLIC_DIR}ECSEngine.hpp" )
+    "${PUBLIC_DIR}types/ecs_api.hpp"
+    "${PUBLIC_DIR}types/ecs_mutex.hpp"
+    "${PUBLIC_DIR}types/ecs_types.hpp"
+    "${PUBLIC_DIR}types/ecs_map.hpp"
+    "${PUBLIC_DIR}types/ecs_vector.hpp"
+    # EVENTS
+    # COMPONENTS
+    # ENTITIES
+    # SYSTEMS
+    "${PUBLIC_DIR}systems/ISystem.hxx"
+    "${PUBLIC_DIR}systems/System.hpp"
+    # CORE
+    "${PUBLIC_DIR}ECSEngine.hpp"
+    # UTILS
+    "${PUBLIC_DIR}utils/IDStorage.hpp" )
 
 # DEBUG
 if ( DEBUG OR HEX_DEBUG )
@@ -68,6 +82,13 @@ endif ( DEBUG OR HEX_DEBUG )
 # =================================================================================
 
 set ( HEX_ECS_SOURCES
+    # EVENTS
+    # COMPONENTS
+    # ENTITIES
+    # SYSTEMS
+    "${PUBLIC_DIR}systems/ISystem.hxx"
+    "${PUBLIC_DIR}systems/System.hpp"
+    # CORE
     "${PRIVATE_DIR}ECSEngine.cpp" )
 
 # =================================================================================

@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_CONFIG_MEMORY_HPP
-#define HEX_CORE_CONFIG_MEMORY_HPP
+#ifndef HEX_ECS_TYPES_HPP
+#define HEX_ECS_TYPES_HPP
 
 // -----------------------------------------------------------
 
@@ -36,41 +36,36 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::api
-#ifndef HEX_CORE_API_HPP
-#include "hex_api.hpp"
-#endif // !HEX_CORE_API_HPP
+// Include ecs::api
+#ifndef HEX_ECS_API_HPP
+#include "ecs_api.hpp"
+#endif // !HEX_ECS_API_HPP
 
-// Include hex::core::MemoryManager
-#ifndef HEX_CORE_MEMORY_MANAGER_HPP
-#include "../utils/memory/MemoryManager.hpp"
-#endif // !HEX_CORE_MEMORY_MANAGER_HPP
-
-// Include STL memory
-#if defined( HEX_WINDOWS ) // Windows
-#include <memory>
-#elif defined( HEX_LINUX ) // Linux
-#include <memory>
-#elif defined( HEX_ANDROID ) // Android
-#include <memory> // Android NDK
-#else
-#error "hex_memory.hpp - configuration required."
-#endif
+// Include hex::numeric
+#ifndef HEX_CORE_NUMERIC_HPP
+#include "../../core/configs/hex_numeric.hpp"
+#endif // !HEX_CORE_NUMERIC_HPP
 
 // ===========================================================
 // TYPES
 // ===========================================================
 
-// Allocators
-#define hexNew hexMemory::New
-#define hexDelete(a) hexMemory::Delete(a)
-#define hexNewArray(a) hexMemory::NewArray(a)
-#define hexDeleteArray(a) hexMemory::DeleteArray(a)
+using ecs_uint8_t   = hex_uint8_t;
+using ecs_int8_t    = hex_int8_t;
+using ecs_uint16_t  = hex_uint16_t;
+using ecs_int16_t   = hex_int16_t;
+using ecs_uint32_t  = hex_uint32_t;
+using ecs_int32_t   = hex_int32_t;
+using ecs_uint64_t  = hex_uint64_t;
+using ecs_int64_t   = hex_int64_t;
+using ecs_float_t   = hex_float_t;
 
-// Smart-Pointers
-template <typename T>
-using hex_sptr = std::shared_ptr<T>;
+using ecs_TypeID = ecs_uint8_t;
+static constexpr const ecs_TypeID ECS_INVALID_TYPE_ID = std::numeric_limits<ecs_TypeID>::max() - 1;
+
+using ecs_ObjectID = ecs_uint64_t;
+static constexpr const ecs_TypeID ECS_INVALID_OBJECT_ID = std::numeric_limits<ecs_ObjectID>::max() - 1;
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_CONFIG_MEMORY_HPP
+#endif // !HEX_ECS_TYPES_HPP

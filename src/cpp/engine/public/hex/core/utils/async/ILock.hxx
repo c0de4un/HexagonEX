@@ -1,4 +1,6 @@
 /**
+ * Copyright © 2020 Denis Z. (code4un@yandex.ru) All rights reserved.
+ * Authors: Denis Z. (code4un@yandex.ru)
  * All rights reserved.
  * License: see LICENSE.txt
  *
@@ -25,10 +27,10 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- **/
+ */
 
-#ifndef HEX_CORE_APPLICATION_HPP
-#define HEX_CORE_APPLICATION_HPP
+#ifndef HEX_CORE_I_LOCK_HXX
+#define HEX_CORE_I_LOCK_HXX
 
 // -----------------------------------------------------------
 
@@ -36,10 +38,10 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::core::IApplication
-#ifndef HEX_CORE_I_APPLICATION_HXX
-#include "IApplication.hxx"
-#endif // !HEX_CORE_I_APPLICATION_HXX
+// Include hex::core::IMutex
+#ifndef HEX_CORE_I_MUTEX_HXX
+#include "IMutex.hxx"
+#endif // !HEX_CORE_I_MUTEX_HXX
 
 // ===========================================================
 // TYPES
@@ -55,72 +57,12 @@ namespace hex
 
         /**
          * @brief
-         * Application - base application class.
+         * ILock - thread-lock interface.
          * 
-         * @version 1.0
+         * @version 1.2
         **/
-        class Application : public IApplication
+        class ILock
         {
-
-            // -----------------------------------------------------------
-
-            // ===========================================================
-            // META
-            // ===========================================================
-
-            HEX_CLASS
-
-            // -----------------------------------------------------------
-
-        protected:
-
-            // -----------------------------------------------------------
-
-            // ===========================================================
-            // CONSTANTS & FIELDS
-            // ===========================================================
-
-            /** Application instance. **/
-            static Application* mInstance;
-
-            // ===========================================================
-            // CONSTRUCTOR
-            // ===========================================================
-
-            explicit Application();
-
-            // ===========================================================
-            // DELETED
-            // ===========================================================
-
-            Application(const Application&) noexcept = delete;
-            Application& operator=(const Application&) noexcept = delete;
-            Application(Application&&) noexcept = delete;
-            Application& operator=(Application&&) noexcept = delete;
-
-            // ===========================================================
-            // METHODS
-            // ===========================================================
-
-            /**
-             * @brief
-             * Called when Initialize called.
-             * Implementor suppose to call this in cases, when initialization
-             * overridden.
-             * 
-             * @throws - no exceptions.
-            **/
-            virtual void onInitialize();
-
-            /**
-             * @brief
-             * Called when Terminate called.
-             * 
-             * @throws - no exceptions.
-            **/
-            virtual void onTerminate() noexcept;
-
-            // -----------------------------------------------------------
 
         public:
 
@@ -130,7 +72,28 @@ namespace hex
             // DESTRUCTOR
             // ===========================================================
 
-            virtual ~Application() noexcept;
+            /**
+             * @brief
+             * ILock destructor.
+             * 
+             * @throws - no exceptions.
+            **/
+            virtual ~ILock() HEX_NOEXCEPT
+            {
+            }
+
+            // ===========================================================
+            // GETTERS & SETTERS
+            // ===========================================================
+
+            /**
+             * @brief
+             * Check if this lock is locked.
+             *
+             * @thread_safety - atomic-flag used.
+             * @throws - no exceptions.
+            **/
+            virtual bool isLocked() HEX_NOEXCEPT = 0;
 
             // ===========================================================
             // METHODS
@@ -138,19 +101,34 @@ namespace hex
 
             /**
              * @brief
-             * Terminate Application isntance.
-             * 
-             * (?)
-             * All sub-systems (Graphics, Audio, Input, Threading) terminated along,
-             * doesn't terminates log-susytem though.
-             * 
-             * @throws - no exceptions.
+             * Try lock.
+             *
+             * @param pMutex - mutex to use (switch to).
+             * @returns - 'true' if locked, 'false' if failed.
+             * @throws - can throw exception.
             **/
-            static void Terminate() noexcept;
+            virtual bool try_lock( hex_IMutex* const pMutex = nullptr ) = 0;
+
+            /**
+             * @brief
+             * Lock.
+             *
+             * @param pMutex - mutex to use (switch to).
+             * @throws - can throw exception.
+            **/
+            virtual void lock( hex_IMutex* const pMutex = nullptr ) = 0;
+
+            /**
+             * @brief
+             * Unlock.
+             *
+             * @throws - can throw exception.
+            **/
+            virtual void unlock() HEX_NOEXCEPT = 0;
 
             // -----------------------------------------------------------
 
-        }; /// hex::core::Application
+        }; /// hex::core::ILock
 
         // -----------------------------------------------------------
 
@@ -158,9 +136,8 @@ namespace hex
 
 } /// hex
 
-#define HEX_CORE_APPLICATION_DECL
-using hexApp = hex::core::Application;
+#define HEX_CORE_I_LOCK_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_APPLICATION_HPP
+#endif // !HEX_CORE_I_LOCK_HXX

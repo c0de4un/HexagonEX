@@ -101,6 +101,8 @@ namespace hex
 #endif // DEBUG
 
             Application::onInitialize();
+
+            // 
         }
 
         void WinApp::onTerminate() noexcept

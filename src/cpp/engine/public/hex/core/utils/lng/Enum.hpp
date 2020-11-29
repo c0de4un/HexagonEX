@@ -27,19 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_APPLICATION_HPP
-#define HEX_CORE_APPLICATION_HPP
+#ifndef HEX_CORE_ENUM_HPP
+#define HEX_CORE_ENUM_HPP
 
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
-
-// Include hex::core::IApplication
-#ifndef HEX_CORE_I_APPLICATION_HXX
-#include "IApplication.hxx"
-#endif // !HEX_CORE_I_APPLICATION_HXX
 
 // ===========================================================
 // TYPES
@@ -53,72 +48,49 @@ namespace hex
 
         // -----------------------------------------------------------
 
+        // ===========================================================
+        // hex::core::Enum
+        // ===========================================================
+
         /**
          * @brief
-         * Application - base application class.
+         * Enum - base enum-class.
+         * 
+         * (?)
+         * Allows to encapsulate & extend (derive) funcitonality.
+         * Used to avoid combining enum-class with wrappers, or using malformat
+         * naming if C-enums with static-utilities.
          * 
          * @version 1.0
         **/
-        class Application : public IApplication
+        template <typename T>
+        class Enum
         {
-
-            // -----------------------------------------------------------
-
-            // ===========================================================
-            // META
-            // ===========================================================
-
-            HEX_CLASS
-
-            // -----------------------------------------------------------
 
         protected:
 
             // -----------------------------------------------------------
 
             // ===========================================================
-            // CONSTANTS & FIELDS
-            // ===========================================================
-
-            /** Application instance. **/
-            static Application* mInstance;
-
-            // ===========================================================
             // CONSTRUCTOR
             // ===========================================================
 
-            explicit Application();
+            /**
+             * @brief
+             * Enum constructor.
+             * 
+             * @throws - can throw exception.
+            **/
+            explicit Enum();
 
             // ===========================================================
             // DELETED
             // ===========================================================
 
-            Application(const Application&) noexcept = delete;
-            Application& operator=(const Application&) noexcept = delete;
-            Application(Application&&) noexcept = delete;
-            Application& operator=(Application&&) noexcept = delete;
-
-            // ===========================================================
-            // METHODS
-            // ===========================================================
-
-            /**
-             * @brief
-             * Called when Initialize called.
-             * Implementor suppose to call this in cases, when initialization
-             * overridden.
-             * 
-             * @throws - no exceptions.
-            **/
-            virtual void onInitialize();
-
-            /**
-             * @brief
-             * Called when Terminate called.
-             * 
-             * @throws - no exceptions.
-            **/
-            virtual void onTerminate() noexcept;
+            Enum( const Enum& ) noexcept = delete;
+            Enum& operator=( const Enum& ) noexcept = delete;
+            Enum( Enum&& ) noexcept = delete;
+            Enum& operator=( Enum&& ) noexcept = delete;
 
             // -----------------------------------------------------------
 
@@ -130,27 +102,17 @@ namespace hex
             // DESTRUCTOR
             // ===========================================================
 
-            virtual ~Application() noexcept;
-
-            // ===========================================================
-            // METHODS
-            // ===========================================================
-
             /**
              * @brief
-             * Terminate Application isntance.
-             * 
-             * (?)
-             * All sub-systems (Graphics, Audio, Input, Threading) terminated along,
-             * doesn't terminates log-susytem though.
+             * Enum destructor.
              * 
              * @throws - no exceptions.
             **/
-            static void Terminate() noexcept;
+            virtual ~Enum() noexcept;
 
             // -----------------------------------------------------------
 
-        }; /// hex::core::Application
+        }; /// hex::core::Enum
 
         // -----------------------------------------------------------
 
@@ -158,9 +120,11 @@ namespace hex
 
 } /// hex
 
-#define HEX_CORE_APPLICATION_DECL
-using hexApp = hex::core::Application;
+template <typename T>
+using hex_Enum = hex::core::Enum<T>;
+
+#define HEX_CORE_ENUM_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_APPLICATION_HPP
+#endif // !HEX_CORE_ENUM_HPP

@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_APPLICATION_HPP
-#define HEX_CORE_APPLICATION_HPP
+#ifndef HEX_CORE_I_GRAPHICS_HXX
+#define HEX_CORE_I_GRAPHICS_HXX
 
 // -----------------------------------------------------------
 
@@ -36,10 +36,21 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::core::IApplication
-#ifndef HEX_CORE_I_APPLICATION_HXX
-#include "IApplication.hxx"
-#endif // !HEX_CORE_I_APPLICATION_HXX
+// Include hex::api
+#ifndef HEX_CORE_API_HPP
+#include "../configs/hex_api.hpp"
+#endif // !HEX_CORE_API_HPP
+
+// ===========================================================
+// FORWARD-DECLARATIONS
+// ===========================================================
+
+// Forward-Declare hex::core::GraphicsSettings
+#ifndef HEX_CORE_GRAPHICS_SETTINGS_DECL
+#define HEX_CORE_GRAPHICS_SETTINGS_DECL
+namespace hex { namespace core { struct GraphicsSettings; } }
+using hex_GraphicsSettings = hex::core::GraphicsSettings;
+#endif // !HEX_CORE_GRAPHICS_SETTINGS_DECL
 
 // ===========================================================
 // TYPES
@@ -55,72 +66,12 @@ namespace hex
 
         /**
          * @brief
-         * Application - base application class.
+         * IGraphics - graphics manager interface.
          * 
          * @version 1.0
         **/
-        class Application : public IApplication
+        class IGraphics
         {
-
-            // -----------------------------------------------------------
-
-            // ===========================================================
-            // META
-            // ===========================================================
-
-            HEX_CLASS
-
-            // -----------------------------------------------------------
-
-        protected:
-
-            // -----------------------------------------------------------
-
-            // ===========================================================
-            // CONSTANTS & FIELDS
-            // ===========================================================
-
-            /** Application instance. **/
-            static Application* mInstance;
-
-            // ===========================================================
-            // CONSTRUCTOR
-            // ===========================================================
-
-            explicit Application();
-
-            // ===========================================================
-            // DELETED
-            // ===========================================================
-
-            Application(const Application&) noexcept = delete;
-            Application& operator=(const Application&) noexcept = delete;
-            Application(Application&&) noexcept = delete;
-            Application& operator=(Application&&) noexcept = delete;
-
-            // ===========================================================
-            // METHODS
-            // ===========================================================
-
-            /**
-             * @brief
-             * Called when Initialize called.
-             * Implementor suppose to call this in cases, when initialization
-             * overridden.
-             * 
-             * @throws - no exceptions.
-            **/
-            virtual void onInitialize();
-
-            /**
-             * @brief
-             * Called when Terminate called.
-             * 
-             * @throws - no exceptions.
-            **/
-            virtual void onTerminate() noexcept;
-
-            // -----------------------------------------------------------
 
         public:
 
@@ -130,27 +81,36 @@ namespace hex
             // DESTRUCTOR
             // ===========================================================
 
-            virtual ~Application() noexcept;
+            /**
+             * @brief
+             * IGraphics destructor.
+             * 
+             * @throws - no exceptions.
+            **/
+            virtual ~IGraphics() HEX_NOEXCEPT
+            {
+            }
+
+            // ===========================================================
+            // GETTERS & SETTERS
+            // ===========================================================
+
+            /**
+             * @brief
+             * Returns current GraphicsSettings instance.
+             * 
+             * @thread_safety - thread-safe.
+             * @throws - no exceptions.
+            **/
+            virtual const hex_GraphicsSettings* getGraphicsSettings() const noexcept = 0;
 
             // ===========================================================
             // METHODS
             // ===========================================================
 
-            /**
-             * @brief
-             * Terminate Application isntance.
-             * 
-             * (?)
-             * All sub-systems (Graphics, Audio, Input, Threading) terminated along,
-             * doesn't terminates log-susytem though.
-             * 
-             * @throws - no exceptions.
-            **/
-            static void Terminate() noexcept;
-
             // -----------------------------------------------------------
 
-        }; /// hex::core::Application
+        }; /// hex::core::IGraphics
 
         // -----------------------------------------------------------
 
@@ -158,9 +118,9 @@ namespace hex
 
 } /// hex
 
-#define HEX_CORE_APPLICATION_DECL
-using hexApp = hex::core::Application;
+#define HEX_CORE_I_GRAPHICS_DECL
+using hex_IGraphics = hex::core::IGraphics;
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_APPLICATION_HPP
+#endif // !HEX_CORE_I_GRAPHICS_HXX

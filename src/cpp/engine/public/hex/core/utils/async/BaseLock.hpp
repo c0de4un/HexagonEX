@@ -1,4 +1,6 @@
 /**
+ * Copyright © 2020 Denis Z. (code4un@yandex.ru) All rights reserved.
+ * Authors: Denis Z. (code4un@yandex.ru)
  * All rights reserved.
  * License: see LICENSE.txt
  *
@@ -25,10 +27,10 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- **/
+ */
 
-#ifndef HEX_ECS_ENGINE_HPP
-#define HEX_ECS_ENGINE_HPP
+#ifndef HEX_CORE_BASE_LOCK_HPP
+#define HEX_CORE_BASE_LOCK_HPP
 
 // -----------------------------------------------------------
 
@@ -36,15 +38,10 @@
 // INCLUDES
 // ===========================================================
 
-// Include ecs::types
-#ifndef HEX_ECS_TYPES_HPP
-#include "types/ecs_types.hpp"
-#endif // !HEX_ECS_TYPES_HPP
-
-// Include hex::ecs::IDStorage
-#ifndef HEX_ECS_ID_STORAGE_HPP
-#include "utils/IDStorage.hpp"
-#endif // !HEX_ECS_ID_STORAGE_HPP
+// Include hex::core::ILock
+#ifndef HEX_CORE_I_LOCK_HXX
+#include "ILock.hxx"
+#endif // !HEX_CORE_I_MUTEX_HXX
 
 // ===========================================================
 // TYPES
@@ -53,64 +50,64 @@
 namespace hex
 {
 
-    namespace ecs
+    namespace core
     {
+
+        // -----------------------------------------------------------
 
         /**
          * @brief
-         * ECSEngine - ecs implementation adapter.
-         * Allows to easilly change ECS implementation.
+         * BaseLock - base thread-lock class.
          * 
-         * @version 0.1
+         * @version 1.1
         **/
-        class ECSEngine final
+        class BaseLock
         {
 
-        private:
+        protected:
 
             // -----------------------------------------------------------
-
-            // ===========================================================
-            // TYPES
-            // ===========================================================
-
-            using id_storages_t = ecs_IDStorage<ecs_ObjectID>;
 
             // ===========================================================
             // FIELDS
             // ===========================================================
 
-            /** ECSEngine instance. **/
-            static ECSEngine* mInstance;
-
-            /** ID-Storages Mutex. **/
-            ecs_mutex_t mIDStoragesMutex;
-
-            /** IDStorages **/
-            ecs_map_t<ecs_TypeID, id_storages_t> mIDStorages;
+            /** IMutex instance. **/
+            hex_IMutex* mMutex;
 
             // ===========================================================
-            // GETTERS & SETTERS
+            // CONSTRUCTOR
             // ===========================================================
 
             /**
              * @brief
-             * Returns ID-Storage.
+             * BaseLock constructor.
              * 
-             * @thread_safety - thread-lock used.
-             * @param pTypeID - ECS Type-ID.
-             * @throws - can throw exception (bad-alloc, mutex).
+             * @throws - can throw exception:
+             * - mutex exception;
+             * - out-of-memory exception;
             **/
-            id_storages_t& getIDStorage( const ecs_TypeID pTypeID );
+            explicit BaseLock();
+
+            /**
+             * @brief
+             * BaseLock constructor with mutex to lock.
+             * 
+             * @param pMutex - IMutex (not managed by instance).
+             * @throws - can throw exception:
+             * - mutex exception;
+             * - out-of-memory exception;
+            **/
+            explicit BaseLock( hex_IMutex* const pMutex );
 
             // ===========================================================
             // DELETED
             // ===========================================================
 
-            ECSEngine( const ECSEngine& ) noexcept = delete;
-            ECSEngine& operator=( const ECSEngine& ) noexcept = delete;
-            ECSEngine( ECSEngine&& ) noexcept = delete;
-            ECSEngine& operator=( ECSEngine&& ) noexcept = delete;
+            BaseLock( const BaseLock& ) noexcept = delete;
+            BaseLock& operator=( const BaseLock& ) noexcept = delete;
+            BaseLock( BaseLock&& ) noexcept = delete;
+            BaseLock& operator=( BaseLock&& ) noexcept = delete;
 
             // -----------------------------------------------------------
 
@@ -119,24 +116,16 @@ namespace hex
             // -----------------------------------------------------------
 
             // ===========================================================
-            // CONSTRUCTOR & DESTRUCTOR
+            // DESTRUCTOR
             // ===========================================================
 
             /**
              * @brief
-             * ECSEngine default constructor.
-             *
-             * @throws - can throw exception (mutex, bad-alloc).
-            **/
-            explicit ECSEngine();
-
-            /**
-             * @brief
-             * ECSEngine destructor.
+             * BaseLock destructor.
              * 
              * @throws - no exceptions.
             **/
-            ~ECSEngine() noexcept;
+            virtual ~BaseLock() HEX_NOEXCEPT;
 
             // ===========================================================
             // GETTERS & SETTERS
@@ -146,54 +135,32 @@ namespace hex
             // METHODS
             // ===========================================================
 
+            // ===========================================================
+            // OVERRIDE: hex::core::ILock
+            // ===========================================================
+
             /**
              * @brief
-             * Initialize ECS.
+             * Check if this lock is locked.
              *
+             * @thread_safety - atomic-flag used.
              * @throws - no exceptions.
             **/
-            static void Initialize() noexcept;
-
-            /**
-             * @brief
-             * Terminate ECS.
-             *
-             * @throws - no exceptions.
-            **/
-            static void Terminate() noexcept;
-
-            /**
-             * @brief
-             * Generates Object-ID.
-             * 
-             * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @returns - Object-ID.
-             * @throws - can throw exception (mutex).
-            **/
-            static ecs_ObjectID generateID( const ecs_TypeID pTypeID );
-
-            /**
-             * @brief
-             * Release ID for reusage.
-             * 
-             * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @param pID - ECS Object-ID.
-             * @throws - no exceptions.
-            **/
-            static void releaseID( const ecs_TypeID pTypeID, const ecs_ObjectID pID ) noexcept;
+            virtual bool isLocked() HEX_NOEXCEPT final;
 
             // -----------------------------------------------------------
 
-        };
+        }; /// hex::core::BaseLock
 
-    } /// hex::ecs
+        // -----------------------------------------------------------
+
+    } /// hex::core
 
 } /// hex
 
-using hexECS = hex::ecs::ECSEngine;
+using hex_BaseLock = hex::core::BaseLock;
+#define HEX_CORE_BASE_LOCK_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_ECS_ENGINE_HPP
+#endif // !HEX_CORE_BASE_LOCK_HPP

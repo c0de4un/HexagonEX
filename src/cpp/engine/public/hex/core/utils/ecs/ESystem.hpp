@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_APPLICATION_HPP
-#define HEX_CORE_APPLICATION_HPP
+#ifndef HEX_CORE_E_SYSTEMS_HPP
+#define HEX_CORE_E_SYSTEMS_HPP
 
 // -----------------------------------------------------------
 
@@ -36,10 +36,15 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::core::IApplication
-#ifndef HEX_CORE_I_APPLICATION_HXX
-#include "IApplication.hxx"
-#endif // !HEX_CORE_I_APPLICATION_HXX
+// Include hex::core::Enum
+#ifndef HEX_CORE_ENUM_HPP
+#include "../lng/Enum.hpp"
+#endif // !HEX_CORE_ENUM_HPP
+
+// Include ecs::types
+#ifndef HEX_ECS_TYPES_HPP
+#include "../../../ecs/types/ecs_types.hpp"
+#endif // !HEX_ECS_TYPES_HPP
 
 // ===========================================================
 // TYPES
@@ -55,70 +60,26 @@ namespace hex
 
         /**
          * @brief
-         * Application - base application class.
-         * 
+         * ESystem - enum-class adapter for encapsulated functionality support
+         * & easy-extensible.
+         *
          * @version 1.0
         **/
-        class Application : public IApplication
+        class ESystem : public hex_Enum<ecs_TypeID>
         {
-
-            // -----------------------------------------------------------
-
-            // ===========================================================
-            // META
-            // ===========================================================
-
-            HEX_CLASS
-
-            // -----------------------------------------------------------
 
         protected:
 
             // -----------------------------------------------------------
 
             // ===========================================================
-            // CONSTANTS & FIELDS
-            // ===========================================================
-
-            /** Application instance. **/
-            static Application* mInstance;
-
-            // ===========================================================
-            // CONSTRUCTOR
-            // ===========================================================
-
-            explicit Application();
-
-            // ===========================================================
             // DELETED
             // ===========================================================
 
-            Application(const Application&) noexcept = delete;
-            Application& operator=(const Application&) noexcept = delete;
-            Application(Application&&) noexcept = delete;
-            Application& operator=(Application&&) noexcept = delete;
-
-            // ===========================================================
-            // METHODS
-            // ===========================================================
-
-            /**
-             * @brief
-             * Called when Initialize called.
-             * Implementor suppose to call this in cases, when initialization
-             * overridden.
-             * 
-             * @throws - no exceptions.
-            **/
-            virtual void onInitialize();
-
-            /**
-             * @brief
-             * Called when Terminate called.
-             * 
-             * @throws - no exceptions.
-            **/
-            virtual void onTerminate() noexcept;
+            ESystem( const ESystem& ) noexcept = delete;
+            ESystem& operator=( const ESystem& ) noexcept = delete;
+            ESystem( ESystem&& ) noexcept = delete;
+            ESystem& operator=( ESystem&& ) noexcept = delete;
 
             // -----------------------------------------------------------
 
@@ -127,30 +88,44 @@ namespace hex
             // -----------------------------------------------------------
 
             // ===========================================================
-            // DESTRUCTOR
+            // CONSTANTS
             // ===========================================================
 
-            virtual ~Application() noexcept;
+            static constexpr const ecs_TypeID RENDER = 1;
+            static constexpr const ecs_TypeID AUDIO = 2;
+            static constexpr const ecs_TypeID INPUT = 3;
+            static constexpr const ecs_TypeID THREADING = 4;
+            static constexpr const ecs_TypeID PHYSICS = 5;
+            static constexpr const ecs_TypeID NET = 6;
+            static constexpr const ecs_TypeID BATCHING = 7;
+            static constexpr const ecs_TypeID GRAPHICS = 8;
+            static constexpr const ecs_TypeID PARTICLES = 9;
+
+            static constexpr const ecs_TypeID ESystem_MAX = 99;
 
             // ===========================================================
-            // METHODS
+            // CONSTRUCTOR & DESTRUCTOR
             // ===========================================================
 
             /**
              * @brief
-             * Terminate Application isntance.
+             * ESystem constructor.
              * 
-             * (?)
-             * All sub-systems (Graphics, Audio, Input, Threading) terminated along,
-             * doesn't terminates log-susytem though.
+             * @throws - can throw exception.
+            **/
+            explicit ESystem();
+
+            /**
+             * @brief
+             * ESystem destructor.
              * 
              * @throws - no exceptions.
             **/
-            static void Terminate() noexcept;
+            virtual ~ESystem() noexcept;
 
             // -----------------------------------------------------------
 
-        }; /// hex::core::Application
+        }; /// hex::core::ESystems
 
         // -----------------------------------------------------------
 
@@ -158,9 +133,10 @@ namespace hex
 
 } /// hex
 
-#define HEX_CORE_APPLICATION_DECL
-using hexApp = hex::core::Application;
+using hex_ESystem = hex::core::ESystem;
+
+#define HEX_CORE_E_SYSTEMS_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_APPLICATION_HPP
+#endif // !HEX_CORE_E_SYSTEMS_HPP

@@ -48,6 +48,11 @@
 #include "../../../../public/hex/ecs/ECSEngine.hpp"
 #endif // HEX_ECS_ENGINE_HPP
 
+// Include hex::core::GraphicsManager
+#ifndef HEX_CORE_GRAPHICS_MANAGER_HPP
+#include "../../../../public/hex/core/graphics/GraphicsManager.hpp"
+#endif // !HEX_CORE_GRAPHICS_MANAGER_HPP
+
 // DEBUG
 #if defined( DEBUG ) || defined( HEX_DEBUG )
 
@@ -96,7 +101,6 @@ namespace hex
 
         void onInitialize()
         {
-
         }
 
         void Application::Terminate() noexcept
@@ -118,6 +122,22 @@ namespace hex
 #endif // DEBUG
 
             Application::onInitialize();
+
+            // Initialize ECS
+            hexECS::Initialize();
+
+            // Initialize default MemoryManager
+            hexMemory::Initialize();
+
+            // @TODO: Initialize ThreadsManager
+            // @TODO: Initialize NetManager
+            // @TODO: Initialize AudioManager
+            // @TODO: Initialize InputManager
+            // @TODO: Initialize GraphicsManager
+            hex_Graphics::Initialize();
+            // @TODO: Initialize RenderManager
+            // @TODO: Initialize ParticlesManager
+
         }
 
         void Application::onTerminate() noexcept

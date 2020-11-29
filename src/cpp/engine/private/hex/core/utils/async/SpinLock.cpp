@@ -1,4 +1,6 @@
 /**
+ * Copyright © 2020 Denis Z. (code4un@yandex.ru) All rights reserved.
+ * Authors: Denis Z. (code4un@yandex.ru)
  * All rights reserved.
  * License: see LICENSE.txt
  *
@@ -25,7 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- **/
+ */
 
 // -----------------------------------------------------------
 
@@ -34,116 +36,113 @@
 // ===========================================================
 
 // HEADER
-#ifndef HEX_ECS_ENGINE_HPP
-#include "../../../public/hex/ecs/ECSEngine.hpp"
-#endif // !HEX_ECS_ENGINE_HPP
-
-// Include hex::ecs::memory
-#ifndef HEX_ECS_DEBUG_HPP
-#include "../../../public/hex/ecs/types/ecs_memory.hpp"
-#endif // !HEX_ECS_DEBUG_HPP
+#ifndef HEX_CORE_SPIN_LOCK_HPP
+#include "../../../public/hex/core/utils/async/SpinLock.hpp"
+#endif // !HEX_CORE_SPIN_LOCK_HPP
 
 // DEBUG
-#if defined( DEBUG ) || defined( HEX_DEBUG )
+#if defined( DEBUG ) || defined(HEX_DEBUG)
 
-// Include debug
-#ifndef HEX_ECS_DEBUG_HPP
-#include "../../../public/hex/ecs/types/ecs_debug.hpp"
-#endif // !HEX_ECS_DEBUG_HPP
-
+// Include hex::assert
+#ifndef HEX_CORE_CONFIG_ASSERT_HPP
+#include "../../../public/hex/core/configs/hex_assert.hpp"
+#endif // !HEX_CORE_CONFIG_ASSERT_HPP
 #endif
+
 // DEBUG
 
 // ===========================================================
-// TYPES
+// hex::core::SpinLock
 // ===========================================================
 
 namespace hex
 {
 
-    namespace ecs
+    namespace core
     {
 
         // -----------------------------------------------------------
 
         // ===========================================================
-        // FIELDS
-        // ===========================================================
-
-        ECSEngine* ECSEngine::mInstance( nullptr );
-
-        // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        ECSEngine::ECSEngine()
-            : mIDStoragesMutex(),
-            mIDStorages()
+        SpinLock::SpinLock()
+            : BaseLock()
         {
         }
 
-        ECSEngine::~ECSEngine() noexcept = default;
-
-        // ===========================================================
-        // GETTERS & SETTERS
-        // ===========================================================
-
-        ECSEngine::id_storages_t& ECSEngine::getIDStorage( const ecs_TypeID pTypeID )
+        SpinLock::SpinLock( hex_IMutex* const pMutex )
+            : BaseLock( pMutex )
         {
-            ecs_lock_t lock( &mIDStoragesMutex );
+            lock();
+        }
 
-            return mIDStorages[pTypeID];
+        SpinLock::~SpinLock() HEX_NOEXCEPT
+        {
+            unlock();
         }
 
         // ===========================================================
-        // METHODS
+        // OVERRIDE: hex::core::BaseLock
         // ===========================================================
 
-        void ECSEngine::Initialize() noexcept
+        bool SpinLock::try_lock( hex_IMutex* const pMutex )
         {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            ecsLog::printInfo( u8"ECSEngine::Initialize" );
-            ecsAssert( !mInstance && "ECS Instance already created, check logic" );
-#endif // DEBUG
-            
-            if ( !mInstance )
-                mInstance = ecsNew<ECSEngine>();
-        }
-
-        void ECSEngine::Terminate() noexcept
-        {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            ecsLog::printInfo( u8"ECSEngine::Terminate" );
+#ifdef HEX_DEBUG // DEBUG
+            hexAssert( ( mMutex || pMutex ) && "SpinLock::try_lock - null mutex !" );
 #endif // DEBUG
 
-            ecsDelete( mInstance );
-            mInstance = nullptr;
-        }
-
-        ecs_ObjectID ECSEngine::generateID( const ecs_TypeID pTypeID )
-        {
-            if ( mInstance )
+            if ( pMutex )
             {
-                id_storages_t& idStorage( mInstance->getIDStorage(pTypeID) );
-                return idStorage.generateID();
+                this->unlock();
+                mMutex = pMutex;
             }
 
-            return ECS_INVALID_OBJECT_ID;
+            for ( unsigned char i = 0; i < SPIN_LIMIT; i++ )
+            {
+                if ( !mMutex->isLocked() )
+                {
+                    break;
+                }
+            }
+
+            return mMutex->try_lock();
         }
 
-        void ECSEngine::releaseID( const ecs_TypeID pTypeID, const ecs_ObjectID pID ) noexcept
+        void SpinLock::lock( hex_IMutex* const pMutex )
         {
-            if ( mInstance )
+#ifdef HEX_DEBUG // DEBUG
+            hexAssert( ( mMutex || pMutex ) && "SpinLock::lock - null mutex !" );
+#endif // DEBUG
+
+            if ( pMutex )
             {
-                id_storages_t& idStorage( mInstance->getIDStorage( pTypeID ) );
-                idStorage.returnID( pID );
+                this->unlock();
+                mMutex = pMutex;
             }
+
+            for ( unsigned char i = 0; i < SPIN_LIMIT; i++ )
+            {
+                if ( !mMutex->isLocked() )
+                {
+                    break;
+                }
+            }
+
+            mMutex->lock();
+        }
+
+        void SpinLock::unlock() HEX_NOEXCEPT
+        {
+            if ( mMutex && mMutex->isLocked() )
+                mMutex->unlock();
         }
 
         // -----------------------------------------------------------
 
-    }
+    } /// hex::core
 
-}
+} /// hex
 
 // -----------------------------------------------------------

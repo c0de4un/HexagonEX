@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_ECS_ENGINE_HPP
-#define HEX_ECS_ENGINE_HPP
+#ifndef HEX_CORE_BIT_MAP_HPP
+#define HEX_CORE_BIT_MAP_HPP
 
 // -----------------------------------------------------------
 
@@ -36,15 +36,15 @@
 // INCLUDES
 // ===========================================================
 
-// Include ecs::types
-#ifndef HEX_ECS_TYPES_HPP
-#include "types/ecs_types.hpp"
-#endif // !HEX_ECS_TYPES_HPP
+// Include hex::map
+#ifndef HEX_CONFIG_MAP_HPP
+#include "../../configs/hex_map.hpp"
+#endif // !HEX_CONFIG_MAP_HPP
 
-// Include hex::ecs::IDStorage
-#ifndef HEX_ECS_ID_STORAGE_HPP
-#include "utils/IDStorage.hpp"
-#endif // !HEX_ECS_ID_STORAGE_HPP
+// Include hex::core::BitVec
+#ifndef HEX_CORE_BIT_VEC_HPP
+#include "BitVec.hpp"
+#endif // !HEX_CORE_BIT_VEC_HPP
 
 // ===========================================================
 // TYPES
@@ -53,41 +53,65 @@
 namespace hex
 {
 
-    namespace ecs
+    namespace core
     {
+
+        // -----------------------------------------------------------
 
         /**
          * @brief
-         * ECSEngine - ecs implementation adapter.
-         * Allows to easilly change ECS implementation.
+         * BitMap - container to store associative collection of bits.
+         * For example, to store IDs per Type-ID.
          * 
-         * @version 0.1
+         * @version 1.0
         **/
-        class ECSEngine final
+        template <typename T>
+        class BitMap
         {
 
         private:
 
             // -----------------------------------------------------------
 
+            static constexpr const hex_size_t DEFAULT_CAPACITY = 24;
+
             // ===========================================================
             // TYPES
             // ===========================================================
 
-            using id_storages_t = ecs_IDStorage<ecs_ObjectID>;
+            /**
+             * @brief
+             * BitVecInfo - struct to encapsulate mutex & bits-vector access.
+            **/
+            struct BitVecInfo final
+            {
+
+                // -----------------------------------------------------------
+
+                // ===========================================================
+                // FIELDS
+                // ===========================================================
+
+                BitVec mVec;
+
+                BitVecInfo()
+                    : mVec( DEFAULT_CAPACITY )
+                {
+                }
+
+                // -----------------------------------------------------------
+
+            };
 
             // ===========================================================
             // FIELDS
             // ===========================================================
 
-            /** ECSEngine instance. **/
-            static ECSEngine* mInstance;
+            /** Mutex **/
+            mutable hex_Mutex mMutex;
 
-            /** ID-Storages Mutex. **/
-            ecs_mutex_t mIDStoragesMutex;
-
-            /** IDStorages **/
-            ecs_map_t<ecs_TypeID, id_storages_t> mIDStorages;
+            /** Bits Vectors **/
+            hex_map_t<T, BitVecInfo> mBitVecs;
 
             // ===========================================================
             // GETTERS & SETTERS
@@ -95,22 +119,26 @@ namespace hex
 
             /**
              * @brief
-             * Returns ID-Storage.
+             * Returns Bit-Vector info-struct.
              * 
-             * @thread_safety - thread-lock used.
-             * @param pTypeID - ECS Type-ID.
-             * @throws - can throw exception (bad-alloc, mutex).
+             * @thread_safety - thread-locks used.
+             * @throws - can thro exception (mutex).
             **/
-            id_storages_t& getIDStorage( const ecs_TypeID pTypeID );
+            BitVecInfo& getVecInfo( const T pKey )
+            {
+                hex_lock_t lock( &mMutex );
+
+                return mBitVecs[pKey];
+            }
 
             // ===========================================================
             // DELETED
             // ===========================================================
 
-            ECSEngine( const ECSEngine& ) noexcept = delete;
-            ECSEngine& operator=( const ECSEngine& ) noexcept = delete;
-            ECSEngine( ECSEngine&& ) noexcept = delete;
-            ECSEngine& operator=( ECSEngine&& ) noexcept = delete;
+            BitMap( const BitMap& ) noexcept = delete;
+            BitMap& operator=( const BitMap& ) noexcept = delete;
+            BitMap( BitMap&& ) noexcept = delete;
+            BitMap& operator=( BitMap&& ) noexcept = delete;
 
             // -----------------------------------------------------------
 
@@ -124,76 +152,80 @@ namespace hex
 
             /**
              * @brief
-             * ECSEngine default constructor.
-             *
-             * @throws - can throw exception (mutex, bad-alloc).
+             * BitMap constructor.
+             * 
+             * @throws - can throw exception.
             **/
-            explicit ECSEngine();
+            explicit BitMap()
+                : mMutex(),
+                mBitVecs()
+            {
+            }
 
             /**
              * @brief
-             * ECSEngine destructor.
+             * BitMap destructor.
              * 
              * @throws - no exceptions.
             **/
-            ~ECSEngine() noexcept;
+            ~BitMap() = default;
 
             // ===========================================================
             // GETTERS & SETTERS
             // ===========================================================
 
+            /**
+             * @brief
+             * Get value.
+             * 
+             * @thread_safety - thread-locks used.
+             * @param pKey - key.
+             * @param pIndex - index.
+             * @param pDefault - default-value.
+             * @throws - can throw mutex-exception.
+            **/
+            bool get( const T pKey, const hex_size_t pIndex, const bool pDefault )
+            {
+                BitVecInfo& vecInfo = getVecInfo( pKey );
+
+                return vecInfo.mVec.get( pIndex, pDefault );
+            }
+
+            /**
+             * @brief
+             * Set value.
+             *
+             * @thread_safety - thread-locks used.
+             * @param pKey - key.
+             * @param pIndex - index.
+             * @throws - can throw mutex-exception.
+            **/
+            void set( const T pKey, const bool pValue )
+            {
+                BitVecInfo& vecInfo = getVecInfo( pKey );
+
+                vecInfo.mVec.set( pIndex, pValue );
+            }
+
             // ===========================================================
             // METHODS
             // ===========================================================
 
-            /**
-             * @brief
-             * Initialize ECS.
-             *
-             * @throws - no exceptions.
-            **/
-            static void Initialize() noexcept;
-
-            /**
-             * @brief
-             * Terminate ECS.
-             *
-             * @throws - no exceptions.
-            **/
-            static void Terminate() noexcept;
-
-            /**
-             * @brief
-             * Generates Object-ID.
-             * 
-             * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @returns - Object-ID.
-             * @throws - can throw exception (mutex).
-            **/
-            static ecs_ObjectID generateID( const ecs_TypeID pTypeID );
-
-            /**
-             * @brief
-             * Release ID for reusage.
-             * 
-             * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @param pID - ECS Object-ID.
-             * @throws - no exceptions.
-            **/
-            static void releaseID( const ecs_TypeID pTypeID, const ecs_ObjectID pID ) noexcept;
-
             // -----------------------------------------------------------
 
-        };
+        }; /// hex::core::BitMap
 
-    } /// hex::ecs
+        // -----------------------------------------------------------
+
+    } /// hex::core
 
 } /// hex
 
-using hexECS = hex::ecs::ECSEngine;
+template <typename T>
+using hex_BitMap = hex::core::BitMap<T, hex_BitVec>;
+
+#define HEX_CORE_BIT_MAP_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_ECS_ENGINE_HPP
+#endif // !HEX_CORE_BIT_MAP_HPP

@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_ECS_ENGINE_HPP
-#define HEX_ECS_ENGINE_HPP
+#ifndef HEX_CORE_GRAPHICS_MANAGER_HPP
+#define HEX_CORE_GRAPHICS_MANAGER_HPP
 
 // -----------------------------------------------------------
 
@@ -36,15 +36,25 @@
 // INCLUDES
 // ===========================================================
 
-// Include ecs::types
-#ifndef HEX_ECS_TYPES_HPP
-#include "types/ecs_types.hpp"
-#endif // !HEX_ECS_TYPES_HPP
+// Include hex::core::IGraphics
+#ifndef HEX_CORE_I_GRAPHICS_HXX
+#include "IGraphics.hxx"
+#endif // !HEX_CORE_I_GRAPHICS_HXX
 
-// Include hex::ecs::IDStorage
-#ifndef HEX_ECS_ID_STORAGE_HPP
-#include "utils/IDStorage.hpp"
-#endif // !HEX_ECS_ID_STORAGE_HPP
+// Include ecs::System
+#ifndef HEX_ECS_SYSTEM_HPP
+#include "../../ecs/systems/System.hpp"
+#endif // !HEX_ECS_SYSTEM_HPP
+
+// Include hex::core::GraphicsSettings
+#ifndef HEX_CORE_GRAPHICS_SETTINGS_HPP
+#include "GraphicsSettings.hpp"
+#endif // !HEX_CORE_GRAPHICS_SETTINGS_HPP
+
+// Include hex::memory
+#ifndef HEX_CORE_CONFIG_MEMORY_HPP
+#include "../configs/hex_memory.hpp"
+#endif // !HEX_CORE_CONFIG_MEMORY_HPP
 
 // ===========================================================
 // TYPES
@@ -53,64 +63,54 @@
 namespace hex
 {
 
-    namespace ecs
+    namespace core
     {
+
+        // -----------------------------------------------------------
 
         /**
          * @brief
-         * ECSEngine - ecs implementation adapter.
-         * Allows to easilly change ECS implementation.
+         * GraphicsManager - base Graphics-Manager class.
          * 
-         * @version 0.1
+         * @version 1.0
         **/
-        class ECSEngine final
+        class GraphicsManager : public hex_IGraphics, public ecs_System
         {
 
-        private:
+        protected:
 
             // -----------------------------------------------------------
-
-            // ===========================================================
-            // TYPES
-            // ===========================================================
-
-            using id_storages_t = ecs_IDStorage<ecs_ObjectID>;
 
             // ===========================================================
             // FIELDS
             // ===========================================================
 
-            /** ECSEngine instance. **/
-            static ECSEngine* mInstance;
+            /** IGraphics Instance **/
+            static hex_sptr<IGraphics> mInstance;
 
-            /** ID-Storages Mutex. **/
-            ecs_mutex_t mIDStoragesMutex;
-
-            /** IDStorages **/
-            ecs_map_t<ecs_TypeID, id_storages_t> mIDStorages;
+            /** GraphicsSettings **/
+            hex_GraphicsSettings* mGraphicsSettings;
 
             // ===========================================================
-            // GETTERS & SETTERS
+            // CONSTRUCTOR
             // ===========================================================
 
             /**
              * @brief
-             * Returns ID-Storage.
+             * GraphicsManager constructor.
              * 
-             * @thread_safety - thread-lock used.
-             * @param pTypeID - ECS Type-ID.
-             * @throws - can throw exception (bad-alloc, mutex).
+             * @throws - can throw exceptions.
             **/
-            id_storages_t& getIDStorage( const ecs_TypeID pTypeID );
+            explicit GraphicsManager( hex_GraphicsSettings* const graphicsSettings  );
 
             // ===========================================================
             // DELETED
             // ===========================================================
 
-            ECSEngine( const ECSEngine& ) noexcept = delete;
-            ECSEngine& operator=( const ECSEngine& ) noexcept = delete;
-            ECSEngine( ECSEngine&& ) noexcept = delete;
-            ECSEngine& operator=( ECSEngine&& ) noexcept = delete;
+            GraphicsManager( const GraphicsManager& ) noexcept = delete;
+            GraphicsManager& operator=( const GraphicsManager& ) noexcept = delete;
+            GraphicsManager( GraphicsManager&& ) noexcept = delete;
+            GraphicsManager& operator=( GraphicsManager&& ) noexcept = delete;
 
             // -----------------------------------------------------------
 
@@ -119,28 +119,39 @@ namespace hex
             // -----------------------------------------------------------
 
             // ===========================================================
-            // CONSTRUCTOR & DESTRUCTOR
+            // GETTERS & SETTERS
             // ===========================================================
 
             /**
              * @brief
-             * ECSEngine default constructor.
+             * Returns current GraphicsSettings instance.
              *
-             * @throws - can throw exception (mutex, bad-alloc).
+             * @thread_safety - thread-safe.
+             * @throws - no exceptions.
             **/
-            explicit ECSEngine();
+            virtual const hex_GraphicsSettings* getGraphicsSettings() const noexcept final;
 
             /**
              * @brief
-             * ECSEngine destructor.
+             * Returns IGraphics instance, or null.
+             * 
+             * @thread_safety - thread-locks used.
+             * @return IGraphics, or null.
+             * @throws - no exceptions.
+            **/
+            static hex_sptr<IGraphics> getInstance() noexcept;
+
+            // ===========================================================
+            // DESTRUCTOR
+            // ===========================================================
+
+            /**
+             * @brief
+             * GraphicsManager destructor.
              * 
              * @throws - no exceptions.
             **/
-            ~ECSEngine() noexcept;
-
-            // ===========================================================
-            // GETTERS & SETTERS
-            // ===========================================================
+            virtual ~GraphicsManager() HEX_NOEXCEPT;
 
             // ===========================================================
             // METHODS
@@ -148,52 +159,40 @@ namespace hex
 
             /**
              * @brief
-             * Initialize ECS.
-             *
-             * @throws - no exceptions.
+             * Initialize GraphicsManager instance.
+             * 
+             * Facade-method for instance#Start().
+             * 
+             * @thread_safety - thread-lock used.
+             * @return - 0 if OK, or error-code.
+             * @throws - can throw exception.
             **/
-            static void Initialize() noexcept;
+            static int Initialize();
 
             /**
              * @brief
-             * Terminate ECS.
-             *
-             * @throws - no exceptions.
-            **/
-            static void Terminate() noexcept;
-
-            /**
-             * @brief
-             * Generates Object-ID.
+             * Terminate GraphicsManager instance.
+             * 
+             * (?) Facade-method for instance#Stop();
              * 
              * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @returns - Object-ID.
-             * @throws - can throw exception (mutex).
-            **/
-            static ecs_ObjectID generateID( const ecs_TypeID pTypeID );
-
-            /**
-             * @brief
-             * Release ID for reusage.
-             * 
-             * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @param pID - ECS Object-ID.
              * @throws - no exceptions.
             **/
-            static void releaseID( const ecs_TypeID pTypeID, const ecs_ObjectID pID ) noexcept;
+            static int Terminate() HEX_NOEXCEPT;
 
             // -----------------------------------------------------------
 
-        };
+        }; /// hex::core::GraphicsManager
 
-    } /// hex::ecs
+        // -----------------------------------------------------------
+
+    } /// hex::core
 
 } /// hex
 
-using hexECS = hex::ecs::ECSEngine;
+using hex_Graphics = hex::core::GraphicsManager;
+#define HEX_CORE_GRAPHICS_MANAGER_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_ECS_ENGINE_HPP
+#endif // !HEX_CORE_GRAPHICS_MANAGER_HPP

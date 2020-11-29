@@ -52,6 +52,7 @@ using hex_Mutex = hex::posix::PMutex;
 
 #elif defined( HEX_WINDOWS )
 
+// Include hex::win::WinMutex
 #ifndef HEX_WIN_MUTEX_HPP
 #include "../../windows/utils//async/WinMutex.hpp"
 #endif // !HEX_WIN_MUTEX_HPP
@@ -61,6 +62,12 @@ using hex_Mutex = hex::win::WinMutex;
 #error "hex_mutex.hpp - platform not detected, configuration required."
 #endif
 // PLATFORM
+
+// Include hex::core::SpinLock
+#ifndef HEX_CORE_SPIN_LOCK_HPP
+#include "../utils/async/SpinLock.hpp"
+#endif // !HEX_CORE_SPIN_LOCK_HPP
+using hex_lock_t = hex_SpinLock;
 
 // -----------------------------------------------------------
 

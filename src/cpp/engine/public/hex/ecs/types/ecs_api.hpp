@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_CONFIG_MEMORY_HPP
-#define HEX_CORE_CONFIG_MEMORY_HPP
+#ifndef HEX_ECS_API_HPP
+#define HEX_ECS_API_HPP
 
 // -----------------------------------------------------------
 
@@ -38,39 +38,15 @@
 
 // Include hex::api
 #ifndef HEX_CORE_API_HPP
-#include "hex_api.hpp"
+#include "../../core/configs/hex_api.hpp"
 #endif // !HEX_CORE_API_HPP
-
-// Include hex::core::MemoryManager
-#ifndef HEX_CORE_MEMORY_MANAGER_HPP
-#include "../utils/memory/MemoryManager.hpp"
-#endif // !HEX_CORE_MEMORY_MANAGER_HPP
-
-// Include STL memory
-#if defined( HEX_WINDOWS ) // Windows
-#include <memory>
-#elif defined( HEX_LINUX ) // Linux
-#include <memory>
-#elif defined( HEX_ANDROID ) // Android
-#include <memory> // Android NDK
-#else
-#error "hex_memory.hpp - configuration required."
-#endif
 
 // ===========================================================
 // TYPES
 // ===========================================================
 
-// Allocators
-#define hexNew hexMemory::New
-#define hexDelete(a) hexMemory::Delete(a)
-#define hexNewArray(a) hexMemory::NewArray(a)
-#define hexDeleteArray(a) hexMemory::DeleteArray(a)
-
-// Smart-Pointers
-template <typename T>
-using hex_sptr = std::shared_ptr<T>;
+#define ECS_NOEXCEPT HEX_NOEXCEPT;
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_CONFIG_MEMORY_HPP
+#enidf // !HEX_ECS_API_HPP

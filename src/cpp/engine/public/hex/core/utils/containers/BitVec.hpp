@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_ECS_ENGINE_HPP
-#define HEX_ECS_ENGINE_HPP
+#ifndef HEX_CORE_BIT_VEC_HPP
+#define HEX_CORE_BIT_VEC_HPP
 
 // -----------------------------------------------------------
 
@@ -36,15 +36,15 @@
 // INCLUDES
 // ===========================================================
 
-// Include ecs::types
-#ifndef HEX_ECS_TYPES_HPP
-#include "types/ecs_types.hpp"
-#endif // !HEX_ECS_TYPES_HPP
+// Include hex::vector
+#ifndef HEX_CONFIG_VECTOR_HPP
+#include "../../configs/hex_vector.hpp"
+#endif // !HEX_CONFIG_VECTOR_HPP
 
-// Include hex::ecs::IDStorage
-#ifndef HEX_ECS_ID_STORAGE_HPP
-#include "utils/IDStorage.hpp"
-#endif // !HEX_ECS_ID_STORAGE_HPP
+// Include hex::mutex
+#ifndef HEX_CORE_CONFIG_MUTEX_HPP
+#include "../../configs/hex_mutex.hpp"
+#endif // !HEX_CORE_CONFIG_MUTEX_HPP
 
 // ===========================================================
 // TYPES
@@ -53,17 +53,19 @@
 namespace hex
 {
 
-    namespace ecs
+    namespace core
     {
+
+        // -----------------------------------------------------------
 
         /**
          * @brief
-         * ECSEngine - ecs implementation adapter.
-         * Allows to easilly change ECS implementation.
+         * BitVec - container to bit-flags.
+         * Basically just an adapter for STL vector, with mutex in design.
          * 
-         * @version 0.1
+         * @version 1.0
         **/
-        class ECSEngine final
+        class BitVec
         {
 
         private:
@@ -71,46 +73,23 @@ namespace hex
             // -----------------------------------------------------------
 
             // ===========================================================
-            // TYPES
-            // ===========================================================
-
-            using id_storages_t = ecs_IDStorage<ecs_ObjectID>;
-
-            // ===========================================================
             // FIELDS
             // ===========================================================
 
-            /** ECSEngine instance. **/
-            static ECSEngine* mInstance;
+            /** Mutex **/
+            mutable hex_Mutex mMutex;
 
-            /** ID-Storages Mutex. **/
-            ecs_mutex_t mIDStoragesMutex;
-
-            /** IDStorages **/
-            ecs_map_t<ecs_TypeID, id_storages_t> mIDStorages;
-
-            // ===========================================================
-            // GETTERS & SETTERS
-            // ===========================================================
-
-            /**
-             * @brief
-             * Returns ID-Storage.
-             * 
-             * @thread_safety - thread-lock used.
-             * @param pTypeID - ECS Type-ID.
-             * @throws - can throw exception (bad-alloc, mutex).
-            **/
-            id_storages_t& getIDStorage( const ecs_TypeID pTypeID );
+            /** Vector **/
+            hex_vector_t<bool> mVec;
 
             // ===========================================================
             // DELETED
             // ===========================================================
 
-            ECSEngine( const ECSEngine& ) noexcept = delete;
-            ECSEngine& operator=( const ECSEngine& ) noexcept = delete;
-            ECSEngine( ECSEngine&& ) noexcept = delete;
-            ECSEngine& operator=( ECSEngine&& ) noexcept = delete;
+            BitVec( const BitVec& ) noexcept = delete;
+            BitVec& operator=( const BitVec& ) noexcept = delete;
+            BitVec( BitVec&& ) noexcept = delete;
+            BitVec& operator=( BitVec&& ) noexcept = delete;
 
             // -----------------------------------------------------------
 
@@ -124,76 +103,87 @@ namespace hex
 
             /**
              * @brief
-             * ECSEngine default constructor.
-             *
-             * @throws - can throw exception (mutex, bad-alloc).
+             * BitVec constructor.
+             * 
+             * @param pCapacity - initial capacity. 0 for default.
+             * @throws - can throw exception.
             **/
-            explicit ECSEngine();
+            explicit BitVec( const hex_size_t pCapacity = 0 )
+                : mMutex(),
+                mVec()
+            {
+                if ( pCapacity > 0  )
+                    mVec.reserve( pCapacity );
+            }
 
             /**
              * @brief
-             * ECSEngine destructor.
+             * BitVec destructor.
              * 
              * @throws - no exceptions.
             **/
-            ~ECSEngine() noexcept;
+            ~BitVec() noexcept = default;
 
             // ===========================================================
             // GETTERS & SETTERS
             // ===========================================================
 
-            // ===========================================================
-            // METHODS
-            // ===========================================================
-
             /**
              * @brief
-             * Initialize ECS.
-             *
-             * @throws - no exceptions.
-            **/
-            static void Initialize() noexcept;
-
-            /**
-             * @brief
-             * Terminate ECS.
-             *
-             * @throws - no exceptions.
-            **/
-            static void Terminate() noexcept;
-
-            /**
-             * @brief
-             * Generates Object-ID.
+             * Return boolean (bit) value.
              * 
              * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @returns - Object-ID.
+             * @param pIndex - offset.
+             * @param pDefault - default = false.
              * @throws - can throw exception (mutex).
             **/
-            static ecs_ObjectID generateID( const ecs_TypeID pTypeID );
+            bool get( const hex_size_t pIndex, bool pDefault = false ) const
+            {
+                hex_lock_t lock( &mMutex );
+
+                if ( mVec.size() < pIndex + 1 )
+                {
+                    mVec.reserve( pIndex + 1 );
+                    mVec[pIndex] = pDefault;
+                    return pDefault;
+                }
+
+                return mVec[pIndex];
+            }
 
             /**
              * @brief
-             * Release ID for reusage.
-             * 
+             * Sets bit (boolean) value.
+             *
              * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @param pID - ECS Object-ID.
-             * @throws - no exceptions.
+             * @param pIndex - bit (boolean) offset.
+             * @param pValue - value.
+             * @throws - can throw exception (mutex).
             **/
-            static void releaseID( const ecs_TypeID pTypeID, const ecs_ObjectID pID ) noexcept;
+            void set( const hex_size_t pIndex, const bool pValue )
+            {
+                hex_lock_t lock( &mMutex );
+
+                if ( mVec.size() < pIndex + 1 )
+                    mVec.reserve( pIndex + 1 );
+
+                mVec[pIndex] = pValue;
+            }
 
             // -----------------------------------------------------------
 
-        };
+        }; /// hex::core::BitVec
 
-    } /// hex::ecs
+        // -----------------------------------------------------------
+
+    } /// hex::core
 
 } /// hex
 
-using hexECS = hex::ecs::ECSEngine;
+using hex_BitVec = hex::core::BitVec;
+
+#define HEX_CORE_BIT_VEC_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_ECS_ENGINE_HPP
+#endif // !HEX_CORE_BIT_VEC_HPP

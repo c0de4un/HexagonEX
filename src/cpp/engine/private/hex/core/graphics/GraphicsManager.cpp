@@ -34,116 +34,107 @@
 // ===========================================================
 
 // HEADER
-#ifndef HEX_ECS_ENGINE_HPP
-#include "../../../public/hex/ecs/ECSEngine.hpp"
-#endif // !HEX_ECS_ENGINE_HPP
+#ifndef HEX_CORE_GRAPHICS_MANAGER_HPP
+#include "../../../public/hex/core/graphics/GraphicsManager.hpp"
+#endif // !HEX_CORE_GRAPHICS_MANAGER_HPP
 
-// Include hex::ecs::memory
-#ifndef HEX_ECS_DEBUG_HPP
-#include "../../../public/hex/ecs/types/ecs_memory.hpp"
-#endif // !HEX_ECS_DEBUG_HPP
+// Include hex::core::ESystem
+#ifndef HEX_CORE_E_SYSTEMS_HPP
+#include "../../../public/hex/core/utils/ecs/ESystem.hpp"
+#endif // !HEX_CORE_E_SYSTEMS_HPP
 
 // DEBUG
 #if defined( DEBUG ) || defined( HEX_DEBUG )
 
-// Include debug
-#ifndef HEX_ECS_DEBUG_HPP
-#include "../../../public/hex/ecs/types/ecs_debug.hpp"
-#endif // !HEX_ECS_DEBUG_HPP
+// Include hex::log
+#ifndef HEX_CORE_CONFIG_LOG_HPP
+#include "../../../public/hex/core/configs/hex_log.hpp"
+#endif // !HEX_CORE_CONFIG_LOG_HPP
+
+// Include hex::assert
+#ifndef HEX_CORE_CONFIG_ASSERT_HPP
+#include "../../../public/hex/core/configs/hex_assert.hpp"
+#endif // !HEX_CORE_CONFIG_ASSERT_HPP
 
 #endif
 // DEBUG
 
 // ===========================================================
-// TYPES
+// hex::core::GraphicsManager
 // ===========================================================
 
 namespace hex
 {
 
-    namespace ecs
+    namespace core
     {
 
         // -----------------------------------------------------------
 
         // ===========================================================
-        // FIELDS
-        // ===========================================================
-
-        ECSEngine* ECSEngine::mInstance( nullptr );
-
-        // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        ECSEngine::ECSEngine()
-            : mIDStoragesMutex(),
-            mIDStorages()
+        GraphicsManager::GraphicsManager( hex_GraphicsSettings* const graphicsSettings )
+            : System( hex_ESystem::RENDER ),
+            mGraphicsSettings( graphicsSettings )
         {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hexLog::printInfo( "GraphicsManager::constructor" );
+#endif // DEUBG
         }
 
-        ECSEngine::~ECSEngine() noexcept = default;
+        GraphicsManager::~GraphicsManager()
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hexLog::printInfo( "GraphicsManager::destructor" );
+#endif // DEUBG
+
+            delete mGraphicsSettings;
+        }
 
         // ===========================================================
         // GETTERS & SETTERS
         // ===========================================================
 
-        ECSEngine::id_storages_t& ECSEngine::getIDStorage( const ecs_TypeID pTypeID )
-        {
-            ecs_lock_t lock( &mIDStoragesMutex );
+        hex_sptr<IGraphics> GraphicsManager::getInstance() noexcept
+        { return mInstance; }
 
-            return mIDStorages[pTypeID];
-        }
+        const hex_GraphicsSettings* GraphicsManager::getGraphicsSettings() const noexcept
+        { return mGraphicsSettings; }
 
         // ===========================================================
         // METHODS
         // ===========================================================
 
-        void ECSEngine::Initialize() noexcept
+        int GraphicsManager::Initialize()
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            ecsLog::printInfo( u8"ECSEngine::Initialize" );
-            ecsAssert( !mInstance && "ECS Instance already created, check logic" );
-#endif // DEBUG
-            
-            if ( !mInstance )
-                mInstance = ecsNew<ECSEngine>();
+            hexLog::printInfo( "GraphicsManager::Initialize" );
+#endif // DEUBG
+
+            hex_sptr<GraphicsManager> instance( static_cast<GraphicsManager*>(getInstance()) );
+            if ( instance != nullptr )
+                return instance->Start();
         }
 
-        void ECSEngine::Terminate() noexcept
+        int GraphicsManager::Terminate() HEX_NOEXCEPT
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            ecsLog::printInfo( u8"ECSEngine::Terminate" );
-#endif // DEBUG
+            hexLog::printInfo( "GraphicsManager::Terminate" );
+#endif // DEUBG
 
-            ecsDelete( mInstance );
+            hex_sptr<IGraphics> instance( getInstance() );
+            if ( instance != nullptr )
+                return instance->Stop();
+
             mInstance = nullptr;
-        }
-
-        ecs_ObjectID ECSEngine::generateID( const ecs_TypeID pTypeID )
-        {
-            if ( mInstance )
-            {
-                id_storages_t& idStorage( mInstance->getIDStorage(pTypeID) );
-                return idStorage.generateID();
-            }
-
-            return ECS_INVALID_OBJECT_ID;
-        }
-
-        void ECSEngine::releaseID( const ecs_TypeID pTypeID, const ecs_ObjectID pID ) noexcept
-        {
-            if ( mInstance )
-            {
-                id_storages_t& idStorage( mInstance->getIDStorage( pTypeID ) );
-                idStorage.returnID( pID );
-            }
         }
 
         // -----------------------------------------------------------
 
-    }
+    } /// hex::core
 
-}
+} /// hex
 
 // -----------------------------------------------------------

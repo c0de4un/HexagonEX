@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_CONFIG_MEMORY_HPP
-#define HEX_CORE_CONFIG_MEMORY_HPP
+#ifndef HEX_CORE_NUMERIC_HPP
+#define HEX_CORE_NUMERIC_HPP
 
 // -----------------------------------------------------------
 
@@ -41,36 +41,35 @@
 #include "hex_api.hpp"
 #endif // !HEX_CORE_API_HPP
 
-// Include hex::core::MemoryManager
-#ifndef HEX_CORE_MEMORY_MANAGER_HPP
-#include "../utils/memory/MemoryManager.hpp"
-#endif // !HEX_CORE_MEMORY_MANAGER_HPP
-
-// Include STL memory
+// Include STL numeric
 #if defined( HEX_WINDOWS ) // Windows
-#include <memory>
+#include <cstdint>
+#include <limits>
 #elif defined( HEX_LINUX ) // Linux
-#include <memory>
+#include <cstdint>
+#include <limits>
 #elif defined( HEX_ANDROID ) // Android
-#include <memory> // Android NDK
+#include <cstdint>
+#include <limits> // Android NDK
 #else
-#error "hex_memory.hpp - configuration required."
+#error "hex_numeric.hpp - configuration required."
 #endif
 
 // ===========================================================
 // TYPES
 // ===========================================================
 
-// Allocators
-#define hexNew hexMemory::New
-#define hexDelete(a) hexMemory::Delete(a)
-#define hexNewArray(a) hexMemory::NewArray(a)
-#define hexDeleteArray(a) hexMemory::DeleteArray(a)
-
-// Smart-Pointers
-template <typename T>
-using hex_sptr = std::shared_ptr<T>;
+using hex_uint8_t    = std::uint8_t;
+using hex_int8_t     = std::int8_t;
+using hex_uint16_t   = std::uint16_t;
+using hex_int16_t    = std::int16_t;
+using hex_uint32_t   = std::uint32_t;
+using hex_int32_t    = std::int32_t;
+using hex_uint64_t   = std::uint64_t;
+using hex_int64_t    = std::int64_t;
+using hex_float_t    = double;
+using hex_doube_t = double;
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_CONFIG_MEMORY_HPP
+#endif // !HEX_CORE_NUMERIC_HPP

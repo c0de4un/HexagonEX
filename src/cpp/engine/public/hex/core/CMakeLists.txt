@@ -58,21 +58,32 @@ set ( HEX_CORE_HEADERS
     "${PUBLIC_DIR}configs/hex_api.hpp"
     "${PUBLIC_DIR}configs/hex_atomic.hpp"
     "${PUBLIC_DIR}configs/hex_assert.hpp"
+    "${PUBLIC_DIR}configs/hex_numeric.hpp"
     "${PUBLIC_DIR}configs/hex_memory.hpp"
+    "${PUBLIC_DIR}configs/hex_map.hpp"
+    "${PUBLIC_DIR}configs/hex_vector.hpp"
     # APPLICATION
     "${PUBLIC_DIR}app/IApplication.hxx"
     "${PUBLIC_DIR}app/Application.hpp"
     # GRAPHICS
+    "${PUBLIC_DIR}graphics/IGraphics.hxx"
+    "${PUBLIC_DIR}graphics/GraphicsSettings.hpp"
+    "${PUBLIC_DIR}graphics/GraphicsManager.hpp"
     # ENGINE
     # RENDER
     # ASYNC
     "${PUBLIC_DIR}utils/async/IMutex.hxx"
     "${PUBLIC_DIR}utils/async/Mutex.hpp"
+    "${PUBLIC_DIR}utils/async/ILock.hxx"
+    "${PUBLIC_DIR}utils/async/BaseLock.hpp"
+    "${PUBLIC_DIR}utils/async/SpinLock.hpp"
     # ASSETS
     # INPUT
     # MEMORY
     "${PUBLIC_DIR}utils/memory/MemoryManager.hpp"
     # UTILS
+    "${PUBLIC_DIR}utils/ecs/ESystem.hpp"
+    "${PUBLIC_DIR}utils/lng/Enum.hpp"
     "${PUBLIC_DIR}hex.hpp" )
 
 # DEBUG
@@ -92,15 +103,20 @@ set ( HEX_CORE_SOURCES
     # APPLICATION
     "${PRIVATE_DIR}app/Application.cpp"
     # GRAPHICS
+    "${PRIVATE_DIR}graphics/GraphicsManager.cpp"
     # ENGINE
     # RENDER
     # ASYNC
     "${PRIVATE_DIR}utils/async/Mutex.cpp"
+    "${PRIVATE_DIR}utils/async/BaseLock.cpp"
+    "${PRIVATE_DIR}utils/async/SpinLock.cpp"
     # ASSETS
     # INPUT
     # MEMORY
     "${PRIVATE_DIR}utils/memory/MemoryManager.cpp"
     # UTILS
+    "${PRIVATE_DIR}utils/ecs/ESystem.cpp"
+    "${PRIVATE_DIR}utils/lng/Enum.cpp"
     "${PRIVATE_DIR}hex.cpp" )
 
 # DEBUG

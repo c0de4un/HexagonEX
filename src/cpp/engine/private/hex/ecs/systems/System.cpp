@@ -27,6 +27,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
+#ifndef HEX_ECS_I_SYSTEM_HXX
+#define HEX_ECS_I_SYSTEM_HXX
+
 // -----------------------------------------------------------
 
 // ===========================================================
@@ -34,28 +37,17 @@
 // ===========================================================
 
 // HEADER
+#ifndef HEX_ECS_SYSTEM_HPP
+#include "../../../../public/hex/ecs/systems/System.hpp"
+#endif // !HEX_ECS_SYSTEM_HPP
+
+// Include ecs::Enigne
 #ifndef HEX_ECS_ENGINE_HPP
-#include "../../../public/hex/ecs/ECSEngine.hpp"
+#include "../../../../public/hex/ecs/ECSEngine.hpp"
 #endif // !HEX_ECS_ENGINE_HPP
 
-// Include hex::ecs::memory
-#ifndef HEX_ECS_DEBUG_HPP
-#include "../../../public/hex/ecs/types/ecs_memory.hpp"
-#endif // !HEX_ECS_DEBUG_HPP
-
-// DEBUG
-#if defined( DEBUG ) || defined( HEX_DEBUG )
-
-// Include debug
-#ifndef HEX_ECS_DEBUG_HPP
-#include "../../../public/hex/ecs/types/ecs_debug.hpp"
-#endif // !HEX_ECS_DEBUG_HPP
-
-#endif
-// DEBUG
-
 // ===========================================================
-// TYPES
+// hex::ecs::System
 // ===========================================================
 
 namespace hex
@@ -67,83 +59,56 @@ namespace hex
         // -----------------------------------------------------------
 
         // ===========================================================
-        // FIELDS
-        // ===========================================================
-
-        ECSEngine* ECSEngine::mInstance( nullptr );
-
-        // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        ECSEngine::ECSEngine()
-            : mIDStoragesMutex(),
-            mIDStorages()
+        System::System( const ecs_TypeID pType )
+            : mTypeID( pType ),
+            mID( generateSystemID(pType) )
         {
+
         }
 
-        ECSEngine::~ECSEngine() noexcept = default;
+        System::~System() ECS_NOEXCEPT
+        {
+            Stop();
+            releaseSystemID( mTypeID, mID );
+        }
 
         // ===========================================================
         // GETTERS & SETTERS
         // ===========================================================
 
-        ECSEngine::id_storages_t& ECSEngine::getIDStorage( const ecs_TypeID pTypeID )
-        {
-            ecs_lock_t lock( &mIDStoragesMutex );
+        ecs_TypeID System::getTypeID() const noexcept
+        { return mTypeID; }
 
-            return mIDStorages[pTypeID];
-        }
+        ecs_ObjectID System::getID() const noexcept
+        { return mID; }
 
         // ===========================================================
         // METHODS
         // ===========================================================
 
-        void ECSEngine::Initialize() noexcept
+        int System::Start()
         {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            ecsLog::printInfo( u8"ECSEngine::Initialize" );
-            ecsAssert( !mInstance && "ECS Instance already created, check logic" );
-#endif // DEBUG
             
-            if ( !mInstance )
-                mInstance = ecsNew<ECSEngine>();
         }
 
-        void ECSEngine::Terminate() noexcept
+        void System::Stop() ECS_NOEXCEPT
         {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            ecsLog::printInfo( u8"ECSEngine::Terminate" );
-#endif // DEBUG
 
-            ecsDelete( mInstance );
-            mInstance = nullptr;
         }
 
-        ecs_ObjectID ECSEngine::generateID( const ecs_TypeID pTypeID )
-        {
-            if ( mInstance )
-            {
-                id_storages_t& idStorage( mInstance->getIDStorage(pTypeID) );
-                return idStorage.generateID();
-            }
+        ecs_ObjectID System::generateSystemID( const ecs_TypeID pType )
+        { return ECSEngine::generateID( pType ); }
 
-            return ECS_INVALID_OBJECT_ID;
-        }
-
-        void ECSEngine::releaseID( const ecs_TypeID pTypeID, const ecs_ObjectID pID ) noexcept
-        {
-            if ( mInstance )
-            {
-                id_storages_t& idStorage( mInstance->getIDStorage( pTypeID ) );
-                idStorage.returnID( pID );
-            }
-        }
+        void System::releaseSystemID( const ecs_TypeID pType, const ecs_ObjectID pID ) ECS_NOEXCEPT
+        { ECSEngine::releaseID( pType, pID ); }
 
         // -----------------------------------------------------------
 
-    }
+    } /// hex::ecs
 
-}
+} /// hex
 
 // -----------------------------------------------------------

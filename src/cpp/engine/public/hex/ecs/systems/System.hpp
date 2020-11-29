@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_ECS_ENGINE_HPP
-#define HEX_ECS_ENGINE_HPP
+#ifndef HEX_ECS_SYSTEM_HPP
+#define HEX_ECS_SYSTEM_HPP
 
 // -----------------------------------------------------------
 
@@ -36,15 +36,15 @@
 // INCLUDES
 // ===========================================================
 
-// Include ecs::types
-#ifndef HEX_ECS_TYPES_HPP
-#include "types/ecs_types.hpp"
-#endif // !HEX_ECS_TYPES_HPP
+// Include hex::ecs::ISsystem
+#ifndef HEX_ECS_I_SYSTEM_HXX
+#include "ISystem.hxx"
+#endif // !HEX_ECS_I_SYSTEM_HXX
 
-// Include hex::ecs::IDStorage
-#ifndef HEX_ECS_ID_STORAGE_HPP
-#include "utils/IDStorage.hpp"
-#endif // !HEX_ECS_ID_STORAGE_HPP
+// Include ecs::mutex
+#ifndef HEX_ECS_MUTEX_HPP
+#include "../types/ecs_mutex.hpp"
+#endif // !HEX_ECS_MUTEX_HPP
 
 // ===========================================================
 // TYPES
@@ -56,61 +56,74 @@ namespace hex
     namespace ecs
     {
 
+        // -----------------------------------------------------------
+
         /**
          * @brief
-         * ECSEngine - ecs implementation adapter.
-         * Allows to easilly change ECS implementation.
-         * 
-         * @version 0.1
+         * System - base System class.
+         *
+         * @version 1.0
         **/
-        class ECSEngine final
+        class System : public ecs_ISystem
         {
 
-        private:
+        protected:
 
             // -----------------------------------------------------------
-
-            // ===========================================================
-            // TYPES
-            // ===========================================================
-
-            using id_storages_t = ecs_IDStorage<ecs_ObjectID>;
 
             // ===========================================================
             // FIELDS
             // ===========================================================
 
-            /** ECSEngine instance. **/
-            static ECSEngine* mInstance;
-
-            /** ID-Storages Mutex. **/
-            ecs_mutex_t mIDStoragesMutex;
-
-            /** IDStorages **/
-            ecs_map_t<ecs_TypeID, id_storages_t> mIDStorages;
+            
 
             // ===========================================================
-            // GETTERS & SETTERS
+            // CONSTRUCTOR
             // ===========================================================
 
             /**
              * @brief
-             * Returns ID-Storage.
+             * System constructor.
              * 
-             * @thread_safety - thread-lock used.
-             * @param pTypeID - ECS Type-ID.
-             * @throws - can throw exception (bad-alloc, mutex).
+             * @param pType - Type-ID.
+             * @throws - can throw exception.
             **/
-            id_storages_t& getIDStorage( const ecs_TypeID pTypeID );
+            explicit System( const ecs_TypeID pType );
 
             // ===========================================================
             // DELETED
             // ===========================================================
 
-            ECSEngine( const ECSEngine& ) noexcept = delete;
-            ECSEngine& operator=( const ECSEngine& ) noexcept = delete;
-            ECSEngine( ECSEngine&& ) noexcept = delete;
-            ECSEngine& operator=( ECSEngine&& ) noexcept = delete;
+            System( const System& ) noexcept = delete;
+            System& operator=( const System& ) noexcept = delete;
+            System( System&& ) noexcept = delete;
+            System& operator=( System&& ) noexcept = delete;
+
+            // ===========================================================
+            // METHODS
+            // ===========================================================
+
+            /**
+             * @brief
+             * Generates ID for instance of this ECS Type.
+             * 
+             * @thread_safety - thread-locks used.
+             * @param pType - ECS Type-ID.
+             * @returns - ID.
+             * @throws - can throw exception.
+            **/
+            static ecs_ObjectID generateSystemID( const ecs_TypeID pType );
+
+            /**
+             * @brief
+             * Release ID of instance.
+             * 
+             * @thread_safety - thread-locks used.
+             * @param pType - ECS Type-ID.
+             * @param pID - ECS Object-ID.
+             * @throws - no exceptions.
+            **/
+            static void releaseSystemID( const ecs_TypeID pType, const ecs_ObjectID pID ) ECS_NOEXCEPT;
 
             // -----------------------------------------------------------
 
@@ -119,28 +132,48 @@ namespace hex
             // -----------------------------------------------------------
 
             // ===========================================================
-            // CONSTRUCTOR & DESTRUCTOR
+            // CONSTANTS
+            // ===========================================================
+
+            /** ECS Type-ID. **/
+            const ecs_TypeID mTypeID;
+
+            /** ECS Object-ID. **/
+            const ecs_ObjectID mID;
+
+            // ===========================================================
+            // DESTRUCTOR
             // ===========================================================
 
             /**
              * @brief
-             * ECSEngine default constructor.
+             * System destructor.
              *
-             * @throws - can throw exception (mutex, bad-alloc).
-            **/
-            explicit ECSEngine();
-
-            /**
-             * @brief
-             * ECSEngine destructor.
-             * 
              * @throws - no exceptions.
             **/
-            ~ECSEngine() noexcept;
+            virtual ~System() ECS_NOEXCEPT;
 
             // ===========================================================
             // GETTERS & SETTERS
             // ===========================================================
+
+            /**
+             * @brief
+             * Returns ECS Type-ID.
+             *
+             * @thread_safety - not required.
+             * @throws - no exceptions.
+            **/
+            virtual ecs_TypeID getTypeID() const noexcept final;
+
+            /**
+             * @brief
+             * Returns ECS Object-ID.
+             *
+             * @thread_safety - not required.
+             * @throws - no exceptions.
+            **/
+            virtual ecs_ObjectID getID() const noexcept final;
 
             // ===========================================================
             // METHODS
@@ -148,52 +181,36 @@ namespace hex
 
             /**
              * @brief
-             * Initialize ECS.
+             * Start System.
              *
-             * @throws - no exceptions.
+             * @thread_safety - thread-locks used.
+             * @return - 0 if OK.
+             * @throws - can throw exception.
             **/
-            static void Initialize() noexcept;
+            virtual int Start() final;
 
             /**
              * @brief
-             * Terminate ECS.
+             * Stop System.
              *
+             * @thread_safety - thread-locks used.
              * @throws - no exceptions.
             **/
-            static void Terminate() noexcept;
-
-            /**
-             * @brief
-             * Generates Object-ID.
-             * 
-             * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @returns - Object-ID.
-             * @throws - can throw exception (mutex).
-            **/
-            static ecs_ObjectID generateID( const ecs_TypeID pTypeID );
-
-            /**
-             * @brief
-             * Release ID for reusage.
-             * 
-             * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @param pID - ECS Object-ID.
-             * @throws - no exceptions.
-            **/
-            static void releaseID( const ecs_TypeID pTypeID, const ecs_ObjectID pID ) noexcept;
+            virtual void Stop() ECS_NOEXCEPT final;
 
             // -----------------------------------------------------------
 
         };
 
+        // -----------------------------------------------------------
+
     } /// hex::ecs
 
 } /// hex
 
-using hexECS = hex::ecs::ECSEngine;
+using ecs_System = hex::ecs::System;
+#define HEX_ECS_SYSTEM_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_ECS_ENGINE_HPP
+#endif // !HEX_ECS_SYSTEM_HPP

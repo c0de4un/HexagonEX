@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_APPLICATION_HPP
-#define HEX_CORE_APPLICATION_HPP
+#ifndef HEX_ECS_I_SYSTEM_HXX
+#define HEX_ECS_I_SYSTEM_HXX
 
 // -----------------------------------------------------------
 
@@ -36,10 +36,10 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::core::IApplication
-#ifndef HEX_CORE_I_APPLICATION_HXX
-#include "IApplication.hxx"
-#endif // !HEX_CORE_I_APPLICATION_HXX
+// Include ecs::types
+#ifndef HEX_ECS_TYPES_HPP
+#include "../types/ecs_types.hpp"
+#endif // !HEX_ECS_TYPES_HPP
 
 // ===========================================================
 // TYPES
@@ -47,80 +47,20 @@
 
 namespace hex
 {
-
-    namespace core
+    
+    namespace ecs
     {
 
         // -----------------------------------------------------------
 
         /**
          * @brief
-         * Application - base application class.
+         * ISystem - System interface.
          * 
          * @version 1.0
         **/
-        class Application : public IApplication
+        class ISystem
         {
-
-            // -----------------------------------------------------------
-
-            // ===========================================================
-            // META
-            // ===========================================================
-
-            HEX_CLASS
-
-            // -----------------------------------------------------------
-
-        protected:
-
-            // -----------------------------------------------------------
-
-            // ===========================================================
-            // CONSTANTS & FIELDS
-            // ===========================================================
-
-            /** Application instance. **/
-            static Application* mInstance;
-
-            // ===========================================================
-            // CONSTRUCTOR
-            // ===========================================================
-
-            explicit Application();
-
-            // ===========================================================
-            // DELETED
-            // ===========================================================
-
-            Application(const Application&) noexcept = delete;
-            Application& operator=(const Application&) noexcept = delete;
-            Application(Application&&) noexcept = delete;
-            Application& operator=(Application&&) noexcept = delete;
-
-            // ===========================================================
-            // METHODS
-            // ===========================================================
-
-            /**
-             * @brief
-             * Called when Initialize called.
-             * Implementor suppose to call this in cases, when initialization
-             * overridden.
-             * 
-             * @throws - no exceptions.
-            **/
-            virtual void onInitialize();
-
-            /**
-             * @brief
-             * Called when Terminate called.
-             * 
-             * @throws - no exceptions.
-            **/
-            virtual void onTerminate() noexcept;
-
-            // -----------------------------------------------------------
 
         public:
 
@@ -130,7 +70,37 @@ namespace hex
             // DESTRUCTOR
             // ===========================================================
 
-            virtual ~Application() noexcept;
+            /**
+             * @brief
+             * ISystem destructor.
+             * 
+             * @throws - no exceptions.
+            **/
+            virtual ~ISystem() ECS_NOEXCEPT
+            {
+            }
+
+            // ===========================================================
+            // GETTERS & SETTERS
+            // ===========================================================
+
+            /**
+             * @brief
+             * Returns ECS Type-ID.
+             * 
+             * @thread_safety - not required.
+             * @throws - no exceptions.
+            **/
+            virtual ecs_TypeID getTypeID() const noexcept = 0;
+
+            /**
+             * @brief
+             * Returns ECS Object-ID.
+             *
+             * @thread_safety - not required.
+             * @throws - no exceptions.
+            **/
+            virtual ecs_ObjectID getID() const noexcept = 0;
 
             // ===========================================================
             // METHODS
@@ -138,29 +108,36 @@ namespace hex
 
             /**
              * @brief
-             * Terminate Application isntance.
+             * Start System.
              * 
-             * (?)
-             * All sub-systems (Graphics, Audio, Input, Threading) terminated along,
-             * doesn't terminates log-susytem though.
+             * @thread_safety - thread-locks used.
+             * @return - 0 if OK.
+             * @throws - can throw exception.
+            **/
+            virtual int Start() = 0;
+
+            /**
+             * @brief
+             * Stop System.
              * 
+             * @thread_safety - thread-locks used.
              * @throws - no exceptions.
             **/
-            static void Terminate() noexcept;
+            virtual void Stop() ECS_NOEXCEPT = 0;
 
             // -----------------------------------------------------------
 
-        }; /// hex::core::Application
+        };
 
         // -----------------------------------------------------------
 
-    } /// hex::core
+    } /// hex::ecs
 
 } /// hex
 
-#define HEX_CORE_APPLICATION_DECL
-using hexApp = hex::core::Application;
+using ecs_ISystem = hex::ecs::ISystem;
+#define HEX_ECS_I_SYSTEM_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_APPLICATION_HPP
+#endif // !HEX_ECS_I_SYSTEM_HXX

@@ -1,4 +1,6 @@
 /**
+ * Copyright © 2020 Denis Z. (code4un@yandex.ru) All rights reserved.
+ * Authors: Denis Z. (code4un@yandex.ru)
  * All rights reserved.
  * License: see LICENSE.txt
  *
@@ -25,10 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- **/
-
-#ifndef HEX_CORE_CONFIG_MEMORY_HPP
-#define HEX_CORE_CONFIG_MEMORY_HPP
+ */
 
 // -----------------------------------------------------------
 
@@ -36,41 +35,50 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::api
-#ifndef HEX_CORE_API_HPP
-#include "hex_api.hpp"
-#endif // !HEX_CORE_API_HPP
-
-// Include hex::core::MemoryManager
-#ifndef HEX_CORE_MEMORY_MANAGER_HPP
-#include "../utils/memory/MemoryManager.hpp"
-#endif // !HEX_CORE_MEMORY_MANAGER_HPP
-
-// Include STL memory
-#if defined( HEX_WINDOWS ) // Windows
-#include <memory>
-#elif defined( HEX_LINUX ) // Linux
-#include <memory>
-#elif defined( HEX_ANDROID ) // Android
-#include <memory> // Android NDK
-#else
-#error "hex_memory.hpp - configuration required."
-#endif
+// Include hex::core::BaseLock
+#ifndef HEX_CORE_BASE_LOCK_HPP
+#include "../../../../../public/hex/core/utils/async/BaseLock.hpp"
+#endif // !HEX_CORE_BASE_LOCK_HPP
 
 // ===========================================================
-// TYPES
+// hex::core::BaseLock
 // ===========================================================
 
-// Allocators
-#define hexNew hexMemory::New
-#define hexDelete(a) hexMemory::Delete(a)
-#define hexNewArray(a) hexMemory::NewArray(a)
-#define hexDeleteArray(a) hexMemory::DeleteArray(a)
+namespace hex
+{
 
-// Smart-Pointers
-template <typename T>
-using hex_sptr = std::shared_ptr<T>;
+    namespace core
+    {
+
+        // -----------------------------------------------------------
+
+        // ===========================================================
+        // CONSTRUCTOR & DESTRUCTOR
+        // ===========================================================
+
+        BaseLock::BaseLock()
+            : mMutex( nullptr )
+        {
+        }
+
+        BaseLock::BaseLock( hex_IMutex* const pMutex )
+            : mMutex( pMutex )
+        {
+        }
+
+        BaseLock::~BaseLock() HEX_NOEXCEPT = default;
+
+        // ===========================================================
+        // OVERRIDE: hex::core::ILock
+        // ===========================================================
+
+        bool BaseLock::isLocked() HEX_NOEXCEPT
+        { return mMutex ? mMutex->isLocked() : false; }
+
+        // -----------------------------------------------------------
+
+    } /// hex::core
+
+} /// hex
 
 // -----------------------------------------------------------
-
-#endif // !HEX_CORE_CONFIG_MEMORY_HPP
