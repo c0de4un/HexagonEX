@@ -45,6 +45,10 @@
 // TYPES
 // ===========================================================
 
+// Smart-Pointers
+template <typename T>
+
+using ecs_sptr = hex_sptr<T>;
 #define ecsNew hexNew
 #define ecsDelete(a) hexDelete(a)
 #define ecsNewArray(a) hexNewArray(a)

@@ -27,24 +27,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
+#ifndef HEX_ECS_I_EVENT_HXX
+#define HEX_ECS_I_EVENT_HXX
+
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
 
-// HEADER
-#ifndef HEX_ECS_SYSTEM_HPP
-#include "../../../../public/hex/ecs/systems/System.hpp"
-#endif // !HEX_ECS_SYSTEM_HPP
-
-// Include ecs::Enigne
-#ifndef HEX_ECS_ENGINE_HPP
-#include "../../../../public/hex/ecs/ECSEngine.hpp"
-#endif // !HEX_ECS_ENGINE_HPP
+// Include ecs::types
+#ifndef HEX_ECS_TYPES_HPP
+#include "../types/ecs_types.hpp"
+#endif // !HEX_ECS_TYPES_HPP
 
 // ===========================================================
-// hex::ecs::System
+// TYPES
 // ===========================================================
 
 namespace hex
@@ -56,51 +54,68 @@ namespace hex
         // -----------------------------------------------------------
 
         // ===========================================================
-        // CONSTRUCTOR & DESTRUCTOR
+        // ecs::IEvent
         // ===========================================================
 
-        System::System( const ecs_TypeID pType )
-            : mTypeID( pType ),
-            mID( generateSystemID(pType) )
+        /**
+         * @brief
+         * IEvent - Event-intarface.
+         * 
+         * @version 1.0
+        */
+        class IEvent
         {
 
-        }
+        public:
 
-        System::~System() noexcept
-        {
-            Stop();
-            releaseSystemID( mTypeID, mID );
-        }
+            // -----------------------------------------------------------
 
-        // ===========================================================
-        // GETTERS & SETTERS
-        // ===========================================================
+            // ===========================================================
+            // DESTRUCTOR
+            // ===========================================================
 
-        ecs_TypeID System::getTypeID() const noexcept
-        { return mTypeID; }
+            virtual ~IEvent() ECS_NOEXCEPT
+            {
+            }
 
-        ecs_ObjectID System::getID() const noexcept
-        { return mID; }
+            // ===========================================================
+            // GETTERS & SETTERS
+            // ===========================================================
 
-        // ===========================================================
-        // METHODS
-        // ===========================================================
+            /**
+             * @brief
+             * Returns Type-ID.
+             * 
+             * @thread_safety - not required.
+             * @throws - no exxceptions.
+            **/
+            virtual ecs_EventTypeID getTypeID() const noexcept = 0;
 
-        int System::Start()
-        {
-            return -1;
-        }
+            /**
+             * @brief
+             * Retursn Event ID.
+             * 
+             * @thread_safety - not required.
+             * @throws - no exceptions.
+            **/
+            virtual ecs_ObjectID getID() const noexcept = 0;
 
-        void System::Stop() noexcept
-        {
+            /**
+             * @brief
+             * Returns 'true' if Event is handled.
+             * 
+             * @thread_safety - atomics used.
+             * @throws - no exceptions.
+            **/
+            virtual bool isHandled() const ECS_NOEXCEPT = 0;
 
-        }
+            // ===========================================================
+            // METHODS
+            // ===========================================================
 
-        ecs_ObjectID System::generateSystemID( const ecs_TypeID pType )
-        { return ECSEngine::generateID( pType ); }
+            // -----------------------------------------------------------
 
-        void System::releaseSystemID( const ecs_TypeID pType, const ecs_ObjectID pID )
-        { ECSEngine::releaseID( pType, pID ); }
+        }; /// hex::ecs::IEvent
 
         // -----------------------------------------------------------
 
@@ -108,4 +123,9 @@ namespace hex
 
 } /// hex
 
+using ecs_IEvent = hex::ecs::IEvent;
+#define HEX_ECS_I_EVENT_DECL
+
 // -----------------------------------------------------------
+
+#endif // !HEX_ECS_I_EVENT_HXX

@@ -62,6 +62,7 @@ set ( HEX_CORE_HEADERS
     "${PUBLIC_DIR}configs/hex_memory.hpp"
     "${PUBLIC_DIR}configs/hex_map.hpp"
     "${PUBLIC_DIR}configs/hex_vector.hpp"
+    "${PUBLIC_DIR}configs/hex_thread.hpp"
     # APPLICATION
     "${PUBLIC_DIR}app/IApplication.hxx"
     "${PUBLIC_DIR}app/Application.hpp"

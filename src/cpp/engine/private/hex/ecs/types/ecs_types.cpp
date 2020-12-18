@@ -27,26 +27,21 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_ECS_API_HPP
-#define HEX_ECS_API_HPP
-
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
 
-// Include hex::api
-#ifndef HEX_CORE_API_HPP
-#include "../../core/configs/hex_api.hpp"
-#endif // !HEX_CORE_API_HPP
+// HEADER
+#ifndef HEX_ECS_TYPES_HPP
+#include "../../../../public/hex/ecs/types/ecs_types.hpp"
+#endif // !HEX_ECS_TYPES_HPP
 
 // ===========================================================
 // TYPES
 // ===========================================================
 
-#define ECS_NOEXCEPT HEX_NOEXCEPT
+
 
 // -----------------------------------------------------------
-
-#endif // !HEX_ECS_API_HPP

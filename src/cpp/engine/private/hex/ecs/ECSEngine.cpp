@@ -38,6 +38,11 @@
 #include "../../../public/hex/ecs/ECSEngine.hpp"
 #endif // !HEX_ECS_ENGINE_HPP
 
+// Include ecs::EventsManager
+#ifndef HEX_ECS_EVENTS_MANAGER_HPP
+#include "../../../public/hex/ecs/events/EventsManager.hpp"
+#endif // !HEX_ECS_EVENTS_MANAGER_HPP
+
 // Include hex::ecs::memory
 #ifndef HEX_ECS_DEBUG_HPP
 #include "../../../public/hex/ecs/types/ecs_memory.hpp"
@@ -105,6 +110,9 @@ namespace hex
             ecsLog::printInfo( u8"ECSEngine::Initialize" );
             ecsAssert( !mInstance && "ECS Instance already created, check logic" );
 #endif // DEBUG
+
+            // Initialize EventsManager
+            ecs_Events::Initialize();
             
             if ( !mInstance )
                 mInstance = ecsNew<ECSEngine>();
@@ -115,6 +123,9 @@ namespace hex
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
             ecsLog::printInfo( u8"ECSEngine::Terminate" );
 #endif // DEBUG
+
+            // Terminate EventsManager
+            ecs_Events::Terminate();
 
             ecsDelete( mInstance );
             mInstance = nullptr;

@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_ECS_ENGINE_HPP
-#define HEX_ECS_ENGINE_HPP
+#ifndef HEX_ECS_EVENTS_MANAGER_HPP
+#define HEX_ECS_EVENTS_MANAGER_HPP
 
 // -----------------------------------------------------------
 
@@ -36,19 +36,31 @@
 // INCLUDES
 // ===========================================================
 
+// Include ecs::mutex
+#ifndef HEX_ECS_MUTEX_HPP
+#include "../types/ecs_mutex.hpp"
+#endif // !HEX_ECS_MUTEX_HPP
+
 // Include ecs::types
 #ifndef HEX_ECS_TYPES_HPP
-#include "types/ecs_types.hpp"
+#include "../types/ecs_types.hpp"
 #endif // !HEX_ECS_TYPES_HPP
 
 // Include hex::ecs::IDStorage
 #ifndef HEX_ECS_ID_STORAGE_HPP
-#include "utils/IDStorage.hpp"
+#include "../utils/IDStorage.hpp"
 #endif // !HEX_ECS_ID_STORAGE_HPP
 
-// STATIC-DEBUG ONLY
-#include "events/EventsManager.hpp"
-// STATIC-DEBUG ONLY
+// ===========================================================
+// FORWARD-DECLARATIONS
+// ===========================================================
+
+// Forward-Declare hex:;ecs::IEvent
+#ifndef HEX_ECS_I_EVENT_DECL
+#define HEX_ECS_I_EVENT_DECL
+namespace hex { namespace ecs { class IEvent; } }
+using ecs_IEvent = hex::ecs::IEvent;
+#endif // !HEX_ECS_I_EVENT_DECL
 
 // ===========================================================
 // TYPES
@@ -60,14 +72,19 @@ namespace hex
     namespace ecs
     {
 
+        // -----------------------------------------------------------
+
+        // ===========================================================
+        // ecs::EventsManager
+        // ===========================================================
+
         /**
          * @brief
-         * ECSEngine - ecs implementation adapter.
-         * Allows to easilly change ECS implementation.
+         * EventsManager - manage events queues.
          * 
-         * @version 0.1
+         * @version 1.0
         **/
-        class ECSEngine final
+        class EventsManager final
         {
 
         private:
@@ -84,14 +101,14 @@ namespace hex
             // FIELDS
             // ===========================================================
 
-            /** ECSEngine instance. **/
-            static ECSEngine* mInstance;
+            /** EventsManager instance. **/
+            static EventsManager* mInstance;
 
-            /** ID-Storages Mutex. **/
-            ecs_mutex_t mIDStoragesMutex;
+            /** ID-Storage Mutex. **/
+            ecs_mutex_t mIDStorageMutex;
 
             /** IDStorages **/
-            ecs_map_t<ecs_TypeID, id_storages_t> mIDStorages;
+            ecs_map_t<ecs_EventTypeID, id_storages_t> mIDStorages;
 
             // ===========================================================
             // GETTERS & SETTERS
@@ -102,19 +119,19 @@ namespace hex
              * Returns ID-Storage.
              * 
              * @thread_safety - thread-lock used.
-             * @param pTypeID - ECS Type-ID.
+             * @param pTypeID - Event Type-ID.
              * @throws - can throw exception (bad-alloc, mutex).
             **/
-            id_storages_t& getIDStorage( const ecs_TypeID pTypeID );
+            id_storages_t& getIDStorage( const ecs_EventTypeID pTypeID );
 
             // ===========================================================
             // DELETED
             // ===========================================================
 
-            ECSEngine( const ECSEngine& ) noexcept = delete;
-            ECSEngine& operator=( const ECSEngine& ) noexcept = delete;
-            ECSEngine( ECSEngine&& ) noexcept = delete;
-            ECSEngine& operator=( ECSEngine&& ) noexcept = delete;
+            EventsManager( const EventsManager& ) noexcept = delete;
+            EventsManager& operator=( const EventsManager& ) noexcept = delete;
+            EventsManager( EventsManager&& ) noexcept = delete;
+            EventsManager& operator=( EventsManager&& ) noexcept = delete;
 
             // -----------------------------------------------------------
 
@@ -127,24 +144,34 @@ namespace hex
             // ===========================================================
 
             /**
-             * @brief
-             * ECSEngine default constructor.
-             *
-             * @throws - can throw exception (mutex, bad-alloc).
-            **/
-            explicit ECSEngine();
+             * @brief 
+             * EventsManager constructor.
+             * 
+             * @throws bad-alloc
+             * @throws mutex
+             */
+            explicit EventsManager();
 
             /**
              * @brief
-             * ECSEngine destructor.
+             * EventsManager destructor.
              * 
              * @throws - no exceptions.
-            **/
-            ~ECSEngine() noexcept;
+             */
+            ~EventsManager() ECS_NOEXCEPT;
 
             // ===========================================================
             // GETTERS & SETTERS
             // ===========================================================
+
+            /**
+             * @brief
+             * Returns EventsManager instance, or null.
+             * 
+             * @thread_safety - not required.
+             * @throws - no exceptions.
+             */
+            static EventsManager* getInstance() noexcept;
 
             // ===========================================================
             // METHODS
@@ -152,52 +179,56 @@ namespace hex
 
             /**
              * @brief
-             * Initialize ECS.
-             *
-             * @throws - no exceptions.
-            **/
-            static void Initialize() noexcept;
+             * Initialize EventsManager instance.
+             * 
+             * @thread_safety - call only from main-thread.
+             * @throws bad-alloc
+             * @throws mutex
+             */
+            static void Initialize();
 
             /**
              * @brief
-             * Terminate ECS.
-             *
+             * Terminate EventsManager instance.
+             * 
+             * @thread_safety - call only from main-thread.
              * @throws - no exceptions.
-            **/
+             */
             static void Terminate() noexcept;
 
             /**
-             * @brief
-             * Generates Object-ID.
+             * @brief 
+             * Generates unique Event-instance ID.
              * 
-             * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @returns - Object-ID.
-             * @throws - can throw exception (mutex).
-            **/
-            static ecs_ObjectID generateID( const ecs_TypeID pTypeID );
+             * @thread_safety - thread-lock used.
+             * @param pType Event Type-ID
+             * @return ecs_ObjectID Event-ID.
+             */
+            static ecs_ObjectID generateEventID( const ecs_EventTypeID pType );
 
             /**
-             * @brief
-             * Release ID for reusage.
+             * @brief 
+             * Release Event-ID for reusage.
              * 
-             * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @param pID - ECS Object-ID.
-             * @throws - no exceptions.
-            **/
-            static void releaseID( const ecs_TypeID pTypeID, const ecs_ObjectID pID ) noexcept;
+             * @param pType Event Type-ID
+             * @param pID - Event-ID
+             * @throws no exceptions
+             */
+            static void releaseEventID( const ecs_EventTypeID pType, const ecs_ObjectID pID ) noexcept;
 
             // -----------------------------------------------------------
 
-        };
+        }; /// hex::ecs::EventsManager
+
+        // -----------------------------------------------------------
 
     } /// hex::ecs
 
 } /// hex
 
-using hexECS = hex::ecs::ECSEngine;
+using ecs_Events = hex::ecs::EventsManager;
+#define HEX_ECS_EVENTS_MANAGER_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_ECS_ENGINE_HPP
+#endif // !HEX_ECS_EVENTS_MANAGER_HPP

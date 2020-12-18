@@ -19,6 +19,8 @@ cmake_minimum_required ( VERSION 3.6 FATAL_ERROR ) # QT & Android
 # OPTIONS
 # =================================================================================
 
+set ( CXX_VERSION 11 )
+
 include ( "cmake/options.cmake" )
 
 # =================================================================================

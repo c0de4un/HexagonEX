@@ -76,7 +76,7 @@ namespace hex
              * 
              * @throws - no exceptions.
             **/
-            virtual ~ISystem() ECS_NOEXCEPT
+            virtual ~ISystem() noexcept
             {
             }
 
@@ -123,11 +123,11 @@ namespace hex
              * @thread_safety - thread-locks used.
              * @throws - no exceptions.
             **/
-            virtual void Stop() ECS_NOEXCEPT = 0;
+            virtual void Stop() noexcept = 0;
 
             // -----------------------------------------------------------
 
-        };
+        }; /// hex::ecs::ISystem
 
         // -----------------------------------------------------------
 

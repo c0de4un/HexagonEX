@@ -71,7 +71,7 @@ void init() noexcept
         // Initialize Logger
 #if defined(DEBUG) || defined(HEX_DEBUG) // DEBUG
         hex::win::WinLog::Initialize();
-        hexLog::printInfo( u8"HexagonEX.Windows: starting . . ." );
+        hexLog::printInfo( "HexagonEX.Windows: starting . . ." );
 #endif // DEBUG
 
         // @TODO: Create WinApp instance.
@@ -80,15 +80,15 @@ void init() noexcept
         // @TODO: Create Game instance
         // Initialize
         hexWinApp::Initialize();
-    } catch (const std::exception& pException) {
-    } catch (...) {
     }
+    catch (const std::exception& pException) { }
+    catch (...) { }
 }
 
 void cleanUp() noexcept
 {
 #if defined(DEBUG) || defined(HEX_DEBUG) // DEBUG
-    hexLog::printInfo( u8"HexagonEX.Windows: stopping . . ." );
+    hexLog::printInfo( "HexagonEX.Windows: stopping . . ." );
 #endif // DEBUG
 
     // @TODO: Terminate instances.

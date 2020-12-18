@@ -44,13 +44,16 @@
 // Include STL numeric
 #if defined( HEX_WINDOWS ) // Windows
 #include <cstdint>
+#include <iostream>
 #include <limits>
 #elif defined( HEX_LINUX ) // Linux
 #include <cstdint>
+#include <iostream>
 #include <limits>
 #elif defined( HEX_ANDROID ) // Android
 #include <cstdint>
-#include <limits> // Android NDK
+#include <iostream>
+#include <limits>
 #else
 #error "hex_numeric.hpp - configuration required."
 #endif

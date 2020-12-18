@@ -34,130 +34,132 @@
 // ===========================================================
 
 // HEADER
-#ifndef HEX_CORE_APPLICATION_HPP
-#include "../../../../public/hex/core/app/Application.hpp"
-#endif // !HEX_CORE_APPLICATION_HPP
+#ifndef HEX_ECS_EVENTS_MANAGER_HPP
+#include "../../../../public/hex/ecs/events/EventsManager.hpp"
+#endif // !HEX_ECS_EVENTS_MANAGER_HPP
 
-// Include hex::memory
-#ifndef HEX_CORE_CONFIG_MEMORY_HPP
-#include "../../../../public/hex/core/configs/hex_memory.hpp"
-#endif // !HEX_CORE_CONFIG_MEMORY_HPP
+// Include ecs::IEvent
+#ifndef HEX_ECS_I_EVENT_HXX
+#include "../../../../public/hex/ecs/events/IEvent.hxx"
+#endif // !HEX_ECS_I_EVENT_HXX
 
-// Include hex::ecs::ECSEngine
-#ifndef HEX_ECS_ENGINE_HPP
-#include "../../../../public/hex/ecs/ECSEngine.hpp"
-#endif // HEX_ECS_ENGINE_HPP
-
-// Include hex::core::GraphicsManager
-#ifndef HEX_CORE_GRAPHICS_MANAGER_HPP
-#include "../../../../public/hex/core/graphics/GraphicsManager.hpp"
-#endif // !HEX_CORE_GRAPHICS_MANAGER_HPP
+// Include hex::ecs::memory
+#ifndef HEX_ECS_DEBUG_HPP
+#include "../../../public/hex/ecs/types/ecs_memory.hpp"
+#endif // !HEX_ECS_DEBUG_HPP
 
 // DEBUG
 #if defined( DEBUG ) || defined( HEX_DEBUG )
 
-// Include hex::log
-#ifndef HEX_CORE_CONFIG_LOG_HPP
-#include "../../../../public/hex/core/configs/hex_log.hpp"
-#endif // !HEX_CORE_CONFIG_LOG_HPP
-
-// Include hex::assert
-#ifndef HEX_CORE_CONFIG_ASSERT_HPP
-#include "../../../../public/hex/core/configs/hex_assert.hpp"
-#endif // !HEX_CORE_CONFIG_ASSERT_HPP
+// Include debug
+#ifndef HEX_ECS_DEBUG_HPP
+#include "../../../../public/hex/ecs/types/ecs_debug.hpp"
+#endif // !HEX_ECS_DEBUG_HPP
 
 #endif
 // DEBUG
 
 // ===========================================================
-// hex::core::Application
+// hex::ecs::EventsManager
 // ===========================================================
 
 namespace hex
 {
 
-    namespace core
+    namespace ecs
     {
 
         // -----------------------------------------------------------
 
         // ===========================================================
-        // CONSTANTS & FIELDS
+        // FIELDS
         // ===========================================================
 
-        Application* Application::mInstance( nullptr );
+        EventsManager* EventsManager::mInstance( nullptr );
 
         // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        Application::Application() = default;
+        EventsManager::EventsManager()
+            : mIDStorageMutex(),
+            mIDStorages()
+        {
+        }
 
-        Application::~Application() noexcept = default;
+        EventsManager::~EventsManager() ECS_NOEXCEPT = default;
+
+        // ===========================================================
+        // GETTERS & SETTERS
+        // ===========================================================
+
+        EventsManager* EventsManager::getInstance() noexcept
+        { return mInstance; }
+
+        EventsManager::id_storages_t& EventsManager::getIDStorage( const ecs_EventTypeID pTypeID )
+        {
+            ecs_lock_t lock( &mIDStorageMutex );
+            return mIDStorages[pTypeID];
+        }
 
         // ===========================================================
         // METHODS
         // ===========================================================
 
-        void onInitialize()
-        {
-        }
-
-        void Application::Terminate() noexcept
+        void EventsManager::Initialize()
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( u8"Application::Terminate" );
+                ecsLog::printInfo( "EventsManager::Initialize" );
 #endif // DEBUG
 
-            if ( mInstance )
-                mInstance->onTerminate();
+            if ( !mInstance )
+                mInstance = ecsNew<EventsManager>();
+        }
 
+        void EventsManager::Terminate() noexcept
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+                ecsLog::printInfo( "EventsManager::Terminate" );
+#endif // DEBUG
+
+            ecsDelete( mInstance );
             mInstance = nullptr;
         }
 
-        void Application::onInitialize()
+        ecs_ObjectID EventsManager::generateEventID( const ecs_EventTypeID pType )
         {
+            EventsManager* const instance( getInstance() );
+
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( u8"Application::onInitialize" );
+            ecsAssert( instance && "EventsManager::generateEventID: not initialized !" );
 #endif // DEBUG
 
-            // Initialize ECS
-            hexECS::Initialize();
+            if ( instance )
+            {
+                ecs_lock_t lock( &instance->mIDStorageMutex );
+                id_storages_t& idStorage( instance->getIDStorage(pType) );
+                return idStorage.generateID();
+            }
 
-            // Initialize default MemoryManager
-            hexMemory::Initialize();
-
-            // @TODO: Initialize ThreadsManager
-            // @TODO: Initialize NetManager
-            // @TODO: Initialize AudioManager
-            // @TODO: Initialize InputManager
-            // @TODO: Initialize GraphicsManager
-            hex_Graphics::Initialize();
-            // @TODO: Initialize RenderManager
-            // @TODO: Initialize ParticlesManager
-
+            return ECS_INVALID_OBJECT_ID;
         }
 
-        void Application::onTerminate() noexcept
+        void EventsManager::releaseEventID( const ecs_EventTypeID pType, const ecs_ObjectID pID ) noexcept
         {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( u8"Application::onTerminate" );
-#endif // DEBUG
+            EventsManager* const instance( getInstance() );
 
-            // Terminate Application
-            hexMemory::Delete( mInstance );
-
-            // Terminate ECS
-            hexECS::Terminate();
-
-            // Termiante MemoryManager
-            hexMemory::Terminate();
+            if ( instance )
+            {
+                ecs_lock_t lock( &instance->mIDStorageMutex );
+                id_storages_t& idStorage( instance->getIDStorage(pType) );
+                idStorage.returnID( pID );
+            }
         }
 
         // -----------------------------------------------------------
 
-    } /// hex::core
+    }
 
-} /// hex
+}
 
 // -----------------------------------------------------------

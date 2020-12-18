@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_ECS_SYSTEM_HPP
-#define HEX_ECS_SYSTEM_HPP
+#ifndef HEX_ECS_EVENT_HPP
+#define HEX_ECS_EVENT_HPP
 
 // -----------------------------------------------------------
 
@@ -36,10 +36,20 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::ecs::ISsystem
-#ifndef HEX_ECS_I_SYSTEM_HXX
-#include "ISystem.hxx"
-#endif // !HEX_ECS_I_SYSTEM_HXX
+// Include ecs::IEvent
+#ifndef HEX_ECS_I_EVENT_HXX
+#include "IEvent.hxx"
+#endif // !HEX_ECS_I_EVENT_HXX
+
+// Include ecs::atomic
+#ifndef HEX_ECS_ATOMIC_HPP
+#include "../types/ecs_atomic.hpp"
+#endif // !HEX_ECS_ATOMIC_HPP
+
+// Include ecs::vector
+#ifndef HEX_ECS_VECTOR_HPP
+#include "../types/ecs_vector.hpp"
+#endif // !HEX_ECS_VECTOR_HPP
 
 // Include ecs::mutex
 #ifndef HEX_ECS_MUTEX_HPP
@@ -58,14 +68,40 @@ namespace hex
 
         // -----------------------------------------------------------
 
+        // ===========================================================
+        // ecs::Event
+        // ===========================================================
+
         /**
          * @brief
-         * System - base System class.
-         *
+         * Event - base Event class.
+         * 
          * @version 1.0
         **/
-        class System : public ecs_ISystem
+        class Event : public ecs_IEvent
         {
+
+        public:
+
+            // -----------------------------------------------------------
+
+            // ===========================================================
+            // CONSTANTS
+            // ===========================================================
+
+            /**
+             * @brief
+             * Boolean-flag ids.
+             */
+            static constexpr const unsigned int HANDLED_FLAG = 0;
+            static constexpr const unsigned int HAS_ERROR_FLAG = 1;
+
+            // -----------------------------------------------------------
+
+        private:
+
+            /** Initial flags bool-vector capacity. **/
+            static constexpr const unsigned int DEFAULT_FLAGS_NUM = 2;
 
         protected:
 
@@ -75,7 +111,11 @@ namespace hex
             // FIELDS
             // ===========================================================
 
-            
+            /** Common Access-Mutex. **/
+            mutable ecs_mutex_t mMutex;
+
+            /** Boolean-Flags. **/
+            ecs_vector_t<bool> mFlags;
 
             // ===========================================================
             // CONSTRUCTOR
@@ -83,47 +123,24 @@ namespace hex
 
             /**
              * @brief
-             * System constructor.
+             * Event constructor.
              * 
-             * @param pType - Type-ID.
-             * @throws - can throw exception.
+             * @param pTypeID - ECS Type-ID.
+             * @param pFlags - amount of boolean-flags to allocate (bit-vector).
+             * @throws - can throw exception:
+             *           - bad_alloc;
+             *           - mutex;
             **/
-            explicit System( const ecs_TypeID pType );
+            explicit Event( const ecs_EventTypeID pTypeID, const unsigned char pFlags = DEFAULT_FLAGS_NUM );
 
             // ===========================================================
             // DELETED
             // ===========================================================
 
-            System( const System& ) noexcept = delete;
-            System& operator=( const System& ) noexcept = delete;
-            System( System&& ) noexcept = delete;
-            System& operator=( System&& ) noexcept = delete;
-
-            // ===========================================================
-            // METHODS
-            // ===========================================================
-
-            /**
-             * @brief
-             * Generates ID for instance of this ECS Type.
-             * 
-             * @thread_safety - thread-locks used.
-             * @param pType - ECS Type-ID.
-             * @returns - ID.
-             * @throws - can throw exception.
-            **/
-            static ecs_ObjectID generateSystemID( const ecs_TypeID pType );
-
-            /**
-             * @brief
-             * Release ID of instance.
-             * 
-             * @thread_safety - thread-locks used.
-             * @param pType - ECS Type-ID.
-             * @param pID - ECS Object-ID.
-             * @throws - no exceptions.
-            **/
-            static void releaseSystemID( const ecs_TypeID pType, const ecs_ObjectID pID );
+            Event( const Event& ) noexcept = delete;
+            Event& operator=( const Event& ) noexcept = delete;
+            Event( Event&& ) noexcept = delete;
+            Event& operator=( Event&& ) noexcept = delete;
 
             // -----------------------------------------------------------
 
@@ -135,10 +152,10 @@ namespace hex
             // CONSTANTS
             // ===========================================================
 
-            /** ECS Type-ID. **/
-            const ecs_TypeID mTypeID;
+            /** Event Type-ID. **/
+            const ecs_EventTypeID mTypeID;
 
-            /** ECS Object-ID. **/
+            /** Event ID. **/
             const ecs_ObjectID mID;
 
             // ===========================================================
@@ -147,60 +164,70 @@ namespace hex
 
             /**
              * @brief
-             * System destructor.
-             *
+             * Event destructor.
+             * 
              * @throws - no exceptions.
             **/
-            virtual ~System() noexcept;
+            virtual ~Event() ECS_NOEXCEPT;
 
             // ===========================================================
-            // GETTERS & SETTERS
+            // ecs::IEvent: GETTERS & SETTERS
             // ===========================================================
 
             /**
              * @brief
-             * Returns ECS Type-ID.
+             * Returns Type-ID.
              *
              * @thread_safety - not required.
-             * @throws - no exceptions.
+             * @throws - no exxceptions.
             **/
-            virtual ecs_TypeID getTypeID() const noexcept final;
+            virtual ecs_EventTypeID getTypeID() const noexcept final;
 
             /**
              * @brief
-             * Returns ECS Object-ID.
+             * Retursn Event ID.
              *
              * @thread_safety - not required.
              * @throws - no exceptions.
             **/
             virtual ecs_ObjectID getID() const noexcept final;
 
-            // ===========================================================
-            // METHODS
-            // ===========================================================
-
             /**
              * @brief
-             * Start System.
+             * Returns 'true' if Event is handled.
              *
-             * @thread_safety - thread-locks used.
-             * @return - 0 if OK.
-             * @throws - can throw exception.
-            **/
-            virtual int Start() final;
-
-            /**
-             * @brief
-             * Stop System.
-             *
-             * @thread_safety - thread-locks used.
+             * @thread_safety - atomics used.
              * @throws - no exceptions.
             **/
-            virtual void Stop() noexcept final;
+            virtual bool isHandled() const ECS_NOEXCEPT final;
+
+            // ===========================================================
+            // GETTERS & SETTERS
+            // ===========================================================
+
+            /**
+             * @brief Get the Boolean Flag
+             * 
+             * @param pFlag - flag index.
+             * @throws - can throw exception:
+             *           - mutex;
+             */
+            bool getBooleanFlag( const unsigned int pFlag ) const;
+
+            /**
+             * @brief Set the Boolean Flag
+             * 
+             * @param pFlag - flag index/id
+             * @param pValue - value
+             * @throws - can throw exception:
+             *           - mutex;
+             *           - bad-alloc (vector);
+             */
+            void setBooleanFlag( const unsigned int pFlag, const bool pValue );
 
             // -----------------------------------------------------------
 
-        };
+        }; /// hex::ecs::Event
 
         // -----------------------------------------------------------
 
@@ -208,9 +235,9 @@ namespace hex
 
 } /// hex
 
-using ecs_System = hex::ecs::System;
-#define HEX_ECS_SYSTEM_DECL
+using ecs_Event = hex::ecs::Event;
+#define HEX_ECS_EVENT_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_ECS_SYSTEM_HPP
+#endif // !HEX_ECS_EVENT_HPP

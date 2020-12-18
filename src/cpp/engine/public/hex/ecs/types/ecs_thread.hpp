@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_ECS_API_HPP
-#define HEX_ECS_API_HPP
+#ifndef HEX_ECS_THREAD_HPP
+#define HEX_ECS_THREAD_HPP
 
 // -----------------------------------------------------------
 
@@ -36,17 +36,17 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::api
-#ifndef HEX_CORE_API_HPP
-#include "../../core/configs/hex_api.hpp"
-#endif // !HEX_CORE_API_HPP
+// Include hex:thread
+#ifndef HEX_CONFIG_THREAD_HPP
+#include "../../core/configs/hex_thread.hpp"
+#endif // !HEX_CONFIG_THREAD_HPP
 
 // ===========================================================
 // TYPES
 // ===========================================================
 
-#define ECS_NOEXCEPT HEX_NOEXCEPT
+using ecs_ThreadType = hex_ThreadType;
 
 // -----------------------------------------------------------
 
-#endif // !HEX_ECS_API_HPP
+#endif // !HEX_ECS_THREAD_HPP

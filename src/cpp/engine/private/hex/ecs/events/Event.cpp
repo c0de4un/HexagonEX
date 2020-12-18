@@ -34,115 +34,91 @@
 // ===========================================================
 
 // HEADER
-#ifndef HEX_CORE_GRAPHICS_MANAGER_HPP
-#include "../../../public/hex/core/graphics/GraphicsManager.hpp"
-#endif // !HEX_CORE_GRAPHICS_MANAGER_HPP
+#ifndef HEX_ECS_EVENT_HPP
+#include "../../../../public/hex/ecs/events/Event.hpp"
+#endif // !HEX_ECS_EVENT_HPP
 
-// Include hex::core::ESystem
-#ifndef HEX_CORE_E_SYSTEMS_HPP
-#include "../../../public/hex/core/utils/ecs/ESystem.hpp"
-#endif // !HEX_CORE_E_SYSTEMS_HPP
+// Include ecs::EventsManager
+#ifndef HEX_ECS_EVENTS_MANAGER_HPP
+#include "../../../../public/hex/ecs/events/EventsManager.hpp"
+#endif // !HEX_ECS_EVENTS_MANAGER_HPP
 
 // DEBUG
 #if defined( DEBUG ) || defined( HEX_DEBUG )
 
-// Include hex::log
-#ifndef HEX_CORE_CONFIG_LOG_HPP
-#include "../../../public/hex/core/configs/hex_log.hpp"
-#endif // !HEX_CORE_CONFIG_LOG_HPP
-
-// Include hex::assert
-#ifndef HEX_CORE_CONFIG_ASSERT_HPP
-#include "../../../public/hex/core/configs/hex_assert.hpp"
-#endif // !HEX_CORE_CONFIG_ASSERT_HPP
+// Include debug
+#ifndef HEX_ECS_DEBUG_HPP
+#include "../../../../public/hex/ecs/types/ecs_debug.hpp"
+#endif // !HEX_ECS_DEBUG_HPP
 
 #endif
 // DEBUG
 
 // ===========================================================
-// hex::core::GraphicsManager
+// ecs::Event
 // ===========================================================
 
 namespace hex
 {
 
-    namespace core
+    namespace ecs
     {
 
         // -----------------------------------------------------------
 
         // ===========================================================
-        // FIELDS
-        // ===========================================================
-
-        hex_sptr<GraphicsManager> GraphicsManager::mInstance( nullptr );
-
-        // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        GraphicsManager::GraphicsManager( hex_GraphicsSettings* const graphicsSettings )
-            : System( hex_ESystem::RENDER ),
-            mGraphicsSettings( graphicsSettings )
+        Event::Event( const ecs_EventTypeID pTypeID, const unsigned char pFlags )
+            : mMutex(),
+            mFlags(),
+            mTypeID( pTypeID ),
+            mID( ecs_Events::generateEventID(pTypeID) )
+
         {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( "GraphicsManager::constructor" );
-#endif // DEUBG
+            if ( pFlags > 0 )
+                mFlags.reserve( pFlags );
         }
 
-        GraphicsManager::~GraphicsManager()
+        Event::~Event() ECS_NOEXCEPT
         {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( "GraphicsManager::destructor" );
-#endif // DEUBG
-
-            delete mGraphicsSettings;
+            ecs_Events::releaseEventID( mTypeID, mID );
         }
+
+        // ===========================================================
+        // ecs::IEvent: GETTERS & SETTERS
+        // ===========================================================
+
+        ecs_EventTypeID Event::getTypeID() const noexcept
+        { return mTypeID; }
+
+        ecs_ObjectID Event::getID() const noexcept
+        { return mID; }
+
+        bool Event::isHandled() const ECS_NOEXCEPT
+        { return getBooleanFlag( Event::HANDLED_FLAG ); }
 
         // ===========================================================
         // GETTERS & SETTERS
         // ===========================================================
 
-        hex_sptr<GraphicsManager> GraphicsManager::getInstance() noexcept
-        { return mInstance; }
-
-        const hex_GraphicsSettings* GraphicsManager::getGraphicsSettings() const noexcept
-        { return mGraphicsSettings; }
-
-        // ===========================================================
-        // METHODS
-        // ===========================================================
-
-        int GraphicsManager::Initialize()
-        {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( "GraphicsManager::Initialize" );
-#endif // DEUBG
-
-            //hex_sptr<GraphicsManager> instance( static_cast<GraphicsManager*>(getInstance()) );
-            //if ( instance != nullptr )
-                //return instance->Start();
-
-            return -1;
+        bool Event::getBooleanFlag( const unsigned int pFlag ) const
+        {// @TODO: add assertions
+            ecs_lock_t lock( &mMutex );
+            return mFlags[pFlag];
         }
 
-        void GraphicsManager::Terminate() HEX_NOEXCEPT
-        {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( "GraphicsManager::Terminate" );
-#endif // DEUBG
-
-            //hex_sptr<IGraphics> instance( getInstance() );
-            //if ( instance != nullptr )
-                //instance->Stop();
-
-            mInstance = nullptr;
+        void Event::setBooleanFlag( const unsigned int pFlag, const bool pValue )
+        {// @TODO: add assertions
+            ecs_lock_t lock( &mMutex );
+            mFlags[pFlag] = pValue;
         }
 
         // -----------------------------------------------------------
 
-    } /// hex::core
+    }
 
-} /// hex
+}
 
 // -----------------------------------------------------------

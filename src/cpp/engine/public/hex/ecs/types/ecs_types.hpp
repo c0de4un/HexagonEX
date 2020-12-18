@@ -61,10 +61,10 @@ using ecs_int64_t   = hex_int64_t;
 using ecs_float_t   = hex_float_t;
 
 using ecs_TypeID = ecs_uint8_t;
-static constexpr const ecs_TypeID ECS_INVALID_TYPE_ID = std::numeric_limits<ecs_TypeID>::max() - 1;
-
 using ecs_ObjectID = ecs_uint64_t;
-static constexpr const ecs_TypeID ECS_INVALID_OBJECT_ID = std::numeric_limits<ecs_ObjectID>::max() - 1;
+using ecs_EventTypeID = ecs_uint32_t;
+
+#define ECS_INVALID_OBJECT_ID ecs_ObjectID(99999);
 
 // -----------------------------------------------------------
 

@@ -37,7 +37,7 @@
 // ===========================================================
 
 // WINDOWS
-#if defined( MINGW ) || defined( MINGGW32 ) || defined( MINGW64 ) || defined( WIN32 ) || defined( WIN64 ) || defined( WINDOWS ) || defined( MSVC )
+#if defined( MINGW ) || defined( MINGW32 ) || defined( MINGW64 ) || defined( WIN ) || defined( WIN32 ) || defined( _WIN32 ) || defined( _WIN64 ) || defined( WIN64 ) || defined( WINDOWS ) || defined( MSVC ) || defined( MSVC64 )
 #define HEX_WINDOWS
 #elif defined( __linux ) || defined( _linux ) || defined( _linux_ ) || defined( __linux__ ) || defined( LINUX )
 // LINUX

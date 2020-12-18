@@ -86,7 +86,7 @@ namespace hex
             // ===========================================================
 
             /** IGraphics Instance **/
-            static hex_sptr<IGraphics> mInstance;
+            static hex_sptr<GraphicsManager> mInstance;
 
             /** GraphicsSettings **/
             hex_GraphicsSettings* mGraphicsSettings;
@@ -139,7 +139,7 @@ namespace hex
              * @return IGraphics, or null.
              * @throws - no exceptions.
             **/
-            static hex_sptr<IGraphics> getInstance() noexcept;
+            static hex_sptr<GraphicsManager> getInstance() noexcept;
 
             // ===========================================================
             // DESTRUCTOR
@@ -178,7 +178,7 @@ namespace hex
              * @thread_safety - thread-locks used.
              * @throws - no exceptions.
             **/
-            static int Terminate() HEX_NOEXCEPT;
+            static void Terminate() HEX_NOEXCEPT;
 
             // -----------------------------------------------------------
 
