@@ -55,6 +55,8 @@ set ( PRIVATE_DIR "../../../private/hex/windows/" )
 set ( HEX_WIN_HEADERS ""
     # ASYNC
     "${PUBLIC_DIR}utils/async/WinMutex.hpp"
+    # GRAPHICS
+    "${PUBLIC_DIR}graphics/WinGraphics.hpp"
     # APPLICATION
     "${PUBLIC_DIR}app/WinApp.hpp" )
 
@@ -71,6 +73,8 @@ endif ( DEBUG OR HEX_DEBUG )
 set ( HEX_WIN_SOURCES ""
     # ASYNC
     "${PRIVATE_DIR}utils/async/WinMutex.cpp"
+    # GRAPHICS
+    "${PRIVATE_DIR}graphics/WinGraphics.cpp"
     # APPLICATION
     "${PRIVATE_DIR}app/WinApp.cpp" )
 

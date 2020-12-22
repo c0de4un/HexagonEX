@@ -82,33 +82,19 @@ namespace hex
         // METHODS
         // ===========================================================
 
-        WinApp* WinApp::Initialize() noexcept
-        {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( u8"WinApp::Initialize" );
-#endif // DEBUG
-
-            if ( !mInstance )
-                mInstance = hexMemory::New<hexWinApp>();
-
-            return static_cast<WinApp*>( mInstance );
-        }
-
         void WinApp::onInitialize()
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( u8"WinApp::onTerminate" );
+            hex_Log::printInfo( "WinApp::onInitialize" );
 #endif // DEBUG
 
             Application::onInitialize();
-
-            // 
         }
 
         void WinApp::onTerminate() noexcept
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( u8"WinApp::onTerminate" );
+            hex_Log::printInfo( "WinApp::onTerminate" );
 #endif // DEBUG
 
             Application::onTerminate();

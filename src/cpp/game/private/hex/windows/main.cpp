@@ -44,6 +44,9 @@
 #endif // !HEX_WIN_APP_HPP
 
 // @TODO: Include hex::win::WinGraphics
+#ifndef HEX_WIN_GRAPHICS_HPP
+#include "../../../../engine/public/hex/windows/graphics/WinGraphics.hpp"
+#endif // !HEX_WIN_GRAPHICS_HPP
 
 // @TODO: Include hex::gl::GLRenderManager
 
@@ -71,15 +74,27 @@ void init() noexcept
         // Initialize Logger
 #if defined(DEBUG) || defined(HEX_DEBUG) // DEBUG
         hex::win::WinLog::Initialize();
-        hexLog::printInfo( "HexagonEX.Windows: starting . . ." );
+        hex_Log::printInfo( "HexagonEX.Windows: starting . . ." );
 #endif // DEBUG
 
-        // @TODO: Create WinApp instance.
-        // @TODO: Create GLFWGraphics instance
+        // Initialize WinApp
+        hex_App::Initialize( hex_MakeShared<hex_App>(static_cast<hex_App*>( hex_New<hex_WinApp>() )) );
+
         // @TODO: Create Engine instance
+        // hex_sptr<hex_Engine> engine( hex_Engine::Initialize(hex_New<hex_Engine()>) );
+
         // @TODO: Create Game instance
-        // Initialize
-        hexWinApp::Initialize();
+        // Create & Initialize WinApp instance.
+        // hex_WinApp::Initialize();
+
+        // Create WinGraphics
+        // hex_GraphicsSettings* const graphicsSettings( hex_New<hex_GraphicsSettings>() );
+        // graphicsSettings->mWidth = 640;
+        // graphicsSettings->mHeight = 480;
+        // hex_WinGraphics::Initialize( graphicsSettings );
+
+        // Start
+        // hex_sptr<hex_App> app( hex_App::getInstance() );
     }
     catch (const std::exception& pException) { }
     catch (...) { }
@@ -88,17 +103,15 @@ void init() noexcept
 void cleanUp() noexcept
 {
 #if defined(DEBUG) || defined(HEX_DEBUG) // DEBUG
-    hexLog::printInfo( "HexagonEX.Windows: stopping . . ." );
+    hex_Log::printInfo( "HexagonEX.Windows: stopping . . ." );
 #endif // DEBUG
 
-    // @TODO: Terminate instances.
-
     // Terminate();
-    hexApp::Terminate();
+    hex_App::Terminate();
 
     // @TODO: Terminate Logger
 #if defined(DEBUG) || defined(HEX_DEBUG) // DEBUG
-    hexLog::Terminate();
+    hex_Log::Terminate();
 #endif // DEBUG
 }
 

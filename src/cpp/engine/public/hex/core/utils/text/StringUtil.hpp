@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_GRAPHICS_SETTINGS_HPP
-#define HEX_CORE_GRAPHICS_SETTINGS_HPP
+#ifndef HEX_CORE_STRING_UTIL_HPP
+#define HEX_CORE_STRING_UTIL_HPP
 
 // -----------------------------------------------------------
 
@@ -36,10 +36,10 @@
 // INCLUDES
 // ===========================================================
 
-// Include hex::api
-#ifndef HEX_CORE_API_HPP
-#include "../configs/hex_api.hpp"
-#endif // !HEX_CORE_API_HPP
+// Include hex::string
+#ifndef HEX_CORE_STRING_HPP
+#include "../../configs/hex_string.hpp"
+#endif // !HEX_CORE_STRING_HPP
 
 // ===========================================================
 // TYPES
@@ -51,54 +51,90 @@ namespace hex
     namespace core
     {
 
+        // -----------------------------------------------------------
+
+        // ===========================================================
+        // hex::core::StringUtil
+        // ===========================================================
+
         /**
          * @brief
-         * GraphicsSettings - base graphics settings struct.
+         * StringUtil - string utility.
          * 
          * @version 1.1
         **/
-        struct GraphicsSettings
+        class StringUtil final
         {
 
+        private:
+
             // -----------------------------------------------------------
 
             // ===========================================================
-            // CONSTANTS
+            // CONSTRUCTOR
+            // ===========================================================
+
+            /**
+             * @brief
+             * StringUtil constructor.
+             * 
+             * @throws - bad_alloc.
+            **/
+            explicit StringUtil() = default;
+
+            // ===========================================================
+            // DELETED
+            // ===========================================================
+
+            StringUtil( const StringUtil& ) noexcept = delete;
+            StringUtil& operator=( const StringUtil& ) noexcept = delete;
+            StringUtil( StringUtil&& ) noexcept = delete;
+            StringUtil& operator=( StringUtil&& ) noexcept = delete;
+
+            // -----------------------------------------------------------
+
+        public:
+
+            // -----------------------------------------------------------
+
+            // ===========================================================
+            // DESTRUCTOR
+            // ===========================================================
+
+            /**
+             * @brief
+             * StringUtil destructor.
+             * 
+             * @throws - no exceptions.
+            **/
+            ~StringUtil() noexcept = default;
+
+            // ===========================================================
+            // GETTERS & SETTERS
             // ===========================================================
 
             // ===========================================================
-            // FIELDS
+            // METHODS
             // ===========================================================
 
-            /** Width **/
-            int mWidth;
-
-            /** Height **/
-            int mHeight;
-
-            // ===========================================================
-            // CONSTRUCTOR & DESTRUCTOR
-            // ===========================================================
-
-            explicit GraphicsSettings()
-                : mWidth( 0 ),
-                mHeight( 0 )
-            {                
+            template <typename T>
+            static hex_string to_string( const T pValue )
+            {
+                return std::to_string( pValue );
             }
 
-            virtual ~GraphicsSettings() noexcept = default;
-
             // -----------------------------------------------------------
 
-        };
+        }; /// hex::core::StringUtil
+
+        // -----------------------------------------------------------
 
     } /// hex::core
 
 } /// hex
 
-using hex_GraphicsSettings = hex::core::GraphicsSettings;
-#define HEX_CORE_GRAPHICS_SETTINGS_DECL
+using hex_Strings = hex::core::StringUtil;
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_GRAPHICS_SETTINGS_HPP
+#endif // !HEX_CORE_STRING_UTIL_HPP

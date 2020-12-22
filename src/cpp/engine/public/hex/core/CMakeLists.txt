@@ -62,6 +62,7 @@ set ( HEX_CORE_HEADERS
     "${PUBLIC_DIR}configs/hex_memory.hpp"
     "${PUBLIC_DIR}configs/hex_map.hpp"
     "${PUBLIC_DIR}configs/hex_vector.hpp"
+    "${PUBLIC_DIR}configs/hex_string.hpp"
     "${PUBLIC_DIR}configs/hex_thread.hpp"
     # APPLICATION
     "${PUBLIC_DIR}app/IApplication.hxx"
@@ -71,6 +72,8 @@ set ( HEX_CORE_HEADERS
     "${PUBLIC_DIR}graphics/GraphicsSettings.hpp"
     "${PUBLIC_DIR}graphics/GraphicsManager.hpp"
     # ENGINE
+    "${PUBLIC_DIR}engine/IEngine.hxx"
+    "${PUBLIC_DIR}engine/Engine.hpp"
     # RENDER
     # ASYNC
     "${PUBLIC_DIR}utils/async/IMutex.hxx"
@@ -85,6 +88,7 @@ set ( HEX_CORE_HEADERS
     # UTILS
     "${PUBLIC_DIR}utils/ecs/ESystem.hpp"
     "${PUBLIC_DIR}utils/lng/Enum.hpp"
+    "${PUBLIC_DIR}utils/text/StringUtil.hpp"
     "${PUBLIC_DIR}hex.hpp" )
 
 # DEBUG
@@ -106,6 +110,7 @@ set ( HEX_CORE_SOURCES
     # GRAPHICS
     "${PRIVATE_DIR}graphics/GraphicsManager.cpp"
     # ENGINE
+    "${PRIVATE_DIR}engine/Engine.cpp"
     # RENDER
     # ASYNC
     "${PRIVATE_DIR}utils/async/Mutex.cpp"

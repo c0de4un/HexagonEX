@@ -27,19 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_GRAPHICS_SETTINGS_HPP
-#define HEX_CORE_GRAPHICS_SETTINGS_HPP
+#ifndef HEX_CORE_I_ENGINE_HXX
+#define HEX_CORE_I_ENGINE_HXX
 
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
-
-// Include hex::api
-#ifndef HEX_CORE_API_HPP
-#include "../configs/hex_api.hpp"
-#endif // !HEX_CORE_API_HPP
 
 // ===========================================================
 // TYPES
@@ -51,54 +46,61 @@ namespace hex
     namespace core
     {
 
+        // -----------------------------------------------------------
+
+        // ===========================================================
+        // hex::core::IEngine
+        // ===========================================================
+
         /**
          * @brief
-         * GraphicsSettings - base graphics settings struct.
+         * IEngine - engine interface.
          * 
          * @version 1.1
         **/
-        struct GraphicsSettings
+        class IEngine
         {
 
+        public:
+
             // -----------------------------------------------------------
 
             // ===========================================================
-            // CONSTANTS
+            // DESTRUCTOR
             // ===========================================================
 
-            // ===========================================================
-            // FIELDS
-            // ===========================================================
-
-            /** Width **/
-            int mWidth;
-
-            /** Height **/
-            int mHeight;
-
-            // ===========================================================
-            // CONSTRUCTOR & DESTRUCTOR
-            // ===========================================================
-
-            explicit GraphicsSettings()
-                : mWidth( 0 ),
-                mHeight( 0 )
-            {                
+            /**
+             * @brief
+             * IEngine destructor.
+             * 
+             * @throws - no exceptions.
+            **/
+            virtual ~IEngine() noexcept
+            {
             }
 
-            virtual ~GraphicsSettings() noexcept = default;
+            // ===========================================================
+            // GETTERS & SETTERS
+            // ===========================================================
+
+            // ===========================================================
+            // METHODS
+            // ===========================================================
 
             // -----------------------------------------------------------
 
-        };
+        }; /// hex::core::IEngine
+
+        // -----------------------------------------------------------
 
     } /// hex::core
 
 } /// hex
 
-using hex_GraphicsSettings = hex::core::GraphicsSettings;
-#define HEX_CORE_GRAPHICS_SETTINGS_DECL
+using hex_IEngine = hex::core::IEngine;
+
+#define HEX_CORE_I_ENGINE_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_GRAPHICS_SETTINGS_HPP
+#endif // !HEX_CORE_I_ENGINE_HXX

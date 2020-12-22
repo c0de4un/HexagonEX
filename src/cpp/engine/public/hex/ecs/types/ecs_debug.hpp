@@ -44,7 +44,7 @@
 #ifndef HEX_CORE_CONFIG_LOG_HPP
 #include "../../core/configs/hex_log.hpp"
 #endif // !HEX_CORE_CONFIG_LOG_HPP
-using ecsLog = hexLog;
+using ecsLog = hex_Log;
 
 // Include hex::assert
 #ifndef HEX_CORE_CONFIG_ASSERT_HPP

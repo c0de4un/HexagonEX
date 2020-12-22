@@ -34,34 +34,39 @@
 // ===========================================================
 
 // HEADER
-#ifndef HEX_ECS_SYSTEMS_MANAGER_HPP
-#include "../../../../public/hex/ecs/systems/SystemsManager.hpp"
-#endif // !HEX_ECS_SYSTEMS_MANAGER_HPP
+#ifndef HEX_CORE_ENGINE_HPP
+#include "../../../../public/hex/core/engine/Engine.hpp"
+#endif // !HEX_CORE_ENGINE_HPP
 
-// Include hex::ecs::memory
-#ifndef HEX_ECS_DEBUG_HPP
-#include "../../../public/hex/ecs/types/ecs_memory.hpp"
-#endif // !HEX_ECS_DEBUG_HPP
+// Include hex::core::ESystem
+#ifndef HEX_CORE_E_SYSTEMS_HPP
+#include "../../../../public/hex/core/utils/ecs/ESystem.hpp"
+#endif // !HEX_CORE_E_SYSTEMS_HPP
 
 // DEBUG
 #if defined( DEBUG ) || defined( HEX_DEBUG )
 
-// Include debug
-#ifndef HEX_ECS_DEBUG_HPP
-#include "../../../../public/hex/ecs/types/ecs_debug.hpp"
-#endif // !HEX_ECS_DEBUG_HPP
+// Include hex::log
+#ifndef HEX_CORE_CONFIG_LOG_HPP
+#include "../../../public/hex/core/configs/hex_log.hpp"
+#endif // !HEX_CORE_CONFIG_LOG_HPP
+
+// Include hex::assert
+#ifndef HEX_CORE_CONFIG_ASSERT_HPP
+#include "../../../public/hex/core/configs/hex_assert.hpp"
+#endif // !HEX_CORE_CONFIG_ASSERT_HPP
 
 #endif
 // DEBUG
 
 // ===========================================================
-// ecs::SystemsManager
+// hex::core::Engine
 // ===========================================================
 
 namespace hex
 {
 
-    namespace ecs
+    namespace core
     {
 
         // -----------------------------------------------------------
@@ -70,52 +75,108 @@ namespace hex
         // FIELDS
         // ===========================================================
 
-        SystemsManager* SystemsManager::mInstance( nullptr );
+        hex_sptr<Engine> Engine::mInstance( nullptr );
 
         // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        SystemsManager::SystemsManager()
+        Engine::Engine()
+            : System( hex_ESystem::ENGINE )
         {
         }
 
-        SystemsManager::~SystemsManager() noexcept = default;
+        Engine::~Engine() noexcept
+        {
+        }
+
+        // ===========================================================
+        // GETTERS & SETTERS: hex::ecs::System
+        // ===========================================================
+
+        // ===========================================================
+        // OVERRIDE: hex::ecs::System
+        // ===========================================================
+
+        int Engine::onStart()
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Engine::onStart" );
+#endif // DEBUG
+
+            return 0;
+        }
+
+        int Engine::onResume()
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Engine::onResume" );
+#endif // DEBUG
+
+            return 0;
+        }
+
+        void Engine::onPause() noexcept
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Engine::onPause" );
+#endif // DEBUG
+        }
+
+        void Engine::onStop() noexcept
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Engine::onStop" );
+#endif // DEBUG
+        }
+        
+        void Engine::onTerminate() noexcept
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Engine::onTerminate" );
+#endif // DEBUG
+        }
 
         // ===========================================================
         // GETTERS & SETTERS
         // ===========================================================
 
-        SystemsManager* SystemsManager::getInstance() noexcept
+        hex_sptr<Engine> Engine::getInstance() noexcept
         { return mInstance; }
 
         // ===========================================================
         // METHODS
         // ===========================================================
 
-        void SystemsManager::Initialize()
+        hex_sptr<Engine> Engine::Initialize( hex_sptr<Engine> pInstance )
         {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-                ecsLog::printInfo( "SystemsManager::Initialize" );
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Engine::Initialize" );
 #endif // DEBUG
 
-            if ( !mInstance )
-                mInstance = ecsNew<SystemsManager>();
+            hex_sptr<Engine> instance( getInstance() );
+            if ( instance == nullptr )
+                instance = pInstance; // Copy
+
+            return instance; // Copy
         }
 
-        void SystemsManager::Terminate() noexcept
+        void Engine::Terminate() noexcept
         {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-                ecsLog::printInfo( "SystemsManager::Terminate" );
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Engine::Terminate" );
 #endif // DEBUG
 
-            ecsDelete( mInstance );
-            mInstance = nullptr;
+            hex_sptr<Engine> instance( getInstance() );
+            if ( instance != nullptr )
+                instance->onTerminate();
+            
+            instance = nullptr;
         }
 
         // -----------------------------------------------------------
 
-    } /// hex::ecs
+    } /// hex::core
 
 } /// hex
 

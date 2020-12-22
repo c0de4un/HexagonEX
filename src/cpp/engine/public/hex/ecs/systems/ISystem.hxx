@@ -102,6 +102,24 @@ namespace hex
             **/
             virtual ecs_ObjectID getID() const noexcept = 0;
 
+            /**
+             * @brief
+             * Returns 'true' if System is Started (initialized).
+             * 
+             * @thread_safety - thread-locks or atomics are used.
+             * @throws - no exceptions.
+            **/
+            virtual bool isStarted() const noexcept = 0;
+
+            /**
+             * @brief
+             * Returns 'true' if System is Paused.
+             * 
+             * @thread_safety - thread-locks or atomics are used.
+             * @throws - no exceptions.
+            **/
+            virtual bool isPaused() const noexcept = 0;
+
             // ===========================================================
             // METHODS
             // ===========================================================
@@ -115,6 +133,15 @@ namespace hex
              * @throws - can throw exception.
             **/
             virtual int Start() = 0;
+
+            /**
+             * @brief
+             * Pause System.
+             * 
+             * @thread_safety - thread-lock used.
+             * @throws - can throw exception.
+            **/
+            virtual void Pause() = 0;
 
             /**
              * @brief

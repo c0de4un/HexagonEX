@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_ECS_ENGINE_HPP
-#define HEX_ECS_ENGINE_HPP
+#ifndef HEX_WIN_GRAPHICS_HPP
+#define HEX_WIN_GRAPHICS_HPP
 
 // -----------------------------------------------------------
 
@@ -36,38 +36,31 @@
 // INCLUDES
 // ===========================================================
 
-// Include ecs::types
-#ifndef HEX_ECS_TYPES_HPP
-#include "types/ecs_types.hpp"
-#endif // !HEX_ECS_TYPES_HPP
-
-// Include hex::ecs::IDStorage
-#ifndef HEX_ECS_ID_STORAGE_HPP
-#include "utils/IDStorage.hpp"
-#endif // !HEX_ECS_ID_STORAGE_HPP
-
-// STATIC-DEBUG ONLY
-#include "events/EventsManager.hpp"
-// STATIC-DEBUG ONLY
+// Include hex::core::GraphicsManager
+#ifndef HEX_CORE_GRAPHICS_MANAGER_HPP
+#include "../../core/graphics/GraphicsManager.hpp"
+#endif // !HEX_CORE_GRAPHICS_MANAGER_HPP
 
 // ===========================================================
-// TYPES
+// hex::win::WinGraphics
 // ===========================================================
 
 namespace hex
 {
 
-    namespace ecs
+    namespace win
     {
+
+        // -----------------------------------------------------------
 
         /**
          * @brief
-         * ECSEngine - ecs implementation adapter.
-         * Allows to easilly change ECS implementation.
+         * WinGraphics - GraphicsManager implementation for Windows platform.
+         * Uses GLFW API.
          * 
-         * @version 0.1
+         * @version 1.2
         **/
-        class ECSEngine final
+        class WinGraphics final : public hex_Graphics
         {
 
         private:
@@ -75,46 +68,74 @@ namespace hex
             // -----------------------------------------------------------
 
             // ===========================================================
-            // TYPES
+            // DELETED
             // ===========================================================
 
-            using id_storages_t = ecs_IDStorage<ecs_ObjectID>;
+            WinGraphics( const WinGraphics& ) noexcept = delete;
+            WinGraphics& operator=( const WinGraphics& ) noexcept = delete;
+            WinGraphics( WinGraphics&& ) noexcept = delete;
+            WinGraphics& operator=( WinGraphics&& ) noexcept = delete;
+
+            // -----------------------------------------------------------
+
+        protected:
+
+            // -----------------------------------------------------------
 
             // ===========================================================
-            // FIELDS
-            // ===========================================================
-
-            /** ECSEngine instance. **/
-            static ECSEngine* mInstance;
-
-            /** ID-Storages Mutex. **/
-            ecs_mutex_t mIDStoragesMutex;
-
-            /** IDStorages **/
-            ecs_map_t<ecs_TypeID, id_storages_t> mIDStorages;
-
-            // ===========================================================
-            // GETTERS & SETTERS
+            // OVERRIDE: hex::ecs::System
             // ===========================================================
 
             /**
              * @brief
-             * Returns ID-Storage.
+             * Called to Start.
              * 
-             * @thread_safety - thread-lock used.
-             * @param pTypeID - ECS Type-ID.
-             * @throws - can throw exception (bad-alloc, mutex).
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
             **/
-            id_storages_t& getIDStorage( const ecs_TypeID pTypeID );
+            virtual int onStart() final;
+
+            /**
+             * @brief
+             * Called to Resume.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
+            **/
+            virtual int onResume() final;
+
+            /**
+             * @brief
+             * Called to Pause.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - no exceptions.
+            **/
+            virtual void onPause() noexcept final;
+
+            /**
+             * @brief
+             * Called to Stop.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - no exceptions.
+            **/
+            virtual void onStop() noexcept final;
 
             // ===========================================================
-            // DELETED
+            // OVERRIDE: hex::ecs::GraphicsManager
             // ===========================================================
 
-            ECSEngine( const ECSEngine& ) noexcept = delete;
-            ECSEngine& operator=( const ECSEngine& ) noexcept = delete;
-            ECSEngine( ECSEngine&& ) noexcept = delete;
-            ECSEngine& operator=( ECSEngine&& ) noexcept = delete;
+            /**
+             * @brief
+             * Called on Termiation.
+             * 
+             * @thread_safety - thread-locks used.
+             * @throws - no exceptions.
+            **/
+            virtual void onTerminate() noexcept final;
 
             // -----------------------------------------------------------
 
@@ -128,19 +149,20 @@ namespace hex
 
             /**
              * @brief
-             * ECSEngine default constructor.
-             *
-             * @throws - can throw exception (mutex, bad-alloc).
+             * WinGraphics constructor.
+             * 
+             * @param graphicsSettings - initial Graphics Settings
+             * @throws - can throw exceptions
             **/
-            explicit ECSEngine();
+            explicit WinGraphics( hex_GraphicsSettings* const graphicsSettings );
 
             /**
              * @brief
-             * ECSEngine destructor.
+             * WinGraphics destructor.
              * 
-             * @throws - no exceptions.
+             * @throws - no exceptions
             **/
-            ~ECSEngine() noexcept;
+            virtual ~WinGraphics() noexcept;
 
             // ===========================================================
             // GETTERS & SETTERS
@@ -152,52 +174,28 @@ namespace hex
 
             /**
              * @brief
-             * Initialize ECS.
-             *
-             * @throws - no exceptions.
-            **/
-            static void Initialize() noexcept;
-
-            /**
-             * @brief
-             * Terminate ECS.
-             *
-             * @throws - no exceptions.
-            **/
-            static void Terminate() noexcept;
-
-            /**
-             * @brief
-             * Generates Object-ID.
+             * Initialize WinGraphics.
              * 
-             * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @returns - Object-ID.
-             * @throws - can throw exception (mutex).
+             * @thread_safety - main-thread only.
+             * @param graphicsSettings - initial Graphics-Settings.
+             * @throws - bad_alloc
+             * @throws - mutex
             **/
-            static ecs_ObjectID generateID( const ecs_TypeID pTypeID );
-
-            /**
-             * @brief
-             * Release ID for reusage.
-             * 
-             * @thread_safety - thread-locks used.
-             * @param pTypeID - ECS Type-ID.
-             * @param pID - ECS Object-ID.
-             * @throws - no exceptions.
-            **/
-            static void releaseID( const ecs_TypeID pTypeID, const ecs_ObjectID pID ) noexcept;
+            static bool Initialize( hex_GraphicsSettings* const graphicsSettings );
 
             // -----------------------------------------------------------
 
-        };
+        }; /// hex::win::WinGraphics
 
-    } /// hex::ecs
+        // -----------------------------------------------------------
+
+    } /// hex::win
 
 } /// hex
 
-using hex_ECS = hex::ecs::ECSEngine;
+using hex_WinGraphics = hex::win::WinGraphics;
+#define HEX_WIN_GRAPHICS_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_ECS_ENGINE_HPP
+#endif // !HEX_WIN_GRAPHICS_HPP

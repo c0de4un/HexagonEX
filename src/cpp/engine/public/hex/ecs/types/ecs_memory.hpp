@@ -49,10 +49,10 @@
 template <typename T>
 
 using ecs_sptr = hex_sptr<T>;
-#define ecsNew hexNew
-#define ecsDelete(a) hexDelete(a)
-#define ecsNewArray(a) hexNewArray(a)
-#define ecsDeleteArray(a) hexDeleteArray(a)
+#define ecsNew hex_New
+#define ecsDelete(a) hex_Delete(a)
+#define ecsNewArray(a) hex_NewArray(a)
+#define ecsDeleteArray(a) hex_DeleteArray(a)
 
 // -----------------------------------------------------------
 

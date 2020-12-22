@@ -60,10 +60,6 @@ namespace hex
         class WinApp final : public hex::core::Application
         {
 
-            // -----------------------------------------------------------
-
-            // -----------------------------------------------------------
-
         private:
 
             // -----------------------------------------------------------
@@ -133,15 +129,6 @@ namespace hex
             // METHODS
             // ===========================================================
 
-            /**
-             * @brief
-             * Initialize WinApp.
-             * 
-             * @returns - WinApp.
-             * @throws - no exceptions.
-            **/
-            static WinApp* Initialize() noexcept;
-
             // -----------------------------------------------------------
 
         }; /// hex::win::WinApp
@@ -151,7 +138,7 @@ namespace hex
 } /// hex
 
 #define HEX_WIN_APP_DECL
-using hexWinApp = hex::win::WinApp;
+using hex_WinApp = hex::win::WinApp;
 
 // -----------------------------------------------------------
 

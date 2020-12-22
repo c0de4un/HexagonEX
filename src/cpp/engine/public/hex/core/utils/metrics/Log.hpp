@@ -208,7 +208,7 @@ namespace hex
 
 #define HEX_CORE_LOG_DECL
 
-using hexLog = hex::core::Log;
+using hex_Log = hex::core::Log;
 
 // -----------------------------------------------------------
 

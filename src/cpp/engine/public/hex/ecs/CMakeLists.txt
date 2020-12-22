@@ -67,10 +67,16 @@ set ( HEX_ECS_HEADERS
     "${PUBLIC_DIR}events/Event.hpp"
     "${PUBLIC_DIR}events/EventsManager.hpp"
     # COMPONENTS
+    "${PUBLIC_DIR}components/Component.hpp"
+    "${PUBLIC_DIR}components/ComponentsManager.hpp"
     # ENTITIES
+    "${PUBLIC_DIR}entities/IEntity.hxx"
+    "${PUBLIC_DIR}entities/Entity.hpp"
+    "${PUBLIC_DIR}entities/EntitiesManager.hpp"
     # SYSTEMS
     "${PUBLIC_DIR}systems/ISystem.hxx"
     "${PUBLIC_DIR}systems/System.hpp"
+    "${PUBLIC_DIR}systems/SystemsManager.hpp"
     # CORE
     "${PUBLIC_DIR}ECSEngine.hpp"
     # UTILS
@@ -93,7 +99,11 @@ set ( HEX_ECS_SOURCES
     "${PRIVATE_DIR}events/Event.cpp"
     "${PRIVATE_DIR}events/EventsManager.cpp"
     # COMPONENTS
+    "${PRIVATE_DIR}components/Component.cpp"
+    "${PRIVATE_DIR}components/ComponentsManager.cpp"
     # ENTITIES
+    "${PRIVATE_DIR}entities/Entity.cpp"
+    "${PRIVATE_DIR}entities/EntitiesManager.cpp"
     # SYSTEMS
     "${PRIVATE_DIR}systems/System.cpp"
     "${PRIVATE_DIR}systems/SystemsManager.cpp"

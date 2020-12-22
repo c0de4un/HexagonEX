@@ -72,10 +72,33 @@ namespace hex
             // -----------------------------------------------------------
 
             // ===========================================================
+            // TYPES
+            // ===========================================================
+
+            using system_state_t = unsigned char;
+
+            // ===========================================================
+            // CONSTANTS
+            // ===========================================================
+
+            static constexpr const system_state_t SYSTEM_STATE_NOT_STARTED = 0;
+            static constexpr const system_state_t SYSTEM_STATE_STARTING = 1;
+            static constexpr const system_state_t SYSTEM_STATE_STARTED = 2;
+            static constexpr const system_state_t SYSTEM_STATE_PAUSING = 3;
+            static constexpr const system_state_t SYSTEM_STATE_PAUSED = 4;
+            static constexpr const system_state_t SYSTEM_STATE_RESUMING = 5;
+            static constexpr const system_state_t SYSTEM_STATE_STOPPING = 6;
+            static constexpr const system_state_t SYSTEM_STATE_STOPPED = 7;
+
+            // ===========================================================
             // FIELDS
             // ===========================================================
 
-            
+            /** State Mutex. **/
+            mutable ecs_mutex_t mStateMutex;
+
+            /** Current System State. **/
+            system_state_t mCurrentState;
 
             // ===========================================================
             // CONSTRUCTOR
@@ -102,6 +125,53 @@ namespace hex
             // ===========================================================
             // METHODS
             // ===========================================================
+
+            /**
+             * @brief
+             * Called to Start.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
+            **/
+            virtual int onStart();
+
+            /**
+             * @brief
+             * Called to Resume.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
+            **/
+            virtual int onResume();
+
+            /**
+             * @brief
+             * Called to Pause.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - no exceptions.
+            **/
+            virtual void onPause() noexcept;
+
+            /**
+             * @brief
+             * Called to Stop.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - no exceptions.
+            **/
+            virtual void onStop() noexcept;
+
+            /**
+             * @brief
+             * Called on Termiation.
+             * 
+             * @thread_safety - thread-locks used.
+             * @throws - no exceptions.
+            **/
+            virtual void onTerminate() noexcept;
 
             /**
              * @brief
@@ -154,7 +224,7 @@ namespace hex
             virtual ~System() noexcept;
 
             // ===========================================================
-            // GETTERS & SETTERS
+            // ecs::ISystem: GETTERS & SETTERS
             // ===========================================================
 
             /**
@@ -175,6 +245,24 @@ namespace hex
             **/
             virtual ecs_ObjectID getID() const noexcept final;
 
+            /**
+             * @brief
+             * Returns 'true' if System is Started (initialized).
+             * 
+             * @thread_safety - thread-locks or atomics are used.
+             * @throws - no exceptions.
+            **/
+            virtual bool isStarted() const noexcept final;
+
+            /**
+             * @brief
+             * Returns 'true' if System is Paused.
+             * 
+             * @thread_safety - thread-locks or atomics are used.
+             * @throws - no exceptions.
+            **/
+            virtual bool isPaused() const noexcept final;
+
             // ===========================================================
             // METHODS
             // ===========================================================
@@ -188,6 +276,15 @@ namespace hex
              * @throws - can throw exception.
             **/
             virtual int Start() final;
+
+            /**
+             * @brief
+             * Pause System.
+             * 
+             * @thread_safety - thread-lock used.
+             * @throws - can throw exception.
+            **/
+            virtual void Pause() final;
 
             /**
              * @brief

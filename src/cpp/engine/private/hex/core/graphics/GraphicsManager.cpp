@@ -86,15 +86,17 @@ namespace hex
             mGraphicsSettings( graphicsSettings )
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( "GraphicsManager::constructor" );
+            hex_Log::printInfo( "GraphicsManager::constructor" );
 #endif // DEUBG
         }
 
         GraphicsManager::~GraphicsManager()
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( "GraphicsManager::destructor" );
+            hex_Log::printInfo( "GraphicsManager::destructor" );
 #endif // DEUBG
+
+            Stop();
 
             delete mGraphicsSettings;
         }
@@ -110,31 +112,31 @@ namespace hex
         { return mGraphicsSettings; }
 
         // ===========================================================
+        // OVERRIDE: hex::ecs::System
+        // ===========================================================
+
+        void GraphicsManager::onTerminate() noexcept
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hex_Log::printInfo( "GraphicsManager::onTerminate" );
+#endif // DEUBG
+        }
+
+        // ===========================================================
         // METHODS
         // ===========================================================
 
-        int GraphicsManager::Initialize()
+        void GraphicsManager::Terminate() noexcept
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( "GraphicsManager::Initialize" );
+            hex_Log::printInfo( "GraphicsManager::Terminate" );
 #endif // DEUBG
 
-            //hex_sptr<GraphicsManager> instance( static_cast<GraphicsManager*>(getInstance()) );
-            //if ( instance != nullptr )
-                //return instance->Start();
+            hex_sptr<GraphicsManager> instance( getInstance() );
 
-            return -1;
-        }
-
-        void GraphicsManager::Terminate() HEX_NOEXCEPT
-        {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( "GraphicsManager::Terminate" );
-#endif // DEUBG
-
-            //hex_sptr<IGraphics> instance( getInstance() );
-            //if ( instance != nullptr )
-                //instance->Stop();
+            if ( instance != nullptr ) {
+                instance->onTerminate();
+            }
 
             mInstance = nullptr;
         }

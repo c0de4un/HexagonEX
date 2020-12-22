@@ -138,7 +138,7 @@ namespace hex
 
             template <typename T, typename... _Types>
             static T* New( _Types&&... _Args )
-            { return new T( _Args ); }
+            { return new T( _Args... ); }
 
             template <typename T>
             static void Delete( T* const pInstance )
@@ -160,6 +160,14 @@ namespace hex
             static void DeleteArray( const T* const pArray )
             { delete[] pArray; }
 
+            template <typename T, typename... _Types>
+            static std::shared_ptr<T> MakeShared( _Types&&... _Args )
+            { return std::make_shared<T>( _Args ); }
+
+            template <typename T>
+            static std::shared_ptr<T> MakeShared( T* const pValue )
+            { return std::shared_ptr<T>( pValue ); }
+
             // -----------------------------------------------------------
 
         }; /// hex::core::MemoryManager
@@ -170,7 +178,7 @@ namespace hex
 
 } /// hex
 
-using hexMemory = hex::core::MemoryManager;
+using hex_Memory = hex::core::MemoryManager;
 
 // -----------------------------------------------------------
 

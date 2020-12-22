@@ -88,14 +88,14 @@ namespace hex
         void MemoryManager::Initialize() noexcept
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( u8"MemoryManager::Initialize" );
+            hex_Log::printInfo( u8"MemoryManager::Initialize" );
 #endif // DEBUG
         }
 
         void MemoryManager::Terminate() noexcept
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( u8"MemoryManager::Terminate" );
+            hex_Log::printInfo( u8"MemoryManager::Terminate" );
 #endif // DEBUG
         }
 

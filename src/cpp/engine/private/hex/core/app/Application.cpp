@@ -38,10 +38,10 @@
 #include "../../../../public/hex/core/app/Application.hpp"
 #endif // !HEX_CORE_APPLICATION_HPP
 
-// Include hex::memory
-#ifndef HEX_CORE_CONFIG_MEMORY_HPP
-#include "../../../../public/hex/core/configs/hex_memory.hpp"
-#endif // !HEX_CORE_CONFIG_MEMORY_HPP
+// Include hex::core::Engine
+#ifndef HEX_CORE_ENGINE_HPP
+#include "../../../../public/hex/core/engine/Engine.hpp"
+#endif // !HEX_CORE_ENGINE_HPP
 
 // Include hex::ecs::ECSEngine
 #ifndef HEX_ECS_ENGINE_HPP
@@ -85,7 +85,7 @@ namespace hex
         // CONSTANTS & FIELDS
         // ===========================================================
 
-        Application* Application::mInstance( nullptr );
+        hex_sptr<Application> Application::mInstance( nullptr );
 
         // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
@@ -96,21 +96,42 @@ namespace hex
         Application::~Application() noexcept = default;
 
         // ===========================================================
+        // GETTERS & SETTERS
+        // ===========================================================
+
+        hex_sptr<Application> Application::getInstance() noexcept
+        { return mInstance; }
+
+        // ===========================================================
         // METHODS
         // ===========================================================
 
-        void onInitialize()
+        hex_sptr<Application> Application::Initialize( hex_sptr<Application> pInstance )
         {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hex_assert( pInstance != nullptr && "Application::Initialize - null argument !" );
+            hex_Log::printInfo( "Application::Initialize" );
+#endif // DEBUG
+
+            hex_sptr<Application> instance( getInstance() );
+            if ( instance == nullptr )
+                mInstance = pInstance;
+            
+            instance = getInstance();
+            instance->onInitialize();
+
+            return instance;
         }
 
         void Application::Terminate() noexcept
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( u8"Application::Terminate" );
+            hex_Log::printInfo( "Application::Terminate" );
 #endif // DEBUG
 
-            if ( mInstance )
-                mInstance->onTerminate();
+            hex_sptr<Application> instance( getInstance() );
+            if ( instance != nullptr )
+                instance->onTerminate();
 
             mInstance = nullptr;
         }
@@ -118,40 +139,30 @@ namespace hex
         void Application::onInitialize()
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( u8"Application::onInitialize" );
+            hex_Log::printInfo( "Application::onInitialize" );
 #endif // DEBUG
 
             // Initialize ECS
-            hexECS::Initialize();
+            hex_ECS::Initialize();
 
             // Initialize default MemoryManager
-            hexMemory::Initialize();
-
-            // @TODO: Initialize ThreadsManager
-            // @TODO: Initialize NetManager
-            // @TODO: Initialize AudioManager
-            // @TODO: Initialize InputManager
-            // @TODO: Initialize GraphicsManager
-            hex_Graphics::Initialize();
-            // @TODO: Initialize RenderManager
-            // @TODO: Initialize ParticlesManager
-
+            hex_Memory::Initialize();
         }
 
         void Application::onTerminate() noexcept
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hexLog::printInfo( u8"Application::onTerminate" );
+            hex_Log::printInfo( "Application::onTerminate" );
 #endif // DEBUG
 
-            // Terminate Application
-            hexMemory::Delete( mInstance );
+            // Terminate Engine
+            hex_Engine::Terminate();
 
             // Terminate ECS
-            hexECS::Terminate();
+            hex_ECS::Terminate();
 
             // Termiante MemoryManager
-            hexMemory::Terminate();
+            hex_Memory::Terminate();
         }
 
         // -----------------------------------------------------------

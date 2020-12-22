@@ -27,14 +27,34 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_ECS_SYSTEMS_MANAGER_HPP
-#define HEX_ECS_SYSTEMS_MANAGER_HPP
+#ifndef HEX_CORE_ENGINE_HPP
+#define HEX_CORE_ENGINE_HPP
 
 // -----------------------------------------------------------
 
 // ===========================================================
 // INCLUDES
 // ===========================================================
+
+// Include hex::core::IEngine
+#ifndef HEX_CORE_I_ENGINE_HXX
+#include "IEngine.hxx"
+#endif // !HEX_CORE_I_ENGINE_HXX
+
+// Include ecs::System
+#ifndef HEX_ECS_SYSTEM_HPP
+#include "../../ecs/systems/System.hpp"
+#endif // !HEX_ECS_SYSTEM_HPP
+
+// Include hex::mutex
+#ifndef HEX_CORE_CONFIG_MUTEX_HPP
+#include "../configs/hex_mutex.hpp"
+#endif // !HEX_CORE_CONFIG_MUTEX_HPP
+
+// Include hex::memory
+#ifndef HEX_CORE_CONFIG_MEMORY_HPP
+#include "../configs/hex_memory.hpp"
+#endif // !HEX_CORE_CONFIG_MEMORY_HPP
 
 // ===========================================================
 // TYPES
@@ -43,25 +63,25 @@
 namespace hex
 {
 
-    namespace ecs
+    namespace core
     {
 
         // -----------------------------------------------------------
 
         // ===========================================================
-        // ecs::SystemsManager
+        // hex::core::Engine
         // ===========================================================
 
         /**
          * @brief
-         * SystemsManager - handles System instances.
+         * Engine - base engine class.
          * 
-         * @version 1.5
+         * @version 1.0
         **/
-        class SystemsManager final
+        class Engine : public hex_IEngine, public ecs_System
         {
 
-        private:
+        protected:
 
             // -----------------------------------------------------------
 
@@ -69,17 +89,72 @@ namespace hex
             // FIELDS
             // ===========================================================
 
-            /** SystemsManager instance. **/
-            static SystemsManager* mInstance;
+            /** Engine instance. **/
+            static hex_sptr<Engine> mInstance;
+
+            // ===========================================================
+            // GETTERS & SETTERS: hex::ecs::System
+            // ===========================================================
+
+            // ===========================================================
+            // OVERRIDE: hex::ecs::System
+            // ===========================================================
+
+            /**
+             * @brief
+             * Called to Start.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
+            **/
+            virtual int onStart();
+
+            /**
+             * @brief
+             * Called to Resume.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
+            **/
+            virtual int onResume();
+
+            /**
+             * @brief
+             * Called to Pause.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - no exceptions.
+            **/
+            virtual void onPause() noexcept;
+
+            /**
+             * @brief
+             * Called to Stop.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - no exceptions.
+            **/
+            virtual void onStop() noexcept;
+            
+            /**
+             * @brief
+             * Called on Termiation.
+             * 
+             * @thread_safety - thread-locks used.
+             * @throws - no exceptions.
+            **/
+            void onTerminate() noexcept;
 
             // ===========================================================
             // DELETED
             // ===========================================================
 
-            SystemsManager( const SystemsManager& ) noexcept = delete;
-            SystemsManager& operator=( const SystemsManager& ) noexcept = delete;
-            SystemsManager( SystemsManager&& ) noexcept = delete;
-            SystemsManager& operator=( SystemsManager&& ) noexcept = delete;
+            Engine(const Engine&) noexcept = delete;
+            Engine& operator=(const Engine&) noexcept = delete;
+            Engine(Engine&&) noexcept = delete;
+            Engine& operator=(Engine&&) noexcept = delete;
 
             // -----------------------------------------------------------
 
@@ -93,20 +168,23 @@ namespace hex
 
             /**
              * @brief
-             * SystemsManager constructor.
+             * Engine constructor.
              * 
-             * @throws bad_alloc
-             * @throws mutex
+             * @throws - can throw exception.
             **/
-            explicit SystemsManager();
+            explicit Engine();
 
             /**
              * @brief
-             * SystemsManager destructor.
+             * Engine destructor.
              * 
-             * @throws - no exceptions.
+             * @throws - no exception.
             **/
-            ~SystemsManager() noexcept;
+            virtual ~Engine() noexcept;
+
+            // ===========================================================
+            // GETTERS & SETTERS: hex::core::IEngine
+            // ===========================================================
 
             // ===========================================================
             // GETTERS & SETTERS
@@ -114,12 +192,16 @@ namespace hex
 
             /**
              * @brief
-             * Returns SystemsManager instance, or null.
+             * Returns Engine instance.
              * 
-             * @thread_safety - not required.
+             * @thread_safety - atomics used.
              * @throws - no exceptions.
             **/
-            static SystemsManager* getInstance() noexcept;
+            static hex_sptr<Engine> getInstance() noexcept;
+
+            // ===========================================================
+            // OVERRIDE: hex::core::IEngine
+            // ===========================================================
 
             // ===========================================================
             // METHODS
@@ -127,37 +209,37 @@ namespace hex
 
             /**
              * @brief
-             * Initialize SystemsManager.
+             * Initialize Engine.
              * 
-             * @thread_safety - main thread only.
-             * @throws - bad_alloc.
-             * @throws - mutex.
+             * @thread_safety - main thread only
+             * @param pInstance - IEngine instance
+             * @return IEngine
             **/
-            static void Initialize();
+            static hex_sptr<Engine> Initialize( hex_sptr<Engine> pInstance );
 
             /**
              * @brief
-             * Terminate SystemsManager instance.
+             * Terminate Engine instance.
              * 
-             * @thread_safety - not thread-safe.
-             * @throws - no exceptions.
+             * @thread_safety - not thread-safe
+             * @throws - no exceptions
             **/
             static void Terminate() noexcept;
 
             // -----------------------------------------------------------
 
-        }; /// hex::ecs::SystemsManager
+        }; /// hex::core::Engine
 
         // -----------------------------------------------------------
 
-    } /// hex::ecs
+    } /// hex::core
 
 } /// hex
 
-using ecs_Systems = hex::ecs::SystemsManager;
+using hex_Engine = hex::core::Engine;
 
-#define HEX_ECS_SYSTEMS_MANAGER_DECL
+#define HEX_CORE_ENGINE_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_ECS_SYSTEMS_MANAGER_HPP
+#endif // !HEX_CORE_ENGINE_HPP

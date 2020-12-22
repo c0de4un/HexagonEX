@@ -41,6 +41,11 @@
 #include "IApplication.hxx"
 #endif // !HEX_CORE_I_APPLICATION_HXX
 
+// Include hex::memory
+#ifndef HEX_CORE_CONFIG_MEMORY_HPP
+#include "../configs/hex_memory.hpp"
+#endif // !HEX_CORE_CONFIG_MEMORY_HPP
+
 // ===========================================================
 // TYPES
 // ===========================================================
@@ -81,12 +86,18 @@ namespace hex
             // ===========================================================
 
             /** Application instance. **/
-            static Application* mInstance;
+            static hex_sptr<Application> mInstance;
 
             // ===========================================================
             // CONSTRUCTOR
             // ===========================================================
 
+            /**
+             * @brief
+             * Application constructor.
+             * 
+             * @throws - can throw exception.
+            **/
             explicit Application();
 
             // ===========================================================
@@ -133,8 +144,31 @@ namespace hex
             virtual ~Application() noexcept;
 
             // ===========================================================
+            // GETTERS & SETTERS
+            // ===========================================================
+
+            /**
+             * @brief
+             * Returns Application instance.
+             * 
+             * @thread_safety - not required.
+             * @throws - no exceptions.
+            **/
+            static hex_sptr<Application> getInstance() noexcept;
+
+            // ===========================================================
             // METHODS
             // ===========================================================
+
+            /**
+             * @brief
+             * Initialize Application instance.
+             * 
+             * @thread_safety - main thread only.
+             * @param pInstance - Application instance to apply.
+             * @return current Application instance.
+            **/
+            static hex_sptr<Application> Initialize( hex_sptr<Application> pInstance );
 
             /**
              * @brief
@@ -158,8 +192,9 @@ namespace hex
 
 } /// hex
 
+using hex_App = hex::core::Application;
+
 #define HEX_CORE_APPLICATION_DECL
-using hexApp = hex::core::Application;
 
 // -----------------------------------------------------------
 

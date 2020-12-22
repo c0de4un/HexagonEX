@@ -1,5 +1,5 @@
 /**
- * Copyright © 2020 Denis Z. (code4un@yandex.ru) All rights reserved.
+ * Copyright ï¿½ 2020 Denis Z. (code4un@yandex.ru) All rights reserved.
  * Authors: Denis Z. (code4un@yandex.ru)
  * All rights reserved.
  * License: see LICENSE.txt
@@ -90,7 +90,7 @@ namespace hex
         bool SpinLock::try_lock( hex_IMutex* const pMutex )
         {
 #ifdef HEX_DEBUG // DEBUG
-            hexAssert( ( mMutex || pMutex ) && "SpinLock::try_lock - null mutex !" );
+            hex_assert( ( mMutex || pMutex ) && "SpinLock::try_lock - null mutex !" );
 #endif // DEBUG
 
             if ( pMutex )
@@ -113,7 +113,7 @@ namespace hex
         void SpinLock::lock( hex_IMutex* const pMutex )
         {
 #ifdef HEX_DEBUG // DEBUG
-            hexAssert( ( mMutex || pMutex ) && "SpinLock::lock - null mutex !" );
+            hex_assert( ( mMutex || pMutex ) && "SpinLock::lock - null mutex !" );
 #endif // DEBUG
 
             if ( pMutex )

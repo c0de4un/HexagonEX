@@ -41,11 +41,6 @@
 #include "hex_api.hpp"
 #endif // !HEX_CORE_API_HPP
 
-// Include hex::core::MemoryManager
-#ifndef HEX_CORE_MEMORY_MANAGER_HPP
-#include "../utils/memory/MemoryManager.hpp"
-#endif // !HEX_CORE_MEMORY_MANAGER_HPP
-
 // Include STL memory
 #if defined( HEX_WINDOWS ) // Windows
 #include <memory>
@@ -57,15 +52,21 @@
 #error "hex_memory.hpp - configuration required."
 #endif
 
+// Include hex::core::MemoryManager
+#ifndef HEX_CORE_MEMORY_MANAGER_HPP
+#include "../utils/memory/MemoryManager.hpp"
+#endif // !HEX_CORE_MEMORY_MANAGER_HPP
+
 // ===========================================================
 // TYPES
 // ===========================================================
 
 // Allocators
-#define hexNew hexMemory::New
-#define hexDelete(a) hexMemory::Delete(a)
-#define hexNewArray(a) hexMemory::NewArray(a)
-#define hexDeleteArray(a) hexMemory::DeleteArray(a)
+#define hex_New hex_Memory::New
+#define hex_Delete(a) hex_Memory::Delete(a)
+#define hex_NewArray(a) hex_Memory::NewArray(a)
+#define hex_DeleteArray(a) hex_Memory::DeleteArray(a)
+#define hex_MakeShared hex_Memory::MakeShared
 
 // Smart-Pointers
 template <typename T>

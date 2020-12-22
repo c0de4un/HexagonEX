@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_CORE_GRAPHICS_SETTINGS_HPP
-#define HEX_CORE_GRAPHICS_SETTINGS_HPP
+#ifndef HEX_CORE_STRING_HPP
+#define HEX_CORE_STRING_HPP
 
 // -----------------------------------------------------------
 
@@ -38,67 +38,41 @@
 
 // Include hex::api
 #ifndef HEX_CORE_API_HPP
-#include "../configs/hex_api.hpp"
+#include "hex_api.hpp"
 #endif // !HEX_CORE_API_HPP
 
-// ===========================================================
-// TYPES
-// ===========================================================
+// PLATFORM
+#if defined( HEX_WINDOWS ) // Windows
 
-namespace hex
-{
+// STL String
+#include <string>
 
-    namespace core
-    {
+using hex_string = std::string;
 
-        /**
-         * @brief
-         * GraphicsSettings - base graphics settings struct.
-         * 
-         * @version 1.1
-        **/
-        struct GraphicsSettings
-        {
+#elif defined( HEX_ANDROID ) // Android
 
-            // -----------------------------------------------------------
+// STL String
+#include <string>
 
-            // ===========================================================
-            // CONSTANTS
-            // ===========================================================
+using hex_string = std::string;
 
-            // ===========================================================
-            // FIELDS
-            // ===========================================================
+#elif defined( HEX_LINUX ) // Linux
 
-            /** Width **/
-            int mWidth;
+// STL String
+#include <string>
 
-            /** Height **/
-            int mHeight;
+using hex_string = std::string;
 
-            // ===========================================================
-            // CONSTRUCTOR & DESTRUCTOR
-            // ===========================================================
+#else
+#error "hex_string.hpp - configuration required."
+#endif
+// PLATFORM
 
-            explicit GraphicsSettings()
-                : mWidth( 0 ),
-                mHeight( 0 )
-            {                
-            }
-
-            virtual ~GraphicsSettings() noexcept = default;
-
-            // -----------------------------------------------------------
-
-        };
-
-    } /// hex::core
-
-} /// hex
-
-using hex_GraphicsSettings = hex::core::GraphicsSettings;
-#define HEX_CORE_GRAPHICS_SETTINGS_DECL
+// Include hex::core::StringUtil
+#ifndef HEX_CORE_STRING_UTIL_HPP
+#include "../utils/text/StringUtil.hpp"
+#endif // !HEX_CORE_STRING_UTIL_HPP
 
 // -----------------------------------------------------------
 
-#endif // !HEX_CORE_GRAPHICS_SETTINGS_HPP
+#endif // !HEX_CORE_STRING_HPP

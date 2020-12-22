@@ -99,7 +99,8 @@ namespace hex
              * @brief
              * GraphicsManager constructor.
              * 
-             * @throws - can throw exceptions.
+             * @param graphicsSettings - initial Graphics Settings
+             * @throws - can throw exceptions
             **/
             explicit GraphicsManager( hex_GraphicsSettings* const graphicsSettings  );
 
@@ -151,7 +152,20 @@ namespace hex
              * 
              * @throws - no exceptions.
             **/
-            virtual ~GraphicsManager() HEX_NOEXCEPT;
+            virtual ~GraphicsManager() noexcept;
+
+            // ===========================================================
+            // OVERRIDE: hex::ecs::System
+            // ===========================================================
+
+            /**
+             * @brief
+             * Called on Termiation.
+             * 
+             * @thread_safety - thread-locks used.
+             * @throws - no exceptions.
+            **/
+            virtual void onTerminate() noexcept;
 
             // ===========================================================
             // METHODS
@@ -159,26 +173,12 @@ namespace hex
 
             /**
              * @brief
-             * Initialize GraphicsManager instance.
-             * 
-             * Facade-method for instance#Start().
+             * Terminate GraphicsManager.
              * 
              * @thread_safety - thread-lock used.
-             * @return - 0 if OK, or error-code.
-             * @throws - can throw exception.
-            **/
-            static int Initialize();
-
-            /**
-             * @brief
-             * Terminate GraphicsManager instance.
-             * 
-             * (?) Facade-method for instance#Stop();
-             * 
-             * @thread_safety - thread-locks used.
              * @throws - no exceptions.
             **/
-            static void Terminate() HEX_NOEXCEPT;
+            static void Terminate() noexcept;
 
             // -----------------------------------------------------------
 

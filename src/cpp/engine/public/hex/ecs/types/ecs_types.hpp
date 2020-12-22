@@ -46,6 +46,11 @@
 #include "../../core/configs/hex_numeric.hpp"
 #endif // !HEX_CORE_NUMERIC_HPP
 
+// Include hex::string
+#ifndef HEX_CORE_STRING_HPP
+#include "../../core/configs/hex_string.hpp"
+#endif // !HEX_CORE_STRING_HPP
+
 // ===========================================================
 // TYPES
 // ===========================================================
@@ -64,7 +69,12 @@ using ecs_TypeID = ecs_uint8_t;
 using ecs_ObjectID = ecs_uint64_t;
 using ecs_EventTypeID = ecs_uint32_t;
 
-#define ECS_INVALID_OBJECT_ID ecs_ObjectID(99999);
+static const ecs_ObjectID ECS_INVALID_OBJECT_ID( 1 );
+
+// #define ECS_INVALID_OBJECT_ID ecs_ObjectID(99999);
+
+using ecs_string = hex_string;
+using ecs_strings = hex_Strings;
 
 // -----------------------------------------------------------
 

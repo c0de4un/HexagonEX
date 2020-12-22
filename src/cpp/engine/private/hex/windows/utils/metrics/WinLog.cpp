@@ -70,10 +70,10 @@ namespace hex
 
         void WinLog::Initialize() noexcept
         {
-            if (hexLog::getInstance() )
+            if (hex_Log::getInstance() )
                 return;
 
-            hexLog::setInstance( new WinLog() );
+            hex_Log::setInstance( new WinLog() );
         }
 
         // ===========================================================

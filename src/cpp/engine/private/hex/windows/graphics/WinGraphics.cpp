@@ -34,88 +34,122 @@
 // ===========================================================
 
 // HEADER
-#ifndef HEX_ECS_SYSTEMS_MANAGER_HPP
-#include "../../../../public/hex/ecs/systems/SystemsManager.hpp"
-#endif // !HEX_ECS_SYSTEMS_MANAGER_HPP
-
-// Include hex::ecs::memory
-#ifndef HEX_ECS_DEBUG_HPP
-#include "../../../public/hex/ecs/types/ecs_memory.hpp"
-#endif // !HEX_ECS_DEBUG_HPP
+#ifndef HEX_WIN_GRAPHICS_HPP
+#include "../../../../public/hex/windows/graphics/WinGraphics.hpp"
+#endif // !HEX_WIN_GRAPHICS_HPP
 
 // DEBUG
 #if defined( DEBUG ) || defined( HEX_DEBUG )
 
-// Include debug
-#ifndef HEX_ECS_DEBUG_HPP
-#include "../../../../public/hex/ecs/types/ecs_debug.hpp"
-#endif // !HEX_ECS_DEBUG_HPP
+// Include hex::log
+#ifndef HEX_CORE_CONFIG_LOG_HPP
+#include "../../../../public/hex/core/configs/hex_log.hpp"
+#endif // !HEX_CORE_CONFIG_LOG_HPP
+
+// Include hex::assert
+#ifndef HEX_CORE_CONFIG_ASSERT_HPP
+#include "../../../../public/hex/core/configs/hex_assert.hpp"
+#endif // !HEX_CORE_CONFIG_ASSERT_HPP
 
 #endif
 // DEBUG
 
 // ===========================================================
-// ecs::SystemsManager
+// hex::win::WinGraphics
 // ===========================================================
 
 namespace hex
 {
 
-    namespace ecs
+    namespace win
     {
 
         // -----------------------------------------------------------
 
         // ===========================================================
-        // FIELDS
-        // ===========================================================
-
-        SystemsManager* SystemsManager::mInstance( nullptr );
-
-        // ===========================================================
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        SystemsManager::SystemsManager()
+        WinGraphics::WinGraphics( hex_GraphicsSettings* const graphicsSettings )
+            : GraphicsManager( graphicsSettings )
         {
         }
 
-        SystemsManager::~SystemsManager() noexcept = default;
+        WinGraphics::~WinGraphics() noexcept
+        {
+        }
 
         // ===========================================================
         // GETTERS & SETTERS
         // ===========================================================
 
-        SystemsManager* SystemsManager::getInstance() noexcept
-        { return mInstance; }
+        // ===========================================================
+        // OVERRIDE: hex::ecs::System
+        // ===========================================================
+
+        int WinGraphics::onStart()
+        {// @TODO: WinGraphics::onStart
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hex_Log::printInfo( "WinGraphics::onStart" );
+#endif // DEUBG
+
+            return 0;
+        }
+
+        int WinGraphics::onResume()
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hex_Log::printInfo( "WinGraphics::onResume" );
+#endif // DEUBG
+
+            return 0;
+        }
+
+        void WinGraphics::onPause() noexcept
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hex_Log::printInfo( "WinGraphics::onPause" );
+#endif // DEUBG
+        }
+
+        void WinGraphics::onStop() noexcept
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hex_Log::printInfo( "WinGraphics::onStop" );
+#endif // DEUBG
+        }
+
+        // ===========================================================
+        // OVERRIDE: hex::ecs::GraphicsManager
+        // ===========================================================
+
+        void WinGraphics::onTerminate() noexcept
+        {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hex_Log::printInfo( "WinGraphics::onTerminate" );
+#endif // DEUBG
+        }
 
         // ===========================================================
         // METHODS
         // ===========================================================
 
-        void SystemsManager::Initialize()
+        bool WinGraphics::Initialize( hex_GraphicsSettings* const graphicsSettings )
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-                ecsLog::printInfo( "SystemsManager::Initialize" );
-#endif // DEBUG
+            hex_Log::printInfo( "WinGraphics::Initialize" );
+#endif // DEUBG
 
-            if ( !mInstance )
-                mInstance = ecsNew<SystemsManager>();
-        }
+            auto instance( getInstance() );
+            if ( instance == nullptr )
+                mInstance.reset( static_cast<hex_Graphics*>(hex_New<WinGraphics>( graphicsSettings )) );
 
-        void SystemsManager::Terminate() noexcept
-        {
-#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-                ecsLog::printInfo( "SystemsManager::Terminate" );
-#endif // DEBUG
-
-            ecsDelete( mInstance );
-            mInstance = nullptr;
+            return mInstance != nullptr;
         }
 
         // -----------------------------------------------------------
 
-    } /// hex::ecs
+    } /// hex::win
 
 } /// hex
 
