@@ -43,7 +43,12 @@
 #include "../../../../engine/public/hex/windows/app/WinApp.hpp"
 #endif // !HEX_WIN_APP_HPP
 
-// @TODO: Include hex::win::WinGraphics
+// Include hex::ecs::Engine
+#ifndef HEX_ECS_ENGINE_HPP
+#include "../../../../engine/public/hex/ecs/ECSEngine.hpp"
+#endif // !HEX_ECS_ENGINE_HPP
+
+// Include hex::win::WinGraphics
 #ifndef HEX_WIN_GRAPHICS_HPP
 #include "../../../../engine/public/hex/windows/graphics/WinGraphics.hpp"
 #endif // !HEX_WIN_GRAPHICS_HPP
@@ -77,8 +82,23 @@ void init() noexcept
         hex_Log::printInfo( "HexagonEX.Windows: starting . . ." );
 #endif // DEBUG
 
-        // Initialize WinApp
-        hex_App::Initialize( hex_MakeShared<hex_App>(static_cast<hex_App*>( hex_New<hex_WinApp>() )) );
+        // Initialize MemoryManager
+        hex_Memory::Initialize();
+
+        // Initialize ECS
+        hex_ECS::Initialize();
+
+        // Initialize Application
+        hex_sptr<hex_App> app( hex_App::Initialize(hex_MakeShared<hex_App>( static_cast<hex_App*>(hex_New<hex_WinApp>()) )) );
+
+        // Initialize Graphics
+
+        // Initialize Engine
+
+        // Initialize Game
+
+        // Start Application
+        app->Start();
 
         // @TODO: Create Engine instance
         // hex_sptr<hex_Engine> engine( hex_Engine::Initialize(hex_New<hex_Engine()>) );
@@ -106,10 +126,10 @@ void cleanUp() noexcept
     hex_Log::printInfo( "HexagonEX.Windows: stopping . . ." );
 #endif // DEBUG
 
-    // Terminate();
+    // Terminate Game, Engine, Application, ECS, MemoryManager
     hex_App::Terminate();
 
-    // @TODO: Terminate Logger
+    // Terminate Logger
 #if defined(DEBUG) || defined(HEX_DEBUG) // DEBUG
     hex_Log::Terminate();
 #endif // DEBUG

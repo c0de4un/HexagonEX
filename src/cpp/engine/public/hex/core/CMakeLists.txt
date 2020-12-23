@@ -74,6 +74,9 @@ set ( HEX_CORE_HEADERS
     # ENGINE
     "${PUBLIC_DIR}engine/IEngine.hxx"
     "${PUBLIC_DIR}engine/Engine.hpp"
+    # GAME
+    "${PUBLIC_DIR}game/IGame.hxx"
+    "${PUBLIC_DIR}game/Game.hpp"
     # RENDER
     # ASYNC
     "${PUBLIC_DIR}utils/async/IMutex.hxx"
@@ -111,6 +114,8 @@ set ( HEX_CORE_SOURCES
     "${PRIVATE_DIR}graphics/GraphicsManager.cpp"
     # ENGINE
     "${PRIVATE_DIR}engine/Engine.cpp"
+    # GAME
+    "${PRIVATE_DIR}game/Game.cpp"
     # RENDER
     # ASYNC
     "${PRIVATE_DIR}utils/async/Mutex.cpp"

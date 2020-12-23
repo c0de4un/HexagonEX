@@ -53,6 +53,11 @@
 #include "../../../../public/hex/core/graphics/GraphicsManager.hpp"
 #endif // !HEX_CORE_GRAPHICS_MANAGER_HPP
 
+// Include hex::core::ESystem
+#ifndef HEX_CORE_E_SYSTEMS_HPP
+#include "../../../public/hex/core/utils/ecs/ESystem.hpp"
+#endif // !HEX_CORE_E_SYSTEMS_HPP
+
 // DEBUG
 #if defined( DEBUG ) || defined( HEX_DEBUG )
 
@@ -91,7 +96,10 @@ namespace hex
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        Application::Application() = default;
+        Application::Application()
+            : System( hex_ESystem::APPLICATION )
+        {
+        }
 
         Application::~Application() noexcept = default;
 
@@ -116,9 +124,6 @@ namespace hex
             hex_sptr<Application> instance( getInstance() );
             if ( instance == nullptr )
                 mInstance = pInstance;
-            
-            instance = getInstance();
-            instance->onInitialize();
 
             return instance;
         }
@@ -131,39 +136,104 @@ namespace hex
 
             hex_sptr<Application> instance( getInstance() );
             if ( instance != nullptr )
-                instance->onTerminate();
+            {
+                // @TODO: Terminate Game
+                hex_Game::Terminate();
 
-            mInstance = nullptr;
+                // Terminate Engine
+                hex_Engine::Terminate();
+
+                // Terminate Application
+                instance->onTerminate();
+                mInstance = nullptr;
+
+                // Terminate ECS
+                hex_ECS::Terminate();
+
+                // Terminate MemoryManager
+                hex_Memory::Terminate();
+            }
         }
 
-        void Application::onInitialize()
-        {
+            // ===========================================================
+            // OVERRIDE: ecs::System
+            // ===========================================================
+
+            int Application::onStart()
+            {
+                // Get Engine instance.
+                hex_sptr<Engine> engine( hex_Engine::getInstance() );
+
+                // Get Game instance.
+                hex_sptr<Game> game( hex_Game::getInstance() );
+
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
-            hex_Log::printInfo( "Application::onInitialize" );
+            hex_Log::printInfo( "Application::onStart" );
+            hex_assert( engine != nullptr && "Application::onStart: Engine is null !" );
+            hex_assert( game != nullptr && "Application::onStart: Game is null !" );
 #endif // DEBUG
 
-            // Initialize ECS
-            hex_ECS::Initialize();
+                // System-Response
+                int response( 0 );
 
-            // Initialize default MemoryManager
-            hex_Memory::Initialize();
-        }
+                // Start Engine
+                response = engine->Start();
 
-        void Application::onTerminate() noexcept
-        {
+                // Check Engine State
+                if ( response != 0 )
+                {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+                    hex_Log::printError( "Application::onStart - failed to start Engine !" );
+#endif // DEBUG
+
+                    return response;
+                }
+
+                // Start Game
+                response = game->Start();
+
+                // Check Game State
+                if ( response != 0 )
+                {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+                    hex_Log::printError( "Application::onStart - failed to start Game !" );
+#endif // DEBUG
+
+                    return response;
+                }
+
+                return 0;
+            }
+
+            int Application::onResume()
+            {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hex_Log::printInfo( "Application::onResume" );
+#endif // DEBUG
+
+                return 0;
+            }
+
+            void Application::onPause() noexcept
+            {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hex_Log::printInfo( "Application::onPause" );
+#endif // DEBUG
+            }
+
+            void Application::onStop() noexcept
+            {
+#if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
+            hex_Log::printInfo( "Application::onStop" );
+#endif // DEBUG
+            }
+
+            void Application::onTerminate() noexcept
+            {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
             hex_Log::printInfo( "Application::onTerminate" );
 #endif // DEBUG
-
-            // Terminate Engine
-            hex_Engine::Terminate();
-
-            // Terminate ECS
-            hex_ECS::Terminate();
-
-            // Termiante MemoryManager
-            hex_Memory::Terminate();
-        }
+            }
 
         // -----------------------------------------------------------
 

@@ -41,6 +41,11 @@
 #include "IApplication.hxx"
 #endif // !HEX_CORE_I_APPLICATION_HXX
 
+// Include ecs::System
+#ifndef HEX_ECS_SYSTEM_HPP
+#include "../../ecs/systems/System.hpp"
+#endif // !HEX_ECS_SYSTEM_HPP
+
 // Include hex::memory
 #ifndef HEX_CORE_CONFIG_MEMORY_HPP
 #include "../configs/hex_memory.hpp"
@@ -64,7 +69,7 @@ namespace hex
          * 
          * @version 1.0
         **/
-        class Application : public IApplication
+        class Application : public IApplication, public ecs_System
         {
 
             // -----------------------------------------------------------
@@ -110,26 +115,55 @@ namespace hex
             Application& operator=(Application&&) noexcept = delete;
 
             // ===========================================================
-            // METHODS
+            // OVERRIDE: ecs::System
             // ===========================================================
 
             /**
              * @brief
-             * Called when Initialize called.
-             * Implementor suppose to call this in cases, when initialization
-             * overridden.
+             * Called to Start.
              * 
-             * @throws - no exceptions.
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
             **/
-            virtual void onInitialize();
+            virtual int onStart() override;
 
             /**
              * @brief
-             * Called when Terminate called.
+             * Called to Resume.
              * 
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
+            **/
+            virtual int onResume() override;
+
+            /**
+             * @brief
+             * Called to Pause.
+             * 
+             * @thread_safety - thread-lock used
              * @throws - no exceptions.
             **/
-            virtual void onTerminate() noexcept;
+            virtual void onPause() noexcept override;
+
+            /**
+             * @brief
+             * Called to Stop.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - no exceptions.
+            **/
+            virtual void onStop() noexcept override;
+
+            /**
+             * @brief
+             * Called on Termiation.
+             * 
+             * @thread_safety - thread-locks used.
+             * @throws - no exceptions.
+            **/
+            virtual void onTerminate() noexcept override;
 
             // -----------------------------------------------------------
 

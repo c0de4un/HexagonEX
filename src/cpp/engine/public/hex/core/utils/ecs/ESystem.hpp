@@ -101,6 +101,8 @@ namespace hex
             static constexpr const ecs_TypeID GRAPHICS = 8;
             static constexpr const ecs_TypeID PARTICLES = 9;
             static constexpr const ecs_TypeID ENGINE = 10;
+            static constexpr const ecs_TypeID APPLICATION = 11;
+            static constexpr const ecs_TypeID GAME = 12;
 
             static constexpr const ecs_TypeID ESystem_MAX = 99;
 
