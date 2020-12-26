@@ -67,7 +67,7 @@ namespace hex
         // GETTERS & SETTERS
         // ===========================================================
 
-        bool Mutex::isLocked() const HEX_NOEXCEPT
+        bool Mutex::isLocked()
         {
             const bool value = mLockedFlag;
             return value;

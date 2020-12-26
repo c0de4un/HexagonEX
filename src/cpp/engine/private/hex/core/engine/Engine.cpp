@@ -158,7 +158,7 @@ namespace hex
             if ( instance == nullptr )
                 instance = pInstance; // Copy
 
-            return instance; // Copy
+            return getInstance(); // Copy
         }
 
         void Engine::Terminate() noexcept

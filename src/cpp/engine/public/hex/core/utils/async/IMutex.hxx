@@ -90,7 +90,7 @@ namespace hex
              * @thread_safety - thread-safe (atomic, not thread-lock).
              * @throws - no exceptions.
             **/
-            virtual bool isLocked() const HEX_NOEXCEPT = 0;
+            virtual bool isLocked() = 0;
 
             /**
              * @brief

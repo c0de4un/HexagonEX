@@ -36,6 +36,21 @@
 // INCLUDES
 // ===========================================================
 
+// Include ecs::System
+#ifndef HEX_ECS_SYSTEM_HPP
+#include "../../ecs/systems/System.hpp"
+#endif // !HEX_ECS_SYSTEM_HPP
+
+// Include hex::core::IGame
+#ifndef HEX_CORE_I_GAME_HXX
+#include "IGame.hxx"
+#endif // !HEX_CORE_I_GAME_HXX
+
+// Include hex::memory
+#ifndef HEX_CORE_CONFIG_MEMORY_HPP
+#include "../configs/hex_memory.hpp"
+#endif // !HEX_CORE_CONFIG_MEMORY_HPP
+
 // ===========================================================
 // TYPES
 // ===========================================================
@@ -52,11 +67,164 @@ namespace hex
         // hex::core::Game
         // ===========================================================
 
+        /**
+         * @brief
+         * Game - base game-class.
+         * 
+         * @version 1.0
+        **/
+        class Game : public hex_IGame, public ecs_System
+        {
+
+        protected:
+
+            // -----------------------------------------------------------
+
+            // ===========================================================
+            // FIELDS
+            // ===========================================================
+
+            /** Game instance. **/
+            static hex_sptr<Game> mInstance;
+
+            // ===========================================================
+            // CONSTRUCTOR
+            // ===========================================================
+
+            /**
+             * @brief
+             * Game constructor.
+             * 
+             * @throws - can throw exception.
+            **/
+            explicit Game();
+
+            // ===========================================================
+            // OVERRIDE: ecs::System
+            // ===========================================================
+
+            /**
+             * @brief
+             * Called to Start.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
+            **/
+            virtual int onStart() override;
+
+            /**
+             * @brief
+             * Called to Resume.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
+            **/
+            virtual int onResume() override;
+
+            /**
+             * @brief
+             * Called to Pause.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - no exceptions.
+            **/
+            virtual void onPause() noexcept override;
+
+            /**
+             * @brief
+             * Called to Stop.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - no exceptions.
+            **/
+            virtual void onStop() noexcept override;
+
+            /**
+             * @brief
+             * Called on Termiation.
+             * 
+             * @thread_safety - thread-locks used.
+             * @throws - no exceptions.
+            **/
+            virtual void onTerminate() noexcept override;
+            
+            // ===========================================================
+            // DELETED
+            // ===========================================================
+
+            Game( const Game& ) noexcept = delete;
+            Game& operator=( const Game& ) noexcept = delete;
+            Game( Game&& ) noexcept = delete;
+            Game& operator=( Game&& ) noexcept = delete;
+
+            // -----------------------------------------------------------
+
+        public:
+
+            // -----------------------------------------------------------
+
+            // ===========================================================
+            // DESTRUCTOR
+            // ===========================================================
+
+            /**
+             * @brief
+             * Game destructor.
+             * 
+             * @throws - no exceptions.
+            **/
+            virtual ~Game() noexcept;
+
+            // ===========================================================
+            // GETTERS & SETTERS
+            // ===========================================================
+
+            /**
+             * @brief
+             * Returns Game instance.
+             * 
+             * @thread_safety - thread-lock used.
+             * @throws - no exceptions.
+            **/
+            static hex_sptr<Game> getInstance() noexcept;
+
+            // ===========================================================
+            // METHODS
+            // ===========================================================
+
+            /**
+             * @brief
+             * Initialize Game instance.
+             * 
+             * @thread_safety - main thread only.
+             * @param pInstance - Game instance to set.
+             * @return Game instance.
+            **/
+            static hex_sptr<Game> Initialize( hex_sptr<Game> pInstance );
+
+            /**
+             * @brief
+             * Terminate Game instance.
+             * 
+             * @thread_safety - thread-lock used.
+             * @throws - no exceptions.
+            **/
+            static void Terminate() noexcept;
+
+            // -----------------------------------------------------------
+
+        }; /// hex::core::Game
+
         // -----------------------------------------------------------
 
     } /// hex::core
 
 } /// hex
+
+using hex_Game = hex::core::Game;
+#define HEX_CORE_GAME_DECL
 
 // -----------------------------------------------------------
 

@@ -90,7 +90,7 @@ namespace hex
 #endif // DEUBG
         }
 
-        GraphicsManager::~GraphicsManager()
+        GraphicsManager::~GraphicsManager() noexcept
         {
 #if defined( DEBUG ) || defined( HEX_DEBUG ) // DEBUG
             hex_Log::printInfo( "GraphicsManager::destructor" );

@@ -53,6 +53,11 @@
 #include "../../../../engine/public/hex/windows/graphics/WinGraphics.hpp"
 #endif // !HEX_WIN_GRAPHICS_HPP
 
+// Include hexgame::core::HexGame
+#ifndef HEXGAME_CORE_HEXGAME_HPP
+#include "../../../public/hex/core/game/HexGame.hpp"
+#endif // !HEXGAME_CORE_HEXGAME_HPP
+
 // @TODO: Include hex::gl::GLRenderManager
 
 // @TODO: Include hex::win::WinAudio
@@ -89,32 +94,28 @@ void init() noexcept
         hex_ECS::Initialize();
 
         // Initialize Application
-        hex_sptr<hex_App> app( hex_App::Initialize(hex_MakeShared<hex_App>( static_cast<hex_App*>(hex_New<hex_WinApp>()) )) );
+        hex_WinApp* const winApp( hex_New<hex_WinApp>() );
+        hex_sptr<hex_App> app( static_cast<hex_App*>(winApp) );
 
         // Initialize Graphics
 
         // Initialize Engine
 
         // Initialize Game
+        hexgame::core::HexGame* const hexGame( hex_New<hexgame::core::HexGame>() );
+        hex_sptr<hex_Game> game( static_cast<hex_Game*>(hexGame) );
 
         // Start Application
-        app->Start();
+        if ( const int start_result = app->Start() != 0 )
+        {
+#if defined(DEBUG) || defined(HEX_DEBUG) // DEBUG
+            hex_string errMsg( "HexagonEX.Windows: failed to start with code: " );
+            errMsg += hex_Strings::to_string<int>( start_result );
+            hex_Log::printError( errMsg.c_str() );
+#endif // DEBUG
 
-        // @TODO: Create Engine instance
-        // hex_sptr<hex_Engine> engine( hex_Engine::Initialize(hex_New<hex_Engine()>) );
-
-        // @TODO: Create Game instance
-        // Create & Initialize WinApp instance.
-        // hex_WinApp::Initialize();
-
-        // Create WinGraphics
-        // hex_GraphicsSettings* const graphicsSettings( hex_New<hex_GraphicsSettings>() );
-        // graphicsSettings->mWidth = 640;
-        // graphicsSettings->mHeight = 480;
-        // hex_WinGraphics::Initialize( graphicsSettings );
-
-        // Start
-        // hex_sptr<hex_App> app( hex_App::getInstance() );
+            return;
+        }
     }
     catch (const std::exception& pException) { }
     catch (...) { }

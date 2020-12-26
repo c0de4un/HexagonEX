@@ -130,7 +130,7 @@ namespace hex
              * @thread_safety - thread-safe (atomic, not thread-lock).
              * @throws - no exceptions.
             **/
-            virtual bool isLocked() const HEX_NOEXCEPT final;
+            virtual bool isLocked() final;
 
             // -----------------------------------------------------------
 

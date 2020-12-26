@@ -94,9 +94,6 @@ namespace hex
             // FIELDS
             // ===========================================================
 
-            /** State Mutex. **/
-            mutable ecs_mutex_t mStateMutex;
-
             /** Current System State. **/
             system_state_t mCurrentState;
 
@@ -166,6 +163,15 @@ namespace hex
 
             /**
              * @brief
+             * Called when instance is set.
+             * 
+             * @thread_safety - main thread only.
+             * @throws - can throw exception.
+            **/
+            virtual void onInitialize();
+
+            /**
+             * @brief
              * Called on Termiation.
              * 
              * @thread_safety - thread-locks used.
@@ -211,6 +217,9 @@ namespace hex
             /** ECS Object-ID. **/
             const ecs_ObjectID mID;
 
+            /** State Mutex. **/
+            ecs_mutex_t mStateMutex;
+
             // ===========================================================
             // DESTRUCTOR
             // ===========================================================
@@ -252,7 +261,7 @@ namespace hex
              * @thread_safety - thread-locks or atomics are used.
              * @throws - no exceptions.
             **/
-            virtual bool isStarted() const noexcept final;
+            virtual bool isStarted() final;
 
             /**
              * @brief
@@ -261,7 +270,7 @@ namespace hex
              * @thread_safety - thread-locks or atomics are used.
              * @throws - no exceptions.
             **/
-            virtual bool isPaused() const noexcept final;
+            virtual bool isPaused() final;
 
             // ===========================================================
             // METHODS

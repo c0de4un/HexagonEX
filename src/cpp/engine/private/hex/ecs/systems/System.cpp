@@ -184,6 +184,10 @@ namespace hex
 
         }
 
+        void System::onInitialize()
+        {
+        }
+
         void System::onTerminate() noexcept
         {
         }
@@ -192,13 +196,13 @@ namespace hex
         // ecs::ISystem: GETTERS & SETTERS
         // ===========================================================
 
-        bool System::isStarted() const noexcept
+        bool System::isStarted()
         {
             ecs_lock_t lock( &mStateMutex );
             return mCurrentState > SYSTEM_STATE_NOT_STARTED && mCurrentState < SYSTEM_STATE_STOPPED;
         }
 
-        bool System::isPaused() const noexcept
+        bool System::isPaused()
         {
             ecs_lock_t lock( &mStateMutex );
             return mCurrentState > SYSTEM_STATE_STARTED && mCurrentState != SYSTEM_STATE_RESUMING;

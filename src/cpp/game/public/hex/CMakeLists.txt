@@ -45,6 +45,9 @@ set(CMAKE_AUTORCC ON)
 # MODULES
 # =================================================================================
 
+# Core
+#add_subdirectory ( "core" )
+
 # Windows
 add_subdirectory ( "windows" )
 

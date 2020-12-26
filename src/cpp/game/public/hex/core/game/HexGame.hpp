@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  **/
 
-#ifndef HEX_ECS_I_SYSTEM_HXX
-#define HEX_ECS_I_SYSTEM_HXX
+#ifndef HEXGAME_CORE_HEXGAME_HPP
+#define HEXGAME_CORE_HEXGAME_HPP
 
 // -----------------------------------------------------------
 
@@ -36,135 +36,146 @@
 // INCLUDES
 // ===========================================================
 
-// Include ecs::types
-#ifndef HEX_ECS_TYPES_HPP
-#include "../types/ecs_types.hpp"
-#endif // !HEX_ECS_TYPES_HPP
+// Include hex::core::Game
+#ifndef HEX_CORE_GAME_HPP
+#include "../../../../../engine/public/hex/core/game/Game.hpp"
+#endif // !HEX_CORE_GAME_HPP
 
 // ===========================================================
 // TYPES
 // ===========================================================
 
-namespace hex
+namespace hexgame
 {
-    
-    namespace ecs
+
+    namespace core
     {
 
         // -----------------------------------------------------------
 
+        // ===========================================================
+        // hexgame::core::HexGame
+        // ===========================================================
+
         /**
          * @brief
-         * ISystem - System interface.
+         * HexGame - HexagonEX mian game class.
          * 
          * @version 1.0
         **/
-        class ISystem
+        class HexGame final : public hex_Game
         {
+
+        protected:
+
+            // -----------------------------------------------------------
+
+            // ===========================================================
+            // OVERRIDE: ecs::System
+            // ===========================================================
+
+            /**
+             * @brief
+             * Called to Start.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
+            **/
+            virtual int onStart() final;
+
+            /**
+             * @brief
+             * Called to Resume.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - can throw exception
+             * @return - 0 if OK
+            **/
+            virtual int onResume() final;
+
+            /**
+             * @brief
+             * Called to Pause.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - no exceptions.
+            **/
+            virtual void onPause() noexcept final;
+
+            /**
+             * @brief
+             * Called to Stop.
+             * 
+             * @thread_safety - thread-lock used
+             * @throws - no exceptions.
+            **/
+            virtual void onStop() noexcept final;
+
+            /**
+             * @brief
+             * Called on Termiation.
+             * 
+             * @thread_safety - thread-locks used.
+             * @throws - no exceptions.
+            **/
+            virtual void onTerminate() noexcept final;
+
+            // ===========================================================
+            // DELETED
+            // ===========================================================
+
+            HexGame( const HexGame& ) noexcept = delete;
+            HexGame& operator=( const HexGame& ) noexcept = delete;
+            HexGame( HexGame&& ) noexcept = delete;
+            HexGame& operator=( HexGame&& ) noexcept = delete;
+
+            // -----------------------------------------------------------
 
         public:
 
             // -----------------------------------------------------------
 
             // ===========================================================
-            // DESTRUCTOR
+            // CONSTRUCTOR & DESTRUCTOR
             // ===========================================================
 
             /**
              * @brief
-             * ISystem destructor.
+             * HexGame constructor.
+             * 
+             * @throws - can throw exception.
+            **/
+            explicit HexGame();
+
+            /**
+             * @brief
+             * HexGame destructor.
              * 
              * @throws - no exceptions.
             **/
-            virtual ~ISystem() noexcept
-            {
-            }
+            virtual ~HexGame() noexcept;
 
             // ===========================================================
             // GETTERS & SETTERS
             // ===========================================================
 
-            /**
-             * @brief
-             * Returns ECS Type-ID.
-             * 
-             * @thread_safety - not required.
-             * @throws - no exceptions.
-            **/
-            virtual ecs_TypeID getTypeID() const noexcept = 0;
-
-            /**
-             * @brief
-             * Returns ECS Object-ID.
-             *
-             * @thread_safety - not required.
-             * @throws - no exceptions.
-            **/
-            virtual ecs_ObjectID getID() const noexcept = 0;
-
-            /**
-             * @brief
-             * Returns 'true' if System is Started (initialized).
-             * 
-             * @thread_safety - thread-locks or atomics are used.
-             * @throws - no exceptions.
-            **/
-            virtual bool isStarted() = 0;
-
-            /**
-             * @brief
-             * Returns 'true' if System is Paused.
-             * 
-             * @thread_safety - thread-locks or atomics are used.
-             * @throws - no exceptions.
-            **/
-            virtual bool isPaused() = 0;
-
             // ===========================================================
             // METHODS
             // ===========================================================
 
-            /**
-             * @brief
-             * Start System.
-             * 
-             * @thread_safety - thread-locks used.
-             * @return - 0 if OK.
-             * @throws - can throw exception.
-            **/
-            virtual int Start() = 0;
-
-            /**
-             * @brief
-             * Pause System.
-             * 
-             * @thread_safety - thread-lock used.
-             * @throws - can throw exception.
-            **/
-            virtual void Pause() = 0;
-
-            /**
-             * @brief
-             * Stop System.
-             * 
-             * @thread_safety - thread-locks used.
-             * @throws - no exceptions.
-            **/
-            virtual void Stop() noexcept = 0;
-
             // -----------------------------------------------------------
 
-        }; /// hex::ecs::ISystem
+        }; /// hexgame::core::HexGame
 
         // -----------------------------------------------------------
 
-    } /// hex::ecs
+    } /// hexgame::core
 
 } /// hex
 
-using ecs_ISystem = hex::ecs::ISystem;
-#define HEX_ECS_I_SYSTEM_DECL
+#define HEXGAME_CORE_HEXGAME_DECL
 
 // -----------------------------------------------------------
 
-#endif // !HEX_ECS_I_SYSTEM_HXX
+#endif // !HEXGAME_CORE_HEXGAME_HPP

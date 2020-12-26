@@ -38,6 +38,27 @@
 #include "../../../../engine/public/hex/core/game/Game.hpp"
 #endif // !HEX_CORE_GAME_HPP
 
+// Include hex::core::ESystem
+#ifndef HEX_CORE_E_SYSTEMS_HPP
+#include "../../../../public/hex/core/utils/ecs/ESystem.hpp"
+#endif // !HEX_CORE_E_SYSTEMS_HPP
+
+// DEBUG
+#if defined( DEBUG ) || defined( HEX_DEBUG )
+
+// Include hex::log
+#ifndef HEX_CORE_CONFIG_LOG_HPP
+#include "../../../public/hex/core/configs/hex_log.hpp"
+#endif // !HEX_CORE_CONFIG_LOG_HPP
+
+// Include hex::assert
+#ifndef HEX_CORE_CONFIG_ASSERT_HPP
+#include "../../../public/hex/core/configs/hex_assert.hpp"
+#endif // !HEX_CORE_CONFIG_ASSERT_HPP
+
+#endif
+// DEBUG
+
 // ===========================================================
 // hex::core::Game
 // ===========================================================
@@ -50,7 +71,102 @@ namespace hex
 
         // -----------------------------------------------------------
 
+        // ===========================================================
+        // FIELDS
+        // ===========================================================
 
+        hex_sptr<Game> Game::mInstance( nullptr );
+
+        // ===========================================================
+        // CONSTRUCTOR & DESTRUCTOR
+        // ===========================================================
+
+        Game::Game()
+            : System( hex_ESystem::GAME )
+        {
+        }
+
+        Game::~Game() noexcept = default;
+
+        // ===========================================================
+        // GETTERS & SETTERS
+        // ===========================================================
+
+        hex_sptr<Game> Game::getInstance() noexcept
+        { return mInstance; }
+
+        // ===========================================================
+        // OVERRIDE: ecs::System
+        // ===========================================================
+
+        int Game::onStart()
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Game::onStart" );
+#endif // DEBUG
+
+            return 0;
+        }
+
+        int Game::onResume()
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Game::onResume" );
+#endif // DEBUG
+
+            return 0;
+        }
+
+        void Game::onPause() noexcept
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Game::onPause" );
+#endif // DEBUG
+        }
+
+        void Game::onStop() noexcept
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Game::onStop" );
+#endif // DEBUG
+        }
+
+        void Game::onTerminate() noexcept
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Game::onTerminate" );
+#endif // DEBUG
+        }
+
+        // ===========================================================
+        // METHODS
+        // ===========================================================
+
+        hex_sptr<Game> Game::Initialize( hex_sptr<Game> pInstance )
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Game::Initialize" );
+#endif // DEBUG
+
+            hex_sptr<Game> instance( getInstance() );
+            if ( instance == nullptr )
+                mInstance = pInstance;
+
+            return getInstance();
+        }
+
+        void Game::Terminate() noexcept
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "Game::Terminate" );
+#endif // DEBUG
+
+            hex_sptr<Game> instance( getInstance() );
+            if ( instance != nullptr )
+                instance->onTerminate();
+            
+            mInstance = nullptr;
+        }
 
         // -----------------------------------------------------------
 

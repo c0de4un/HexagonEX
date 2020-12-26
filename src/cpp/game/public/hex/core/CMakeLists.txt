@@ -20,7 +20,7 @@ cmake_minimum_required ( VERSION 3.6 FATAL_ERROR ) # QT & Android
 # =================================================================================
 
 # Project Name
-set ( PROJECT_NAME "HexagonEX.Windows" )
+set ( PROJECT_NAME "HexagonEX.Core" )
 
 # Project Version
 set ( PROJECT_VERSION 0.0.1 )
@@ -46,49 +46,35 @@ set(CMAKE_AUTORCC ON)
 # =================================================================================
 
 set ( PUBLIC_DIR "" )
-set ( PRIVATE_DIR "../../../private/" )
-set ( EXECUTABLE_OBJECT "HexagonEX" ) # Executable Object Name
+set ( PRIVATE_DIR "../../../private/hex/core/" )
 
 # =================================================================================
 # HEADERS
 # =================================================================================
 
-set ( HEX_GAME_WINDOWS_HEADERS
-    "main.hpp" )
+set ( HEX_GAME_CORE_HEADERS
+    # GAME
+    "${PUBLIC_DIR}game/HexGame.hpp" )
 
 # =================================================================================
 # SOURCES
 # =================================================================================
 
-set ( HEX_GAME_WINDOWS_SOURCES
-    "${PRIVATE_DIR}hex/windows/main.cpp" )
-
-# =================================================================================
-# RESOURCES
-# =================================================================================
-
-set ( HEX_GAME_WINDOWS_RESOURCES "${CMAKE_SOURCE_DIR}/res/win/win_res.rc" )
+set ( HEX_GAME_CORE_SOURCES
+    "${PRIVATE_DIR}game/HexGame.cpp" )
 
 # =================================================================================
 # BUILD
 # =================================================================================
 
-# Add Executable Object
-add_executable ( ${EXECUTABLE_OBJECT} ${HEX_GAME_WINDOWS_HEADERS} ${HEX_GAME_WINDOWS_SOURCES} ${HEX_GAME_WINDOWS_RESOURCES} )
+# Add STATIC Library
+add_library ( HexagonEX.Core ${HEX_GAME_CORE_HEADERS} ${HEX_GAME_CORE_SOURCES} )
 
-# Configure Executable-Object
-set_target_properties ( ${EXECUTABLE_OBJECT} PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin" )
-
-# Link Executable with Core
-#target_include_directories ( ${EXECUTABLE_OBJECT} PUBLIC "../core" )
-target_include_directories ( ${EXECUTABLE_OBJECT} PUBLIC "../../../../engine/public" )
-target_link_libraries ( ${EXECUTABLE_OBJECT} hexEngine.Core hexEngine.Windows )
-
-# Link Executable with Engine
-#target_include_directories ( ${EXECUTABLE_OBJECT} PUBLIC "../../../../engine/public" )
-#target_link_libraries ( ${EXECUTABLE_OBJECT} hexEngine.Core hexEngine.Windows )
-#target_link_libraries ( ${EXECUTABLE_OBJECT} hexEngine.Core hexEngine.Windows )
+# Link
+target_include_directories ( HexagonEX.Core PUBLIC "../../../../engine/public" )
+target_link_libraries ( HexagonEX.Core hexEngine.Core )
+#target_include_directories ( hexEngine.Windows PUBLIC "../core" )
+#target_include_directories ( hexEngine.Windows PUBLIC "../ecs" )
+#target_link_libraries ( hexEngine.Windows hexEngine.Core )
 
 # ------------------------------------------------------------------------------

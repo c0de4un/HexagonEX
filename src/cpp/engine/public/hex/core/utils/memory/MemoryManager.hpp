@@ -162,11 +162,17 @@ namespace hex
 
             template <typename T, typename... _Types>
             static std::shared_ptr<T> MakeShared( _Types&&... _Args )
-            { return std::make_shared<T>( _Args ); }
+            { return std::make_shared<T>( _Args... ); }
 
             template <typename T>
             static std::shared_ptr<T> MakeShared( T* const pValue )
             { return std::shared_ptr<T>( pValue ); }
+
+            template <typename T, typename V>
+            static std::shared_ptr<V> SharedCast( std::shared_ptr<T> pValue )
+            {
+                return std::static_pointer_cast<T, V>( pValue );
+            }
 
             // -----------------------------------------------------------
 

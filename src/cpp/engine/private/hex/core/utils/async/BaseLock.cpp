@@ -72,7 +72,7 @@ namespace hex
         // OVERRIDE: hex::core::ILock
         // ===========================================================
 
-        bool BaseLock::isLocked() HEX_NOEXCEPT
+        bool BaseLock::isLocked()
         { return mMutex ? mMutex->isLocked() : false; }
 
         // -----------------------------------------------------------

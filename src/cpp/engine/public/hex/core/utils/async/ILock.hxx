@@ -78,9 +78,7 @@ namespace hex
              * 
              * @throws - no exceptions.
             **/
-            virtual ~ILock() HEX_NOEXCEPT
-            {
-            }
+            virtual ~ILock() HEX_NOEXCEPT = default;
 
             // ===========================================================
             // GETTERS & SETTERS

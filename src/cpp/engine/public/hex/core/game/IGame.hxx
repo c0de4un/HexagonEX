@@ -52,6 +52,12 @@ namespace hex
         // hex::core::IGame
         // ===========================================================
 
+        /**
+         * @breif
+         * IGame - game interface.
+         * 
+         * @version 1.0
+        **/
         class IGame
         {
 
@@ -60,8 +66,16 @@ namespace hex
             // -----------------------------------------------------------
 
             // ===========================================================
-            // hex::core::IGame
+            // DESTRUCTOR
             // ===========================================================
+
+            /**
+             * @brief
+             * IGame destructor.
+             * 
+             * @throws - no exceptions.
+            **/
+            virtual ~IGame() noexcept = default;
 
             // -----------------------------------------------------------
 
@@ -72,6 +86,9 @@ namespace hex
     } /// hex::core
 
 } /// hex
+
+using hex_IGame = hex::core::IGame;
+#define HEX_CORE_I_GAME_DECL
 
 // -----------------------------------------------------------
 

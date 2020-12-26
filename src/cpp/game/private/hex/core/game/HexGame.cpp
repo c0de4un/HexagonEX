@@ -1,6 +1,4 @@
 /**
- * Copyright � 2020 Denis Z. (code4un@yandex.ru) All rights reserved.
- * Authors: Denis Z. (code4un@yandex.ru)
  * All rights reserved.
  * License: see LICENSE.txt
  *
@@ -27,7 +25,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- */
+ **/
 
 // -----------------------------------------------------------
 
@@ -36,31 +34,31 @@
 // ===========================================================
 
 // HEADER
-#ifndef HEX_CORE_SPIN_LOCK_HPP
-#include "../../../public/hex/core/utils/async/SpinLock.hpp"
-#endif // !HEX_CORE_SPIN_LOCK_HPP
-
-// Include hex::core::IMutex
-#ifndef HEX_CORE_I_MUTEX_HXX
-#include "../../../public/hex/core/utils/async/IMutex.hxx"
-#endif // !HEX_CORE_I_MUTEX_HXX
+#ifndef HEXGAME_CORE_HEXGAME_HPP
+#include "../../../../public/hex/core/game/HexGame.hpp"
+#endif // !HEXGAME_CORE_HEXGAME_HPP
 
 // DEBUG
-#if defined( DEBUG ) || defined(HEX_DEBUG)
+#if defined( DEBUG ) || defined( HEX_DEBUG )
+
+// Include hex::log
+#ifndef HEX_CORE_CONFIG_LOG_HPP
+#include "../../../../engine/public/hex/core/configs/hex_log.hpp"
+#endif // !HEX_CORE_CONFIG_LOG_HPP
 
 // Include hex::assert
 #ifndef HEX_CORE_CONFIG_ASSERT_HPP
-#include "../../../public/hex/core/configs/hex_assert.hpp"
+#include "../../../../engine/public/hex/core/configs/hex_assert.hpp"
 #endif // !HEX_CORE_CONFIG_ASSERT_HPP
-#endif
 
+#endif
 // DEBUG
 
 // ===========================================================
-// hex::core::SpinLock
+// hexgame::core::HexGame
 // ===========================================================
 
-namespace hex
+namespace hexgame
 {
 
     namespace core
@@ -72,77 +70,59 @@ namespace hex
         // CONSTRUCTOR & DESTRUCTOR
         // ===========================================================
 
-        SpinLock::SpinLock()
-            : BaseLock()
+        HexGame::HexGame()
+            : Game()
         {
         }
 
-        SpinLock::SpinLock( hex_IMutex* const pMutex )
-            : BaseLock( pMutex )
-        {
-            //lock();
-        }
-
-        SpinLock::~SpinLock() HEX_NOEXCEPT
-        {
-            unlock();
-        }
+        HexGame::~HexGame() noexcept = default;
 
         // ===========================================================
-        // OVERRIDE: hex::core::BaseLock
+        // OVERRIDE: ecs::System
         // ===========================================================
 
-        bool SpinLock::try_lock( hex_IMutex* const pMutex )
+        int HexGame::onStart()
         {
-            if ( pMutex )
-            {
-                this->unlock();
-                mMutex = pMutex;
-            }
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "HexGame::onStart" );
+#endif // DEBUG
 
-            if ( !mMutex )
-                return false;
-
-            for ( unsigned char i = 0; i < SPIN_LIMIT; i++ )
-            {
-                if ( !mMutex->isLocked() )
-                {
-                    break;
-                }
-            }
-
-            return mMutex->try_lock();
+            return 0;
         }
 
-        void SpinLock::lock( hex_IMutex* const pMutex )
+        int HexGame::onResume()
         {
-            if ( pMutex )
-            {
-                this->unlock();
-                mMutex = pMutex;
-            }
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "HexGame::onResume" );
+#endif // DEBUG
 
-            if ( !mMutex )
-                return;
-
-            for ( unsigned char i = 0; i < SPIN_LIMIT; i++ )
-            {
-                if ( !mMutex->isLocked() )
-                    break;
-            }
-
-            mMutex->lock();
+            return 0;
         }
 
-        void SpinLock::unlock() HEX_NOEXCEPT
+        void HexGame::onPause() noexcept
         {
-            if ( mMutex && mMutex->isLocked() )
-                mMutex->unlock();
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "HexGame::onPause" );
+#endif // DEBUG
+        }
+
+        void HexGame::onStop() noexcept
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "HexGame::onStop" );
+#endif // DEBUG
+        }
+
+        void HexGame::onTerminate() noexcept
+        {
+#ifdef HEX_DEBUG // DEBUG
+            hex_Log::printInfo( "HexGame::onTerminate" );
+#endif // DEBUG
         }
 
         // -----------------------------------------------------------
 
-    } /// hex::core
+    } /// hexgame::core
 
 } /// hex
 

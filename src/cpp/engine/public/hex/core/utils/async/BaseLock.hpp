@@ -146,7 +146,7 @@ namespace hex
              * @thread_safety - atomic-flag used.
              * @throws - no exceptions.
             **/
-            virtual bool isLocked() HEX_NOEXCEPT final;
+            virtual bool isLocked() final;
 
             // -----------------------------------------------------------
 

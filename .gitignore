@@ -16,6 +16,9 @@
 # Mono auto generated files
 mono_crash.*
 
+# Private-Assets (not for publicity)
+/assets/private/
+
 # Build results
 /bin
 /build
@@ -352,3 +355,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+desktop.ini
